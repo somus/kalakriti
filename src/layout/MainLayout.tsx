@@ -1,13 +1,6 @@
 import PWABadge from '@/PWABadge';
 import { AppSidebar } from '@/components/app-sidebar';
-import {
-	Breadcrumb,
-	BreadcrumbItem,
-	BreadcrumbLink,
-	BreadcrumbList,
-	BreadcrumbPage,
-	BreadcrumbSeparator
-} from '@/components/ui/breadcrumb';
+import Breadcrumbs from '@/components/breadcrumbs';
 import { Separator } from '@/components/ui/separator';
 import {
 	SidebarInset,
@@ -21,6 +14,7 @@ import LoadingScreen from '@/views/general/LoadingScreen';
 import { RedirectToSignIn, useAuth, useUser } from '@clerk/clerk-react';
 import { Zero } from '@rocicorp/zero';
 import { ZeroProvider } from '@rocicorp/zero/react';
+import { memo } from 'react';
 import { Outlet } from 'react-router';
 
 const PUBLIC_SERVER = import.meta.env.VITE_PUBLIC_SERVER as string | undefined;
@@ -29,7 +23,7 @@ if (!PUBLIC_SERVER) {
 	throw new Error('Missing Public Server');
 }
 
-export function MainLayout() {
+export const MainLayout = memo(function MainLayout() {
 	const { isLoaded: isUserLoaded, user } = useUser();
 	const { getToken } = useAuth();
 
@@ -69,19 +63,7 @@ export function MainLayout() {
 							<div className='flex items-center gap-2 px-4'>
 								<SidebarTrigger className='-ml-1' />
 								<Separator orientation='vertical' className='mr-2 h-4' />
-								<Breadcrumb>
-									<BreadcrumbList>
-										<BreadcrumbItem className='hidden md:block'>
-											<BreadcrumbLink href='#'>
-												Building Your Application
-											</BreadcrumbLink>
-										</BreadcrumbItem>
-										<BreadcrumbSeparator className='hidden md:block' />
-										<BreadcrumbItem>
-											<BreadcrumbPage>Data Fetching</BreadcrumbPage>
-										</BreadcrumbItem>
-									</BreadcrumbList>
-								</Breadcrumb>
+								<Breadcrumbs />
 							</div>
 						</header>
 						<Outlet />
@@ -92,4 +74,4 @@ export function MainLayout() {
 			<PWABadge />
 		</>
 	);
-}
+});

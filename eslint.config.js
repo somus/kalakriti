@@ -1,4 +1,5 @@
 import js from '@eslint/js';
+import lodash from 'eslint-plugin-lodash';
 import react from 'eslint-plugin-react';
 import reactCompiler from 'eslint-plugin-react-compiler';
 import reactHooks from 'eslint-plugin-react-hooks';
@@ -19,7 +20,11 @@ export default tseslint.config(
 			ecmaVersion: 2020,
 			globals: globals.browser,
 			parserOptions: {
-				project: ['./tsconfig.node.json', './tsconfig.app.json'],
+				project: [
+					'./tsconfig.node.json',
+					'./tsconfig.app.json',
+					'./tsconfig.api.json'
+				],
 				tsconfigRootDir: import.meta.dirname
 			}
 		},
@@ -28,17 +33,19 @@ export default tseslint.config(
 			react,
 			'react-hooks': reactHooks,
 			'react-refresh': reactRefresh,
-			'react-compiler': reactCompiler
+			'react-compiler': reactCompiler,
+			lodash
 		},
 		rules: {
 			...react.configs.recommended.rules,
 			...react.configs['jsx-runtime'].rules,
 			...reactHooks.configs.recommended.rules,
+			'react-compiler/react-compiler': 'error',
 			'react-refresh/only-export-components': [
 				'warn',
 				{ allowConstantExport: true }
 			],
-			'react-compiler/react-compiler': 'error'
+			'lodash/import-scope': [2, 'method']
 		}
 	}
 );

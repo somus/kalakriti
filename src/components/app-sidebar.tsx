@@ -15,120 +15,85 @@ import {
 	BookOpen,
 	Bot,
 	Command,
-	Frame,
-	Map,
-	PieChart,
 	Settings2,
 	SquareTerminal
 } from 'lucide-react';
 import * as React from 'react';
 import { Link } from 'react-router';
 
-const data = {
-	navMain: [
-		{
-			title: 'Users',
-			url: '/users',
-			icon: SquareTerminal,
-			items: [
-				{
-					title: 'History',
-					url: '#'
-				},
-				{
-					title: 'Starred',
-					url: '#'
-				},
-				{
-					title: 'Settings',
-					url: '#'
-				}
-			]
-		},
-		{
-			title: 'Events',
-			url: '/events',
-			icon: Bot,
-			items: [
-				{
-					title: 'Genesis',
-					url: '#'
-				},
-				{
-					title: 'Explorer',
-					url: '#'
-				},
-				{
-					title: 'Quantum',
-					url: '#'
-				}
-			]
-		},
-		{
-			title: 'Centers',
-			url: '/centers',
-			icon: BookOpen,
-			items: [
-				{
-					title: 'Introduction',
-					url: '#'
-				},
-				{
-					title: 'Get Started',
-					url: '#'
-				},
-				{
-					title: 'Tutorials',
-					url: '#'
-				},
-				{
-					title: 'Changelog',
-					url: '#'
-				}
-			]
-		},
-		{
-			title: 'Settings',
-			url: '/settings',
-			icon: Settings2,
-			items: [
-				{
-					title: 'General',
-					url: '#'
-				},
-				{
-					title: 'Team',
-					url: '#'
-				},
-				{
-					title: 'Billing',
-					url: '#'
-				},
-				{
-					title: 'Limits',
-					url: '#'
-				}
-			]
-		}
-	],
-	projects: [
-		{
-			name: 'Design Engineering',
-			url: '#',
-			icon: Frame
-		},
-		{
-			name: 'Sales & Marketing',
-			url: '#',
-			icon: PieChart
-		},
-		{
-			name: 'Travel',
-			url: '#',
-			icon: Map
-		}
-	]
-};
+export const mainNavItems = [
+	{
+		title: 'Users',
+		url: '/users',
+		icon: SquareTerminal,
+		items: [
+			{
+				title: 'Create',
+				url: '/users/create'
+			},
+			{
+				title: 'Settings',
+				url: '#'
+			}
+		]
+	},
+	{
+		title: 'Events',
+		url: '/events',
+		icon: Bot,
+		items: [
+			{
+				title: 'Create',
+				url: '/events/create'
+			},
+			{
+				title: 'Settings',
+				url: '/events/settings'
+			}
+		]
+	},
+	{
+		title: 'Centers',
+		url: '/centers',
+		icon: BookOpen,
+		items: [
+			{
+				title: 'Create',
+				url: '/centers/create'
+			},
+			{
+				title: 'Settings',
+				url: '/centers/settings'
+			}
+		]
+	},
+	{
+		title: 'Settings',
+		url: '/settings',
+		icon: Settings2,
+		items: []
+	}
+];
+
+// const data = {
+// projects: [
+// 	{
+// 		name: 'Design Engineering',
+// 		url: '#',
+// 		icon: Frame
+// 	},
+// 	{
+// 		name: 'Sales & Marketing',
+// 		url: '#',
+// 		icon: PieChart
+// 	},
+// 	{
+// 		name: 'Travel',
+// 		url: '#',
+// 		icon: Map
+// 	}
+// ]
+// };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { user } = useUser();
@@ -162,7 +127,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				</SidebarMenu>
 			</SidebarHeader>
 			<SidebarContent>
-				<NavMain items={data.navMain} />
+				<NavMain items={mainNavItems} />
 				{/* <NavProjects projects={data.projects} /> */}
 			</SidebarContent>
 			<SidebarFooter>

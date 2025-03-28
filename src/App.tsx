@@ -1,23 +1,29 @@
+import { ErrorBoundary } from 'react-error-boundary';
 import { BrowserRouter, Route, Routes } from 'react-router';
 
 import { MainLayout } from './layout/MainLayout';
 import { DashboardView } from './views/DashboardView';
 import { DefaultView } from './views/DefaultView';
-import { UsersView } from './views/general/UsersView';
+import { CreateUserView } from './views/UsersView/CreateUserView';
+import { UsersView } from './views/UsersView/UsersView';
+import ErrorScreen from './views/general/ErrorScreen';
 
 function App() {
 	return (
-		<BrowserRouter>
-			<Routes>
-				<Route element={<MainLayout />}>
-					<Route path='*' element={<DefaultView />} />
+		<ErrorBoundary FallbackComponent={ErrorScreen}>
+			<BrowserRouter>
+				<Routes>
+					<Route element={<MainLayout />}>
+						<Route path='*' element={<DefaultView />} />
 
-					<Route path='/dashboard' element={<DashboardView />} />
+						<Route path='/dashboard' element={<DashboardView />} />
 
-					<Route path='/users' element={<UsersView />} />
-				</Route>
-			</Routes>
-		</BrowserRouter>
+						<Route path='/users' element={<UsersView />} />
+						<Route path='/users/create' element={<CreateUserView />} />
+					</Route>
+				</Routes>
+			</BrowserRouter>
+		</ErrorBoundary>
 	);
 }
 

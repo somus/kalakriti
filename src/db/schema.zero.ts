@@ -1,6 +1,7 @@
 import {
 	type ExpressionBuilder,
 	type PermissionsConfig,
+	Row,
 	definePermissions
 } from '@rocicorp/zero';
 import { createZeroSchema } from 'drizzle-zero';
@@ -24,12 +25,17 @@ const zeroSchema = createZeroSchema(drizzleSchema, {
 	tables: {
 		users: {
 			id: true,
-			name: true,
-			role: true
+			firstName: true,
+			lastName: true,
+			role: true,
+			phoneNumber: true,
+			email: true
 		},
 		events: {
 			id: true,
 			name: true,
+			startTime: true,
+			endTime: true,
 			coordinatorId: true
 		}
 	}
@@ -40,6 +46,8 @@ export const schema = zeroSchema;
 
 // Define permissions with explicit types
 export type ZeroSchema = typeof zeroSchema;
+export type User = Row<typeof schema.tables.users>;
+export type Event = Row<typeof schema.tables.events>;
 
 export const permissions = definePermissions<AuthData, ZeroSchema>(
 	schema,
@@ -61,12 +69,24 @@ export const permissions = definePermissions<AuthData, ZeroSchema>(
 		return {
 			events: {
 				row: {
-					select: [allowIfLoggedIn]
+					select: [allowIfLoggedIn],
+					insert: [loggedInUserIsAdmin],
+					update: {
+						preMutation: [loggedInUserIsAdmin],
+						postMutation: [loggedInUserIsAdmin]
+					},
+					delete: [loggedInUserIsAdmin]
 				}
 			},
 			users: {
 				row: {
-					select: [loggedInUserIsAdmin]
+					select: [loggedInUserIsAdmin],
+					insert: [loggedInUserIsAdmin],
+					update: {
+						preMutation: [loggedInUserIsAdmin],
+						postMutation: [loggedInUserIsAdmin]
+					},
+					delete: [loggedInUserIsAdmin]
 				}
 			}
 		} satisfies PermissionsConfig<AuthData, ZeroSchema>;

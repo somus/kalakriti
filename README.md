@@ -28,10 +28,7 @@ bun db:up
 # Push the schema to the database
 bun db:push
 
-# Start Zero Cache
-bun zero-cache
-
-# Start dev server
+# Start Zero Cache and dev server
 bun dev
 ```
 
@@ -44,3 +41,5 @@ bun dev
 - [Drizzle](https://orm.drizzle.team/docs/overview) for database schema generation with postgres
 - [Zero Sync](https://zero.rocicorp.dev/) is sync engine which takes care of syncing the data between the client and the server even when the internet is down
 - [Clerk](https://clerk.com/docs/quickstarts/react) for authentication
+- [Zod](https://zod.dev/) for schema validation
+- [Autoform](https://autoform.vantezzen.io/docs) for form generation from zod schema
