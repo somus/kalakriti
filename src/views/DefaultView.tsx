@@ -2,7 +2,7 @@ import { Link, Navigate, useLocation } from 'react-router';
 
 import ErrorScreen from './general/ErrorScreen';
 
-export const DefaultView = () => {
+export default function DefaultView() {
 	const { pathname } = useLocation();
 
 	if (pathname == '/') {
@@ -17,4 +17,4 @@ export const DefaultView = () => {
 			</Link>
 		</ErrorScreen>
 	);
-};
+}

@@ -14,7 +14,6 @@ import LoadingScreen from '@/views/general/LoadingScreen';
 import { RedirectToSignIn, useAuth, useUser } from '@clerk/clerk-react';
 import { Zero } from '@rocicorp/zero';
 import { ZeroProvider } from '@rocicorp/zero/react';
-import { memo } from 'react';
 import { Outlet } from 'react-router';
 
 const PUBLIC_SERVER = import.meta.env.VITE_PUBLIC_SERVER as string | undefined;
@@ -23,7 +22,7 @@ if (!PUBLIC_SERVER) {
 	throw new Error('Missing Public Server');
 }
 
-export const MainLayout = memo(function MainLayout() {
+export default function MainLayout() {
 	const { isLoaded: isUserLoaded, user } = useUser();
 	const { getToken } = useAuth();
 
@@ -74,4 +73,4 @@ export const MainLayout = memo(function MainLayout() {
 			<PWABadge />
 		</>
 	);
-});
+}

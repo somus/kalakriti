@@ -20,7 +20,7 @@ const userSchema = clerkUserCreateInputSchema.extend({
 
 const schemaProvider = new ZodProvider(userSchema);
 
-export function CreateUserView() {
+export default function CreateUserView() {
 	const { getToken } = useAuth();
 	const zero = useZero();
 	return (

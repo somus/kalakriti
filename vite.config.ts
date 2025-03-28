@@ -48,6 +48,19 @@ export default defineConfig({
 			}
 		})
 	],
+	build: {
+		chunkSizeWarningLimit: 1600,
+		rollupOptions: {
+			output: {
+				manualChunks: {
+					react: ['react', 'react-dom', 'react-router'],
+					zero: ['@rocicorp/zero'],
+					reactTable: ['@tanstack/react-table', 'zod', 'date-fns'],
+					clerk: ['@clerk/clerk-react']
+				}
+			}
+		}
+	},
 	resolve: {
 		alias: {
 			'@': path.resolve(__dirname, './src')

@@ -4,6 +4,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
+		"analyze": "bunx vite-bundle-visualizer ",
 		"build": "vite build",
 		"clean": "rm -rf node_modules bun.lock dist",
 		"db:clean": "env-cmd -f .env.local -- docker volume rm -f kalakriti_pgdata && rm -rf \"${ZERO_REPLICA_FILE:-/dev/null}\"*",
