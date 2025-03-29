@@ -26,6 +26,10 @@ export default function useTable<T>({
 	const [globalFilter, setGlobalFilter] = useState('');
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 	const [rowSelection, setRowSelection] = useState({});
+	const [pagination, setPagination] = useState({
+		pageIndex: 0, //initial page index
+		pageSize: 10 //default page size
+	});
 
 	return useReactTable({
 		data,
@@ -36,6 +40,7 @@ export default function useTable<T>({
 		getFilteredRowModel: getFilteredRowModel(),
 		getFacetedRowModel: getFacetedRowModel(),
 		getFacetedMinMaxValues: getFacetedMinMaxValues(),
+		onPaginationChange: setPagination,
 		onSortingChange: setSorting,
 		onColumnFiltersChange: setColumnFilters,
 		onColumnVisibilityChange: setColumnVisibility,
@@ -46,7 +51,8 @@ export default function useTable<T>({
 			columnFilters,
 			globalFilter,
 			columnVisibility,
-			rowSelection
+			rowSelection,
+			pagination
 		},
 		filterFns: {
 			// fuzzy: fuzzyFilter,
