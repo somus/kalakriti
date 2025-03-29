@@ -1,11 +1,18 @@
-// import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { DataTableColumnHeader } from '@/components/data-table-column-header';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 import { User } from '@/db/schema.zero';
 import { defineMeta, filterFn } from '@/lib/filters';
 import { cn } from '@/lib/utils';
 import { createColumnHelper } from '@tanstack/react-table';
 import {
-	// CircleDashedIcon,
+	Ellipsis,
 	Heading1Icon,
 	MailIcon,
 	Phone,
@@ -15,24 +22,9 @@ import {
 const columnHelper = createColumnHelper<User>();
 
 const ROLE_STYLES_MAP = {
-	guardian: 'bg-red-500 border-red-500',
-	admin: 'bg-orange-500 border-orange-500',
-	volunteer: 'bg-amber-500 border-amber-500'
-	// yellow: 'bg-yellow-500 border-yellow-500',
-	// lime: 'bg-lime-500 border-lime-500',
-	// green: 'bg-green-500 border-green-500',
-	// emerald: 'bg-emerald-500 border-emerald-500',
-	// teal: 'bg-teal-500 border-teal-500',
-	// cyan: 'bg-cyan-500 border-cyan-500',
-	// sky: 'bg-sky-500 border-sky-500',
-	// blue: 'bg-blue-500 border-blue-500',
-	// indigo: 'bg-indigo-500 border-indigo-500',
-	// violet: 'bg-violet-500 border-violet-500',
-	// purple: 'bg-purple-500 border-purple-500',
-	// fuchsia: 'bg-fuchsia-500 border-fuchsia-500',
-	// pink: 'bg-pink-500 border-pink-500',
-	// rose: 'bg-rose-500 border-rose-500',
-	// neutral: 'bg-neutral-500 border-neutral-500',
+	admin: 'bg-red-500 border-red-500',
+	volunteer: 'bg-teal-500 border-teal-500',
+	guardian: 'bg-blue-500 border-blue-500'
 } as const;
 
 export const columns = [
@@ -60,53 +52,37 @@ export const columns = [
 	}),
 	columnHelper.accessor(row => row.firstName, {
 		id: 'firstName',
-		header: 'First Name',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='First Name' />
+		),
 		cell: ({ row }) => <div>{row.getValue('firstName')}</div>,
 		meta: {
 			displayName: 'First Name',
 			type: 'text',
 			icon: Heading1Icon
 		},
-		filterFn: filterFn('text')
+		filterFn: filterFn('text'),
+		sortingFn: 'alphanumeric'
 	}),
 	columnHelper.accessor(row => row.lastName, {
 		id: 'lastName',
-		header: 'Last Name',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Last Name' />
+		),
 		cell: ({ row }) => <div>{row.getValue('lastName')}</div>,
 		meta: {
 			displayName: 'Last Name',
 			type: 'text',
 			icon: Heading1Icon
 		},
-		filterFn: filterFn('text')
+		filterFn: filterFn('text'),
+		sortingFn: 'alphanumeric'
 	}),
-	// columnHelper.accessor('avatar', {
-	// 	id: 'avatar',
-	// 	header: 'Avatar',
-	// 	cell: ({ row }) => {
-	// 		const avatar = row.getValue<User['avatar']>('avatar');
-
-	// 		if (!avatar) {
-	// 			return <CircleDashedIcon className='size-5 text-border' />;
-	// 		}
-
-	// 		const initials = row.original.name
-	// 			.split(' ')
-	// 			.map(x => x[0])
-	// 			.join('')
-	// 			.toUpperCase();
-
-	// 		return (
-	// 			<Avatar className='size-5'>
-	// 				<AvatarImage src={avatar} />
-	// 				<AvatarFallback>{initials}</AvatarFallback>
-	// 			</Avatar>
-	// 		);
-	// 	}
-	// }),
 	columnHelper.accessor(row => row.role, {
 		id: 'role',
-		header: 'Role',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Role' />
+		),
 		cell: ({ row }) => {
 			const role = row.getValue<User['role']>('role');
 
@@ -149,7 +125,9 @@ export const columns = [
 	}),
 	columnHelper.accessor(row => row.email, {
 		id: 'email',
-		header: 'Email',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Email' />
+		),
 		cell: ({ row }) => <div>{row.getValue('email')}</div>,
 		meta: {
 			displayName: 'Email',
@@ -160,7 +138,9 @@ export const columns = [
 	}),
 	columnHelper.accessor(row => row.phoneNumber, {
 		id: 'phoneNumber',
-		header: 'Phone Number',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Phone Number' />
+		),
 		cell: ({ row }) => <div>{row.getValue('phoneNumber')}</div>,
 		meta: {
 			displayName: 'Phone Number',
@@ -168,5 +148,28 @@ export const columns = [
 			icon: Phone
 		},
 		filterFn: filterFn('text')
-	})
+	}),
+	{
+		id: 'actions',
+		cell: function Cell() {
+			return (
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button
+							aria-label='Open menu'
+							variant='ghost'
+							className='flex size-8 p-0 data-[state=open]:bg-muted'
+						>
+							<Ellipsis className='size-4' aria-hidden='true' />
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align='end'>
+						<DropdownMenuItem>Edit</DropdownMenuItem>
+						<DropdownMenuItem variant='destructive'>Delete</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
+			);
+		},
+		size: 32
+	}
 ];

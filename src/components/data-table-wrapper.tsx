@@ -10,6 +10,8 @@ import {
 } from '@/components/ui/table';
 import { type Table as TanStackTable, flexRender } from '@tanstack/react-table';
 
+import { DataTableViewOptions } from './data-table-view-options';
+
 export default function DataTableWrapper<TData>({
 	table
 }: {
@@ -21,6 +23,7 @@ export default function DataTableWrapper<TData>({
 		<div className='w-full px-4'>
 			<div className='flex items-center py-4 gap-2'>
 				<DataTableFilter table={table} />
+				<DataTableViewOptions table={table} />
 			</div>
 			<div className='rounded-md border bg-white dark:bg-inherit'>
 				<Table>
@@ -29,7 +32,10 @@ export default function DataTableWrapper<TData>({
 							<TableRow key={headerGroup.id}>
 								{headerGroup.headers.map(header => {
 									return (
-										<TableHead key={header.id}>
+										<TableHead
+											key={header.id}
+											onClick={header.column.getToggleSortingHandler()}
+										>
 											{header.isPlaceholder
 												? null
 												: flexRender(

@@ -3,6 +3,7 @@
 This application is designed to be a local first dashboard for Kalakriti where in the app will continue to work even when the internet is down. The app will sync with the server once the internet is back up.
 
 ## Preqrequisites
+
 ```bash
 # Install bun
 curl -fsSL https://bun.sh/install | bash

@@ -38,10 +38,14 @@ import type { ColumnOption, ElementType } from '@/lib/filters';
 import { cn } from '@/lib/utils';
 import type { Column, ColumnMeta, RowData, Table } from '@tanstack/react-table';
 import { format, isEqual } from 'date-fns';
-import { FilterXIcon, RectangleEllipsis } from 'lucide-react';
-import { ArrowRight, Filter } from 'lucide-react';
-import { X } from 'lucide-react';
-import { Ellipsis } from 'lucide-react';
+import {
+	ArrowRight,
+	Ellipsis,
+	FilterXIcon,
+	ListFilter,
+	RectangleEllipsis,
+	X
+} from 'lucide-react';
 import {
 	cloneElement,
 	isValidElement,
@@ -156,7 +160,7 @@ export function TableFilter<TData>({ table }: { table: Table<TData> }) {
 		>
 			<PopoverTrigger asChild>
 				<Button variant='outline' className={cn('h-7', hasFilters && 'w-fit')}>
-					<Filter className='size-4' />
+					<ListFilter className='size-4' />
 					{!hasFilters && <span>Filter</span>}
 				</Button>
 			</PopoverTrigger>
@@ -298,7 +302,7 @@ function renderFilter<TData, T extends ColumnDataType>(
 	return (
 		<div
 			key={`filter-${filter.id}`}
-			className='flex h-7 items-center rounded-2xl border border-border bg-background shadow-xs'
+			className='flex h-7 items-center rounded border border-border bg-background shadow-xs'
 		>
 			<PropertyFilterSubject meta={meta} />
 			<Separator orientation='vertical' />
@@ -317,7 +321,7 @@ function renderFilter<TData, T extends ColumnDataType>(
 			<Separator orientation='vertical' />
 			<Button
 				variant='ghost'
-				className='rounded-none rounded-r-2xl text-xs w-7 h-full'
+				className='rounded-none rounded-r text-xs w-7 h-full'
 				onClick={() => table.getColumn(filter.id)?.setFilterValue(undefined)}
 			>
 				<X className='size-4 -translate-x-0.5' />
@@ -949,6 +953,7 @@ export function PropertyFilterDateValueDisplay<TData, TValue>({
 export function PropertyFilterTextValueDisplay<TData, TValue>({
 	column
 }: PropertyFilterValueDisplayProps<TData, TValue>) {
+	'use no memo';
 	const filter = column.getFilterValue()
 		? (column.getFilterValue() as FilterValue<'text', TData>)
 		: undefined;
