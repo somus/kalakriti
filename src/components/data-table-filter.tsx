@@ -59,13 +59,13 @@ import type { DateRange } from 'react-day-picker';
 export function DataTableFilter<TData>({ table }: { table: Table<TData> }) {
 	'use no memo';
 	return (
-		<div className='flex w-full items-start justify-between gap-2'>
-			<div className='flex h-full w-full items-stretch gap-2'>
-				<TableFilter table={table} />
-				<PropertyFilterList table={table} />
-			</div>
+		// <div className='flex w-full items-start justify-between gap-2'>
+		<div className='flex h-full w-full items-stretch gap-2'>
+			<TableFilter table={table} />
+			<PropertyFilterList table={table} />
 			<TableFilterActions table={table} />
 		</div>
+		// </div>
 	);
 }
 
@@ -80,11 +80,11 @@ export function TableFilterActions<TData>({ table }: { table: Table<TData> }) {
 	return (
 		<Button
 			className={cn('h-7', !hasFilters && 'hidden')}
-			variant='destructive'
+			variant='outline'
 			onClick={clearFilters}
 		>
 			<FilterXIcon />
-			Clear
+			Reset
 		</Button>
 	);
 }

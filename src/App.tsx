@@ -8,7 +8,6 @@ import LoadingScreen from './views/general/LoadingScreen';
 const MainLayout = lazy(() => import('./layout/MainLayout'));
 const DefaultView = lazy(() => import('./views/DefaultView'));
 const UsersView = lazy(() => import('./views/UsersView/UsersView'));
-const CreateUserView = lazy(() => import('./views/UsersView/CreateUserView'));
 const DashboardView = lazy(() => import('./views/DashboardView'));
 
 function App() {
@@ -46,14 +45,6 @@ function App() {
 							element={
 								<Suspense fallback={<LoadingScreen />}>
 									<UsersView />
-								</Suspense>
-							}
-						/>
-						<Route
-							path='/users/create'
-							element={
-								<Suspense fallback={<LoadingScreen />}>
-									<CreateUserView />
 								</Suspense>
 							}
 						/>

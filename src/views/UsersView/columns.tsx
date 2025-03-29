@@ -8,9 +8,12 @@ import {
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { User } from '@/db/schema.zero';
+import useZero from '@/hooks/useZero';
+import { deleteClerkUser } from '@/lib/clerkUser';
 import { defineMeta, filterFn } from '@/lib/filters';
 import { cn } from '@/lib/utils';
-import { createColumnHelper } from '@tanstack/react-table';
+import { useAuth } from '@clerk/clerk-react';
+import { Row, createColumnHelper } from '@tanstack/react-table';
 import {
 	Ellipsis,
 	Heading1Icon,
@@ -18,6 +21,9 @@ import {
 	Phone,
 	ShieldUser
 } from 'lucide-react';
+import { useState } from 'react';
+
+import UserFormDialog from './UserFormDialog';
 
 const columnHelper = createColumnHelper<User>();
 
@@ -151,25 +157,55 @@ export const columns = [
 	}),
 	{
 		id: 'actions',
-		cell: function Cell() {
-			return (
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button
-							aria-label='Open menu'
-							variant='ghost'
-							className='flex size-8 p-0 data-[state=open]:bg-muted'
-						>
-							<Ellipsis className='size-4' aria-hidden='true' />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align='end'>
-						<DropdownMenuItem>Edit</DropdownMenuItem>
-						<DropdownMenuItem variant='destructive'>Delete</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
-			);
+		cell: ({ row }: { row: Row<User> }) => {
+			return <Actions user={row.original} />;
 		},
 		size: 32
 	}
 ];
+
+// eslint-disable-next-line react-refresh/only-export-components
+const Actions = ({ user }: { user: User }) => {
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	const { getToken } = useAuth();
+	const z = useZero();
+
+	return (
+		<DropdownMenu modal={false}>
+			<DropdownMenuTrigger asChild>
+				<Button
+					aria-label='Open menu'
+					variant='ghost'
+					className='flex size-8 p-0 data-[state=open]:bg-muted'
+				>
+					<Ellipsis className='size-4' aria-hidden='true' />
+				</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align='end'>
+				<DropdownMenuItem onSelect={() => setIsDialogOpen(true)}>
+					Edit
+				</DropdownMenuItem>
+				<DropdownMenuItem
+					variant='destructive'
+					onSelect={() => {
+						Promise.all([
+							z.mutate.users.delete({
+								id: user.id
+							}),
+							deleteClerkUser({ getToken, userId: user.id })
+						]).catch(e => {
+							console.log('Failed to delete user', e);
+						});
+					}}
+				>
+					Delete
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+			<UserFormDialog
+				user={user}
+				open={isDialogOpen}
+				onOpenChange={setIsDialogOpen}
+			/>
+		</DropdownMenu>
+	);
+};

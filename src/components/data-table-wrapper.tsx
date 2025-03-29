@@ -13,9 +13,11 @@ import { type Table as TanStackTable, flexRender } from '@tanstack/react-table';
 import { DataTableViewOptions } from './data-table-view-options';
 
 export default function DataTableWrapper<TData>({
-	table
+	table,
+	additionalActions
 }: {
 	table: TanStackTable<TData>;
+	additionalActions?: React.ReactNode[];
 }) {
 	// eslint-disable-next-line react-compiler/react-compiler
 	'use no memo';
@@ -24,6 +26,7 @@ export default function DataTableWrapper<TData>({
 			<div className='flex items-center py-4 gap-2'>
 				<DataTableFilter table={table} />
 				<DataTableViewOptions table={table} />
+				{additionalActions}
 			</div>
 			<div className='rounded-md border bg-white dark:bg-inherit'>
 				<Table>

@@ -1,6 +1,5 @@
-import DataTableWrapper from '@/components/data-table-wrapper';
-import { User } from '@/db/schema.zero';
 import {
+	type ColumnDef,
 	type ColumnFiltersState,
 	type SortingState,
 	type VisibilityState,
@@ -14,19 +13,22 @@ import {
 } from '@tanstack/react-table';
 import { useState } from 'react';
 
-import { columns } from './columns';
-
-export default function UsersTable({ users }: { users: User[] }) {
-	// eslint-disable-next-line react-compiler/react-compiler
-	'use no memo';
+export default function useTable<T>({
+	data,
+	columns
+}: {
+	data: T[];
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	columns: ColumnDef<T, any>[];
+}) {
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 	const [globalFilter, setGlobalFilter] = useState('');
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 	const [rowSelection, setRowSelection] = useState({});
 
-	const table = useReactTable({
-		data: users,
+	return useReactTable({
+		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
@@ -50,6 +52,4 @@ export default function UsersTable({ users }: { users: User[] }) {
 			// fuzzy: fuzzyFilter,
 		}
 	});
-
-	return <DataTableWrapper table={table} />;
 }

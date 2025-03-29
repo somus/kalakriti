@@ -12,6 +12,7 @@ export const SelectField: React.FC<AutoFormFieldProps> = ({
 	field,
 	inputProps,
 	error,
+	value,
 	id
 }) => {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unused-vars
@@ -31,7 +32,7 @@ export const SelectField: React.FC<AutoFormFieldProps> = ({
 				props.onChange(syntheticEvent);
 			}}
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-			defaultValue={field.default}
+			defaultValue={value ?? field.default}
 		>
 			<SelectTrigger id={id} className={error ? 'border-destructive' : ''}>
 				<SelectValue placeholder='Select an option' />
