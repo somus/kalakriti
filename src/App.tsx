@@ -1,19 +1,18 @@
+import { ErrorBoundaryFallback } from '@/components/global-error-boundaey';
+import LoadingScreen from '@/views/general/LoadingScreen';
 import { Suspense, lazy } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { BrowserRouter, Route, Routes } from 'react-router';
 
-import ErrorScreen from './views/general/ErrorScreen';
-import LoadingScreen from './views/general/LoadingScreen';
-
-const MainLayout = lazy(() => import('./layout/MainLayout'));
-const DefaultView = lazy(() => import('./views/DefaultView'));
-const UsersView = lazy(() => import('./views/UsersView/UsersView'));
-const DashboardView = lazy(() => import('./views/DashboardView'));
+const MainLayout = lazy(() => import('@/layout/MainLayout'));
+const DefaultView = lazy(() => import('@/views/DefaultView'));
+const UsersView = lazy(() => import('@/views/UsersView/UsersView'));
+const DashboardView = lazy(() => import('@/views/DashboardView'));
 
 function App() {
 	return (
-		<ErrorBoundary FallbackComponent={ErrorScreen}>
-			<BrowserRouter>
+		<BrowserRouter>
+			<ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
 				<Routes>
 					<Route
 						element={
@@ -50,8 +49,8 @@ function App() {
 						/>
 					</Route>
 				</Routes>
-			</BrowserRouter>
-		</ErrorBoundary>
+			</ErrorBoundary>
+		</BrowserRouter>
 	);
 }
 

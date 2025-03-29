@@ -25,47 +25,27 @@ export const mainNavItems = [
 	{
 		title: 'Users',
 		url: '/users',
-		icon: SquareTerminal,
-		items: [
-			{
-				title: 'Create',
-				url: '/users/create'
-			},
-			{
-				title: 'Settings',
-				url: '#'
-			}
-		]
+		icon: SquareTerminal
+		// items: [
+		// 	{
+		// 		title: 'Create',
+		// 		url: '/users/create'
+		// 	},
+		// 	{
+		// 		title: 'Settings',
+		// 		url: '#'
+		// 	}
+		// ]
 	},
 	{
 		title: 'Events',
 		url: '/events',
-		icon: Bot,
-		items: [
-			{
-				title: 'Create',
-				url: '/events/create'
-			},
-			{
-				title: 'Settings',
-				url: '/events/settings'
-			}
-		]
+		icon: Bot
 	},
 	{
 		title: 'Centers',
 		url: '/centers',
-		icon: BookOpen,
-		items: [
-			{
-				title: 'Create',
-				url: '/centers/create'
-			},
-			{
-				title: 'Settings',
-				url: '/centers/settings'
-			}
-		]
+		icon: BookOpen
 	},
 	{
 		title: 'Settings',
