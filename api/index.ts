@@ -8,10 +8,11 @@ import {
 	clerkUserCreateInputSchema,
 	clerkUserUpdateInputSchema
 } from '../shared/schema';
+import { env } from './env.server';
 
 const app = new Hono();
 const clerkClient = createClerkClient({
-	secretKey: process.env.CLERK_SECRET_KEY
+	secretKey: env.CLERK_SECRET_KEY
 });
 
 app.use('*', cors());

@@ -16,7 +16,9 @@ import { Zero } from '@rocicorp/zero';
 import { ZeroProvider } from '@rocicorp/zero/react';
 import { Outlet } from 'react-router';
 
-const PUBLIC_SERVER = import.meta.env.VITE_PUBLIC_SERVER as string | undefined;
+import { env } from '../env.client';
+
+const PUBLIC_SERVER = env.VITE_PUBLIC_SERVER;
 
 if (!PUBLIC_SERVER) {
 	throw new Error('Missing Public Server');
