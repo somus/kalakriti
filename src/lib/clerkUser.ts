@@ -1,4 +1,4 @@
-import { GetToken } from '@clerk/types';
+import { ClerkAPIError, GetToken } from '@clerk/types';
 import {
 	ClerkUser,
 	ClerkUserCreateInput,
@@ -7,6 +7,15 @@ import {
 	clerkUserUpdateInputSchema
 } from 'shared/schema';
 import { z } from 'zod';
+
+interface ClerkError {
+	clerkError: boolean;
+	clerkTraceId: string;
+	status: number;
+	errors: ClerkAPIError[];
+}
+
+export type ClerkResult = ClerkUser | ClerkError;
 
 export async function clearClerkUser({
 	getToken,
@@ -25,7 +34,7 @@ export async function clearClerkUser({
 		body: JSON.stringify(data)
 	});
 
-	const createdUser = (await res.json()) as ClerkUser;
+	const createdUser = (await res.json()) as ClerkResult;
 
 	return createdUser;
 }
@@ -47,9 +56,9 @@ export async function updateClerkUser({
 		body: JSON.stringify(data)
 	});
 
-	const createdUser = (await res.json()) as ClerkUser;
+	const updatedUser = (await res.json()) as ClerkResult;
 
-	return createdUser;
+	return updatedUser;
 }
 
 export async function deleteClerkUser({
@@ -69,7 +78,7 @@ export async function deleteClerkUser({
 		body: JSON.stringify({ id: data })
 	});
 
-	const createdUser = (await res.json()) as ClerkUserUpdateInput;
+	const deletedUser = (await res.json()) as ClerkResult;
 
-	return createdUser;
+	return deletedUser;
 }

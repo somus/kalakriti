@@ -1,4 +1,4 @@
-import { AutoForm } from '@/components/ui/autoform';
+import { FormLayout, InputField, SelectField } from '@/components/form';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -16,14 +16,12 @@ import {
 	deleteClerkUser,
 	updateClerkUser
 } from '@/lib/clerkUser';
-import { ZodProvider } from '@autoform/zod';
 import { useAuth } from '@clerk/clerk-react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
+import { UseFormSetError, useForm } from 'react-hook-form';
 import {
-	ClerkUser,
-	ClerkUserCreateInput,
-	ClerkUserUpdateInput,
 	clerkUserCreateInputSchema,
 	clerkUserUpdateInputSchema
 } from 'shared/schema';
@@ -39,6 +37,7 @@ const createUserSchema = clerkUserCreateInputSchema.extend({
 		.optional(),
 	role: z.enum(rolesEnum.enumValues).default('volunteer')
 });
+
 const updateUserSchema = clerkUserUpdateInputSchema
 	.extend({
 		phoneNumber: z
@@ -52,8 +51,9 @@ const updateUserSchema = clerkUserUpdateInputSchema
 	})
 	.omit({ id: true });
 
-const createUserProvider = new ZodProvider(createUserSchema);
-const updateUserPRovider = new ZodProvider(updateUserSchema);
+type CreateUserFormData = z.infer<typeof createUserSchema>;
+type UpdateUserFormData = z.infer<typeof updateUserSchema>;
+type UserFormData = CreateUserFormData | UpdateUserFormData;
 
 export default function UserFormDialog({
 	user,
@@ -71,11 +71,130 @@ export default function UserFormDialog({
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
+	// Format user data for form
+	const getUserDefaultValues = (user?: User) => {
+		if (!user)
+			return {
+				role: rolesEnum.enumValues[2]
+			};
+
+		return {
+			firstName: user.firstName,
+			lastName: user.lastName ?? undefined,
+			email: user.email,
+			phoneNumber: user.phoneNumber ?? undefined,
+			role: user.role ?? 'volunteer'
+		};
+	};
+
+	// Form submission handler
+	const handleFormSubmit = async (
+		data: UserFormData,
+		setError: UseFormSetError<UserFormData>
+	) => {
+		setIsSubmitting(true);
+		let clerkUserId: string | undefined;
+		const isCreating = !user;
+
+		try {
+			// Prepare data based on create or update flow
+			if (isCreating) {
+				// Create flow
+				const { password, ...createData } = data as CreateUserFormData;
+
+				// Create user in Clerk
+				const clerkResult = await clearClerkUser({
+					getToken,
+					user: { password, ...createData }
+				});
+
+				// Handle Clerk errors
+				if ('clerkError' in clerkResult) {
+					setError(
+						clerkResult.errors[0].code === 'form_identifier_exists'
+							? 'email'
+							: 'root.submissionError',
+						{
+							message: clerkResult.errors[0].message
+						}
+					);
+					setIsSubmitting(false);
+					return;
+				}
+
+				clerkUserId = clerkResult.id;
+
+				// Create user in database
+				await zero.mutate.users.insert({
+					id: clerkUserId,
+					...createData
+				});
+			} else {
+				// Update flow
+				const { password, ...updateData } = data as UpdateUserFormData;
+
+				// Update user in Clerk
+				const clerkResult = await updateClerkUser({
+					getToken,
+					user: { id: user.id, password, ...updateData }
+				});
+
+				// Handle Clerk errors
+				if ('clerkError' in clerkResult) {
+					setError(
+						clerkResult.errors[0].code === 'form_identifier_exists'
+							? 'email'
+							: 'root.submissionError',
+						{
+							message: clerkResult.errors[0].message
+						}
+					);
+					setIsSubmitting(false);
+					return;
+				}
+
+				// Update user in database
+				await zero.mutate.users.update({
+					id: user.id,
+					...updateData
+				});
+			}
+
+			// Close dialog on success
+			setIsSubmitting(false);
+			if (onOpenChange) {
+				onOpenChange(false);
+			} else {
+				setIsDialogOpen(false);
+			}
+		} catch (e) {
+			setIsSubmitting(false);
+			if (isCreating && clerkUserId) {
+				// Cleanup the user if the user creation fails
+				await deleteClerkUser({ getToken, userId: clerkUserId });
+			}
+			setError('root.submissionError', {
+				message: e instanceof Error ? e.message : 'Something went wrong'
+			});
+		}
+	};
+
+	const form = useForm<UserFormData>({
+		resolver: zodResolver(!user ? createUserSchema : updateUserSchema),
+		defaultValues: getUserDefaultValues(user)
+	});
+
 	if (!children && !(open !== undefined && onOpenChange)) {
 		throw new Error(
 			'UserFormDialog must have children or pass open and onOpenChange props'
 		);
 	}
+
+	// Prepare role options
+	const roleOptions = rolesEnum.enumValues.map(role => ({
+		value: role,
+		label: role.charAt(0).toUpperCase() + role.slice(1)
+	}));
 
 	return (
 		<Dialog
@@ -87,66 +206,27 @@ export default function UserFormDialog({
 				<DialogHeader>
 					<DialogTitle>{!user ? 'Create User' : 'Update User'}</DialogTitle>
 				</DialogHeader>
-				<AutoForm
-					schema={!user ? createUserProvider : updateUserPRovider}
-					// @ts-expect-error type fails becuase of issue with zero where it generates not null for all enum types
-					defaultValues={user}
-					onSubmit={async data => {
-						let clerkUser: ClerkUser | undefined;
-						setIsSubmitting(true);
-
-						try {
-							if (!user) {
-								const { password, ...createUserInput } =
-									data as ClerkUserCreateInput;
-								// Create the user in Clerk
-								clerkUser = await clearClerkUser({
-									getToken,
-									user: { password, ...createUserInput }
-								});
-								// Create the user in db
-								await zero.mutate.users.insert({
-									id: clerkUser.id,
-									...createUserInput
-								});
-							} else {
-								const { password, ...updateUserInput } = data as Omit<
-									ClerkUserUpdateInput,
-									'id'
-								>;
-								// Update the user in Clerk
-								clerkUser = await updateClerkUser({
-									getToken,
-									user: { id: user.id, password, ...updateUserInput }
-								});
-								// Update the user in db
-								await zero.mutate.users.update({
-									id: user.id,
-									...updateUserInput
-								});
-							}
-						} catch (e) {
-							if (clerkUser) {
-								// Clenup the user if the user creation fails
-								await deleteClerkUser({ getToken, userId: clerkUser.id });
-							}
-							console.error(e);
-						}
-						setIsSubmitting(false);
-						if (onOpenChange) {
-							onOpenChange(false);
-						} else {
-							setIsDialogOpen(false);
-						}
-					}}
+				<FormLayout<UserFormData>
+					form={form}
+					onSubmit={form.handleSubmit(data =>
+						handleFormSubmit(data, form.setError)
+					)}
 				>
+					<InputField name='firstName' label='First Name' />
+					<InputField name='lastName' label='Last Name' />
+					<InputField name='email' label='Email' type='email' />
+					<InputField name='phoneNumber' label='Phone Number' />
+					<SelectField name='role' label='Role' options={roleOptions} />
+					{!user && (
+						<InputField name='password' label='Password' type='password' />
+					)}
 					<DialogFooter>
 						<Button type='submit' disabled={isSubmitting}>
-							{isSubmitting && <LoaderCircle className='animate-spin' />}Save
-							changes
+							{isSubmitting && <LoaderCircle className='animate-spin mr-2' />}
+							Save changes
 						</Button>
 					</DialogFooter>
-				</AutoForm>
+				</FormLayout>
 			</DialogContent>
 		</Dialog>
 	);

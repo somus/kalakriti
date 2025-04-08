@@ -43,4 +43,4 @@ bun dev
 - [Zero Sync](https://zero.rocicorp.dev/) is sync engine which takes care of syncing the data between the client and the server even when the internet is down
 - [Clerk](https://clerk.com/docs/quickstarts/react) for authentication
 - [Zod](https://zod.dev/) for schema validation
-- [Autoform](https://autoform.vantezzen.io/docs) for form generation from zod schema
+- [React Hook Form](https://react-hook-form.com/) for form handling
