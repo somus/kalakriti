@@ -51,7 +51,7 @@ export const mainNavItems = [
 		title: 'Settings',
 		url: '/settings',
 		icon: Settings2,
-		items: []
+		items: [] as { title: string; url: string }[]
 	}
 ];
 

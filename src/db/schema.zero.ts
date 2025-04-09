@@ -37,6 +37,20 @@ const zeroSchema = createZeroSchema(drizzleSchema, {
 			startTime: true,
 			endTime: true,
 			coordinatorId: true
+		},
+		centers: {
+			id: true,
+			name: true,
+			phoneNumber: true,
+			email: true
+		},
+		centerLiaisons: {
+			userId: true,
+			centerId: true
+		},
+		centerGuardians: {
+			userId: true,
+			centerId: true
 		}
 	}
 });
@@ -48,6 +62,16 @@ export const schema = zeroSchema;
 export type ZeroSchema = typeof zeroSchema;
 export type User = Row<typeof schema.tables.users>;
 export type Event = Row<typeof schema.tables.events>;
+export type CenterLiaison = Row<typeof schema.tables.centerLiaisons> & {
+	user: User;
+};
+export type CenterGuardian = Row<typeof schema.tables.centerGuardians> & {
+	user: User;
+};
+export type Center = Row<typeof schema.tables.centers> & {
+	liaisons: CenterLiaison[];
+	guardians: CenterGuardian[];
+};
 
 export const permissions = definePermissions<AuthData, ZeroSchema>(
 	schema,
@@ -66,6 +90,18 @@ export const permissions = definePermissions<AuthData, ZeroSchema>(
 				eb.cmpLit(authData.meta.role ?? '', '=', 'admin')
 			);
 
+		// const loggedInUserIsGuardianOfCenter = (
+		// 	authData: AuthData,
+		// 	eb: ExpressionBuilder<ZeroSchema, 'centers'>
+		// ) =>
+		// 	eb.and(allowIfLoggedIn(authData, eb), eb.cmp('guardianId', authData.sub));
+
+		// const loggedInUserIsLiaisonOfCenter = (
+		// 	authData: AuthData,
+		// 	eb: ExpressionBuilder<ZeroSchema, 'centers'>
+		// ) =>
+		// 	eb.and(allowIfLoggedIn(authData, eb), eb.cmp('liaisonId', authData.sub));
+
 		return {
 			events: {
 				row: {
@@ -79,6 +115,47 @@ export const permissions = definePermissions<AuthData, ZeroSchema>(
 				}
 			},
 			users: {
+				row: {
+					select: [loggedInUserIsAdmin],
+					insert: [loggedInUserIsAdmin],
+					update: {
+						preMutation: [loggedInUserIsAdmin],
+						postMutation: [loggedInUserIsAdmin]
+					},
+					delete: [loggedInUserIsAdmin]
+				}
+			},
+			centers: {
+				row: {
+					select: [
+						loggedInUserIsAdmin
+						// loggedInUserIsGuardianOfCenter,
+						// loggedInUserIsLiaisonOfCenter
+					],
+					insert: [loggedInUserIsAdmin],
+					update: {
+						preMutation: [
+							loggedInUserIsAdmin
+							// loggedInUserIsGuardianOfCenter,
+							// loggedInUserIsLiaisonOfCenter
+						],
+						postMutation: [loggedInUserIsAdmin]
+					},
+					delete: [loggedInUserIsAdmin]
+				}
+			},
+			centerLiaisons: {
+				row: {
+					select: [loggedInUserIsAdmin],
+					insert: [loggedInUserIsAdmin],
+					update: {
+						preMutation: [loggedInUserIsAdmin],
+						postMutation: [loggedInUserIsAdmin]
+					},
+					delete: [loggedInUserIsAdmin]
+				}
+			},
+			centerGuardians: {
 				row: {
 					select: [loggedInUserIsAdmin],
 					insert: [loggedInUserIsAdmin],

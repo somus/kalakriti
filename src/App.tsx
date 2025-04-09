@@ -7,6 +7,7 @@ import { BrowserRouter, Route, Routes } from 'react-router';
 const MainLayout = lazy(() => import('@/layout/MainLayout'));
 const DefaultView = lazy(() => import('@/views/DefaultView'));
 const UsersView = lazy(() => import('@/views/UsersView/UsersView'));
+const CentersView = lazy(() => import('@/views/CentersView/CentersView'));
 const DashboardView = lazy(() => import('@/views/DashboardView'));
 
 function App() {
@@ -44,6 +45,15 @@ function App() {
 							element={
 								<Suspense fallback={<LoadingScreen />}>
 									<UsersView />
+								</Suspense>
+							}
+						/>
+
+						<Route
+							path='/centers'
+							element={
+								<Suspense fallback={<LoadingScreen />}>
+									<CentersView />
 								</Suspense>
 							}
 						/>

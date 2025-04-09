@@ -1,48 +1,83 @@
 {
-  "version": "7",
-  "dialect": "postgresql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1742920893671,
-      "tag": "0000_light_nicolaos",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1742930547408,
-      "tag": "0001_absent_zarda",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1743150190248,
-      "tag": "0002_marvelous_karma",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1743150905703,
-      "tag": "0003_young_mantis",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1743151696516,
-      "tag": "0004_exotic_blacklash",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1743151754304,
-      "tag": "0005_sharp_magdalene",
-      "breakpoints": true
-    }
-  ]
+	"version": "7",
+	"dialect": "postgresql",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "7",
+			"when": 1742920893671,
+			"tag": "0000_light_nicolaos",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1742930547408,
+			"tag": "0001_absent_zarda",
+			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1743150190248,
+			"tag": "0002_marvelous_karma",
+			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "7",
+			"when": 1743150905703,
+			"tag": "0003_young_mantis",
+			"breakpoints": true
+		},
+		{
+			"idx": 4,
+			"version": "7",
+			"when": 1743151696516,
+			"tag": "0004_exotic_blacklash",
+			"breakpoints": true
+		},
+		{
+			"idx": 5,
+			"version": "7",
+			"when": 1743151754304,
+			"tag": "0005_sharp_magdalene",
+			"breakpoints": true
+		},
+		{
+			"idx": 6,
+			"version": "7",
+			"when": 1743324878349,
+			"tag": "0006_remarkable_omega_flight",
+			"breakpoints": true
+		},
+		{
+			"idx": 7,
+			"version": "7",
+			"when": 1743325761863,
+			"tag": "0007_normal_firebrand",
+			"breakpoints": true
+		},
+		{
+			"idx": 8,
+			"version": "7",
+			"when": 1743332170260,
+			"tag": "0008_natural_purple_man",
+			"breakpoints": true
+		},
+		{
+			"idx": 9,
+			"version": "7",
+			"when": 1743332328380,
+			"tag": "0009_zippy_tombstone",
+			"breakpoints": true
+		},
+		{
+			"idx": 10,
+			"version": "7",
+			"when": 1744139063475,
+			"tag": "0010_worthless_risque",
+			"breakpoints": true
+		}
+	]
 }

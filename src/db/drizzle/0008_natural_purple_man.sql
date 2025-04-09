@@ -1,0 +1,1 @@
+ALTER TABLE "centers" RENAME COLUMN "first_name" TO "name";
