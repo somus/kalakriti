@@ -29,6 +29,9 @@ bun db:up
 # Push the schema to the database
 bun db:push
 
+# Generate the zero schema
+bun generate
+
 # Start Zero Cache and dev server
 bun dev
 ```
