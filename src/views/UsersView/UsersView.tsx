@@ -9,7 +9,7 @@ import UserFormDialog from './UserFormDialog';
 import { columns } from './columns';
 
 export default function UsersView() {
-	// eslint-disable-next-line react-compiler/react-compiler
+	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 	const z = useZero();
 	const [users, status] = useQuery(z.query.users);

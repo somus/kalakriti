@@ -29,7 +29,7 @@ export function DataTableColumnHeader<TData, TValue>({
 	className,
 	...props
 }: DataTableColumnHeaderProps<TData, TValue>) {
-	// eslint-disable-next-line react-compiler/react-compiler
+	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 	if (!column.getCanSort() && !column.getCanHide()) {
 		return <div className={cn(className)}>{title}</div>;

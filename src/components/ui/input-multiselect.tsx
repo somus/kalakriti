@@ -326,7 +326,7 @@ const MultipleSelector = React.forwardRef<
 			};
 
 			void exec();
-			// eslint-disable-next-line react-compiler/react-compiler
+			// eslint-disable-next-line react-hooks/react-compiler
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus]);
 
@@ -353,7 +353,7 @@ const MultipleSelector = React.forwardRef<
 			};
 
 			void exec();
-			// eslint-disable-next-line react-compiler/react-compiler
+			// eslint-disable-next-line react-hooks/react-compiler
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus]);
 

@@ -19,7 +19,7 @@ export default function DataTableWrapper<TData>({
 	table: TanStackTable<TData>;
 	additionalActions?: React.ReactNode[];
 }) {
-	// eslint-disable-next-line react-compiler/react-compiler
+	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 	return (
 		<div className='w-full px-4'>

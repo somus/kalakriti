@@ -11,7 +11,7 @@ import CenterFormDialog from './CenterFormDialog';
 import { columns } from './columns';
 
 export default function UsersView() {
-	// eslint-disable-next-line react-compiler/react-compiler
+	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 	const z = useZero();
 	const [centers, status] = useQuery(

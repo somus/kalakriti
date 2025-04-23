@@ -26,7 +26,7 @@ export function DataTablePagination<TData>({
 	className,
 	...props
 }: DataTablePaginationProps<TData>) {
-	// eslint-disable-next-line react-compiler/react-compiler
+	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 	return (
 		<div
