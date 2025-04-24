@@ -20,12 +20,18 @@ export default drizzleZeroConfig(drizzleSchema, {
 			phoneNumber: true,
 			email: true
 		},
+		eventCategories: {
+			id: true,
+			name: true,
+			coordinatorId: true
+		},
 		events: {
 			id: true,
 			name: true,
 			startTime: true,
 			endTime: true,
-			coordinatorId: true
+			coordinatorId: true,
+			eventCategoryId: true
 		},
 		centers: {
 			id: true,

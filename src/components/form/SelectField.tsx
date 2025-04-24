@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/select';
 import { Control, FieldValues, Path, useFormContext } from 'react-hook-form';
 
-interface SelectOption {
+export interface SelectOption {
 	value: string;
 	label: string;
 }

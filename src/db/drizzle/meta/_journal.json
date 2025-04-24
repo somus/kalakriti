@@ -78,6 +78,13 @@
 			"when": 1744139063475,
 			"tag": "0010_worthless_risque",
 			"breakpoints": true
+		},
+		{
+			"idx": 11,
+			"version": "7",
+			"when": 1745489329475,
+			"tag": "0011_outstanding_argent",
+			"breakpoints": true
 		}
 	]
 }

@@ -17,6 +17,10 @@ const CenterParticipantsView = lazy(
 const CenterEventsView = lazy(
 	() => import('@/views/CenterEventsView/CenterEventsView')
 );
+const EventsView = lazy(() => import('@/views/EventsView/EventsView'));
+const EventCategoriesView = lazy(
+	() => import('@/views/EventCategoriesView/EventCategoriesView')
+);
 
 function App() {
 	return (
@@ -67,6 +71,25 @@ function App() {
 									</Suspense>
 								}
 							/>
+
+							<Route path='/events'>
+								<Route
+									path=''
+									element={
+										<Suspense fallback={<LoadingScreen />}>
+											<EventsView />
+										</Suspense>
+									}
+								/>
+								<Route
+									path='categories'
+									element={
+										<Suspense fallback={<LoadingScreen />}>
+											<EventCategoriesView />
+										</Suspense>
+									}
+								/>
+							</Route>
 						</Route>
 
 						{/* Center Routes */}

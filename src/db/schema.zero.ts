@@ -21,6 +21,9 @@ interface AuthData {
 
 // Define permissions with explicit types
 export type User = Row<typeof schema.tables.users>;
+export type EventCategory = Row<typeof schema.tables.eventCategories> & {
+	coordinator: User;
+};
 export type Event = Row<typeof schema.tables.events>;
 export type CenterLiaison = Row<typeof schema.tables.centerLiaisons> & {
 	user: User;
@@ -61,6 +64,17 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 	// 	eb.and(allowIfLoggedIn(authData, eb), eb.cmp('liaisonId', authData.sub));
 
 	return {
+		eventCategories: {
+			row: {
+				select: [allowIfLoggedIn],
+				insert: [loggedInUserIsAdmin],
+				update: {
+					preMutation: [loggedInUserIsAdmin],
+					postMutation: [loggedInUserIsAdmin]
+				},
+				delete: [loggedInUserIsAdmin]
+			}
+		},
 		events: {
 			row: {
 				select: [allowIfLoggedIn],

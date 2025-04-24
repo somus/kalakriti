@@ -35,7 +35,13 @@ const adminNavItems: NavItem[] = [
 	{
 		title: 'Events',
 		url: '/events',
-		icon: TicketsIcon
+		icon: TicketsIcon,
+		items: [
+			{
+				title: 'Categories',
+				url: '/events/categories'
+			}
+		]
 	},
 	{
 		title: 'Centers',
