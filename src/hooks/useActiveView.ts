@@ -1,16 +1,25 @@
 import { useLocation } from 'react-router';
 
+const paths = [
+	'/users',
+	'/events',
+	'/centers',
+	'/center/participants',
+	'/center/events'
+];
+
 export const useActiveView = () => {
 	const { pathname } = useLocation();
-	if (pathname.startsWith('/dashboard')) {
-		return '/dashboard';
-	} else if (pathname.startsWith('/users')) {
-		return '/users';
-	} else if (pathname.startsWith('/events')) {
-		return '/events';
-	} else if (pathname.startsWith('/centers')) {
-		return '/centers';
-	} else {
-		return '';
+	let activePath = '';
+
+	if (pathname === '/') return '/';
+
+	for (const path of paths) {
+		if (pathname.startsWith(path)) {
+			activePath = path;
+			break;
+		}
 	}
+
+	return activePath;
 };

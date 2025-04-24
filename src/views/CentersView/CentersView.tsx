@@ -1,13 +1,11 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Button } from '@/components/ui/button';
-// import { Button } from '@/components/ui/button';
 import { Center } from '@/db/schema.zero';
 import useTable from '@/hooks/useTable';
 import useZero from '@/hooks/useZero';
 import { useQuery } from '@rocicorp/zero/react';
 
 import CenterFormDialog from './CenterFormDialog';
-// import UserFormDialog from './UserFormDialog';
 import { columns } from './columns';
 
 export default function UsersView() {

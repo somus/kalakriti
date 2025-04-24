@@ -1,4 +1,3 @@
-import { mainNavItems } from '@/components/app-sidebar';
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -10,8 +9,10 @@ import {
 import { Fragment, ReactNode } from 'react';
 import { Link, useLocation } from 'react-router';
 
-export default function Breadcrumbs() {
-	const navItemsMap = mainNavItems.reduce(
+import { NavItem } from './nav-main';
+
+export default function Breadcrumbs({ navItems }: { navItems: NavItem[] }) {
+	const navItemsMap = navItems.reduce(
 		(acc, item) => {
 			acc[item.url] = item.title;
 			if (item.items) {
@@ -27,30 +28,32 @@ export default function Breadcrumbs() {
 	const pathnames = pathname.split('/').slice(1);
 	const breadcrumbItems: ReactNode[] = [];
 
-	pathnames.every((_path, index) => {
-		const currentPath = `/${pathnames.slice(0, index + 1).join('/')}`;
-		if (!navItemsMap[currentPath]) {
-			return false;
-		}
-		const isLast = index === pathnames.length - 1;
+	if (pathname !== '/') {
+		pathnames.every((_path, index) => {
+			const currentPath = `/${pathnames.slice(0, index + 1).join('/')}`;
+			if (!navItemsMap[currentPath]) {
+				return false;
+			}
+			const isLast = index === pathnames.length - 1;
 
-		breadcrumbItems.push(
-			<Fragment key={currentPath}>
-				<BreadcrumbSeparator className='hidden md:block' />
-				<BreadcrumbItem>
-					{isLast ? (
-						<BreadcrumbPage>{navItemsMap[currentPath]}</BreadcrumbPage>
-					) : (
-						<BreadcrumbLink asChild>
-							<Link to={currentPath}>{navItemsMap[currentPath]}</Link>
-						</BreadcrumbLink>
-					)}
-				</BreadcrumbItem>
-			</Fragment>
-		);
+			breadcrumbItems.push(
+				<Fragment key={currentPath}>
+					<BreadcrumbSeparator className='hidden md:block' />
+					<BreadcrumbItem>
+						{isLast ? (
+							<BreadcrumbPage>{navItemsMap[currentPath]}</BreadcrumbPage>
+						) : (
+							<BreadcrumbLink asChild>
+								<Link to={currentPath}>{navItemsMap[currentPath]}</Link>
+							</BreadcrumbLink>
+						)}
+					</BreadcrumbItem>
+				</Fragment>
+			);
 
-		return true;
-	});
+			return true;
+		});
+	}
 
 	return (
 		<Breadcrumb>

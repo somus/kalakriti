@@ -20,19 +20,17 @@ import { useActiveView } from '@/hooks/useActiveView';
 import { ChevronRight, type LucideIcon } from 'lucide-react';
 import { NavLink } from 'react-router';
 
-export function NavMain({
-	items
-}: {
-	items: {
+export interface NavItem {
+	title: string;
+	url: string;
+	icon: LucideIcon;
+	items?: {
 		title: string;
 		url: string;
-		icon: LucideIcon;
-		items?: {
-			title: string;
-			url: string;
-		}[];
 	}[];
-}) {
+}
+
+export function NavMain({ items }: { items: NavItem[] }) {
 	const activeView = useActiveView();
 
 	return (

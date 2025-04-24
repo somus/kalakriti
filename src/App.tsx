@@ -4,11 +4,19 @@ import { Suspense, lazy } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { BrowserRouter, Route, Routes } from 'react-router';
 
+import ProtectedRoute from './layout/ProtectedRoute';
+
 const MainLayout = lazy(() => import('@/layout/MainLayout'));
 const DefaultView = lazy(() => import('@/views/DefaultView'));
 const UsersView = lazy(() => import('@/views/UsersView/UsersView'));
 const CentersView = lazy(() => import('@/views/CentersView/CentersView'));
 const DashboardView = lazy(() => import('@/views/DashboardView'));
+const CenterParticipantsView = lazy(
+	() => import('@/views/CenterParticipantsView/CenterParticipantsView')
+);
+const CenterEventsView = lazy(
+	() => import('@/views/CenterEventsView/CenterEventsView')
+);
 
 function App() {
 	return (
@@ -32,7 +40,7 @@ function App() {
 						/>
 
 						<Route
-							path='/dashboard'
+							path='/'
 							element={
 								<Suspense fallback={<LoadingScreen />}>
 									<DashboardView />
@@ -40,23 +48,50 @@ function App() {
 							}
 						/>
 
-						<Route
-							path='/users'
-							element={
-								<Suspense fallback={<LoadingScreen />}>
-									<UsersView />
-								</Suspense>
-							}
-						/>
+						{/* Admin Routes */}
+						<Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+							<Route
+								path='/users'
+								element={
+									<Suspense fallback={<LoadingScreen />}>
+										<UsersView />
+									</Suspense>
+								}
+							/>
 
+							<Route
+								path='/centers'
+								element={
+									<Suspense fallback={<LoadingScreen />}>
+										<CentersView />
+									</Suspense>
+								}
+							/>
+						</Route>
+
+						{/* Center Routes */}
 						<Route
-							path='/centers'
-							element={
-								<Suspense fallback={<LoadingScreen />}>
-									<CentersView />
-								</Suspense>
-							}
-						/>
+							path='center'
+							element={<ProtectedRoute allowedRoles={['guardian']} />}
+						>
+							<Route
+								path='participants'
+								element={
+									<Suspense fallback={<LoadingScreen />}>
+										<CenterParticipantsView />
+									</Suspense>
+								}
+							/>
+
+							<Route
+								path='events'
+								element={
+									<Suspense fallback={<LoadingScreen />}>
+										<CenterEventsView />
+									</Suspense>
+								}
+							/>
+						</Route>
 					</Route>
 				</Routes>
 			</ErrorBoundary>

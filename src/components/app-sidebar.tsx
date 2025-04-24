@@ -1,4 +1,4 @@
-import { NavMain } from '@/components/nav-main';
+import { NavItem, NavMain } from '@/components/nav-main';
 // import { NavProjects } from '@/components/nav-projects';
 import { NavUser } from '@/components/nav-user';
 import {
@@ -11,49 +11,9 @@ import {
 	SidebarMenuItem
 } from '@/components/ui/sidebar';
 import { useUser } from '@clerk/clerk-react';
-import {
-	BookOpen,
-	Bot,
-	Command,
-	Settings2,
-	SquareTerminal
-} from 'lucide-react';
+import { Command } from 'lucide-react';
 import * as React from 'react';
 import { Link } from 'react-router';
-
-export const mainNavItems = [
-	{
-		title: 'Users',
-		url: '/users',
-		icon: SquareTerminal
-		// items: [
-		// 	{
-		// 		title: 'Create',
-		// 		url: '/users/create'
-		// 	},
-		// 	{
-		// 		title: 'Settings',
-		// 		url: '#'
-		// 	}
-		// ]
-	},
-	{
-		title: 'Events',
-		url: '/events',
-		icon: Bot
-	},
-	{
-		title: 'Centers',
-		url: '/centers',
-		icon: BookOpen
-	},
-	{
-		title: 'Settings',
-		url: '/settings',
-		icon: Settings2,
-		items: [] as { title: string; url: string }[]
-	}
-];
 
 // const data = {
 // projects: [
@@ -75,7 +35,10 @@ export const mainNavItems = [
 // ]
 // };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({
+	navItems,
+	...props
+}: React.ComponentProps<typeof Sidebar> & { navItems: NavItem[] }) {
 	const { user } = useUser();
 	if (!user) {
 		return null;
@@ -93,7 +56,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton size='lg' asChild>
-							<Link to='/dashboard'>
+							<Link to='/'>
 								<div className='bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg'>
 									<Command className='size-4' />
 								</div>
@@ -107,7 +70,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				</SidebarMenu>
 			</SidebarHeader>
 			<SidebarContent>
-				<NavMain items={mainNavItems} />
+				<NavMain items={navItems} />
 				{/* <NavProjects projects={data.projects} /> */}
 			</SidebarContent>
 			<SidebarFooter>

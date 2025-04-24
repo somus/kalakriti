@@ -1,15 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { AlertCircle, ArrowLeft, HomeIcon } from 'lucide-react';
-import { Link, Navigate, useLocation } from 'react-router';
+import { Link } from 'react-router';
 
 export default function DefaultView() {
-	const { pathname } = useLocation();
-
-	if (pathname == '/') {
-		return <Navigate to='/dashboard' replace={true} />;
-	}
-
 	return (
 		<div className='min-h-screen w-full bg-background flex items-center justify-center p-4'>
 			<Card className='max-w-md w-full p-8 space-y-6'>
