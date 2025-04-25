@@ -8,7 +8,7 @@ import { useQuery } from '@rocicorp/zero/react';
 import EventCategoryFormDialog from './EventCategoryFormDialog';
 import { columns } from './columns';
 
-export default function UsersView() {
+export default function EventCategoriesView() {
 	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 	const z = useZero();

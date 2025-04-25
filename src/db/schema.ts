@@ -1,5 +1,6 @@
 import { relations } from 'drizzle-orm';
 import {
+	integer,
 	pgEnum,
 	pgTable,
 	primaryKey,
@@ -132,3 +133,14 @@ export const centerGuardiansRelations = relations(
 		})
 	})
 );
+
+export const participantCategories = pgTable('participant_categories', {
+	id: varchar('id').primaryKey(),
+	name: varchar('name').notNull(),
+	minAge: integer('min_age').notNull(),
+	maxAge: integer('max_age').notNull(),
+	maxBoys: integer('max_boys').notNull(),
+	maxGirls: integer('max_girls').notNull(),
+	totalEventsAllowed: integer('total_events_allowed').notNull(),
+	maxEventsPerCategory: integer('max_events_per_category').notNull()
+});

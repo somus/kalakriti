@@ -46,6 +46,16 @@ export default drizzleZeroConfig(drizzleSchema, {
 		centerGuardians: {
 			userId: true,
 			centerId: true
+		},
+		participantCategories: {
+			id: true,
+			name: true,
+			minAge: true,
+			maxAge: true,
+			maxBoys: true,
+			maxGirls: true,
+			totalEventsAllowed: true,
+			maxEventsPerCategory: true
 		}
 	}
 });

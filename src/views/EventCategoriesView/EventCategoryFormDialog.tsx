@@ -65,7 +65,7 @@ export default function EventCategoryFormDialog({
 
 		return {
 			name: eventCategory.name,
-			coordinator: eventCategory.coordinator?.id ?? null
+			coordinator: eventCategory.coordinator?.id ?? undefined
 		};
 	};
 

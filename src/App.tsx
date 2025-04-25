@@ -21,6 +21,12 @@ const EventsView = lazy(() => import('@/views/EventsView/EventsView'));
 const EventCategoriesView = lazy(
 	() => import('@/views/EventCategoriesView/EventCategoriesView')
 );
+const ParticipantCategoriesView = lazy(
+	() => import('@/views/ParticipantCategoriesView/ParticipantCategoriesView')
+);
+const ParticipantsView = lazy(
+	() => import('@/views/ParticipantsView/ParticipantsView')
+);
 
 function App() {
 	return (
@@ -86,6 +92,24 @@ function App() {
 									element={
 										<Suspense fallback={<LoadingScreen />}>
 											<EventCategoriesView />
+										</Suspense>
+									}
+								/>
+							</Route>
+							<Route path='/participants'>
+								<Route
+									path=''
+									element={
+										<Suspense fallback={<LoadingScreen />}>
+											<ParticipantsView />
+										</Suspense>
+									}
+								/>
+								<Route
+									path='categories'
+									element={
+										<Suspense fallback={<LoadingScreen />}>
+											<ParticipantCategoriesView />
 										</Suspense>
 									}
 								/>

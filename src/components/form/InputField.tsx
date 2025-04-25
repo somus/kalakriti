@@ -40,6 +40,11 @@ export function InputField<T extends FieldValues>({
 							{...field}
 							{...props}
 							value={field.value ?? ''}
+							onChange={
+								type === 'number'
+									? e => field.onChange(Number(e.target.value))
+									: field.onChange
+							}
 						/>
 					</FormControl>
 					<FormMessage />

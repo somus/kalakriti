@@ -35,6 +35,9 @@ export type Center = Row<typeof schema.tables.centers> & {
 	liaisons: CenterLiaison[];
 	guardians: CenterGuardian[];
 };
+export type ParticipantCategory = Row<
+	typeof schema.tables.participantCategories
+>;
 
 export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 	const allowIfLoggedIn = (
@@ -130,6 +133,17 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 		centerGuardians: {
 			row: {
 				select: [loggedInUserIsAdmin],
+				insert: [loggedInUserIsAdmin],
+				update: {
+					preMutation: [loggedInUserIsAdmin],
+					postMutation: [loggedInUserIsAdmin]
+				},
+				delete: [loggedInUserIsAdmin]
+			}
+		},
+		participantCategories: {
+			row: {
+				select: [allowIfLoggedIn],
 				insert: [loggedInUserIsAdmin],
 				update: {
 					preMutation: [loggedInUserIsAdmin],

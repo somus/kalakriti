@@ -49,6 +49,17 @@ const adminNavItems: NavItem[] = [
 		icon: SchoolIcon
 	},
 	{
+		title: 'Participants',
+		url: '/participants',
+		icon: UsersIcon,
+		items: [
+			{
+				title: 'Categories',
+				url: '/participants/categories'
+			}
+		]
+	},
+	{
 		title: 'Settings',
 		url: '/settings',
 		icon: Settings2,
