@@ -1,6 +1,8 @@
-export default function CenterEventsView() {
-	// eslint-disable-next-line react-hooks/react-compiler
-	'use no memo';
+import { CenterOutletContext } from '@/layout/CenterLayout';
+import { useOutletContext } from 'react-router';
 
-	return <h1>Center Events</h1>;
+export default function CenterEventsView() {
+	const { center } = useOutletContext<CenterOutletContext>();
+
+	return <h1>{center.name} Events</h1>;
 }
