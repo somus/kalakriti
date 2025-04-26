@@ -1,22 +1,27 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Button } from '@/components/ui/button';
-import { EventCategory } from '@/db/schema.zero';
+import { Schema } from '@/db/schema.zero';
 import useTable from '@/hooks/useTable';
 import useZero from '@/hooks/useZero';
+import { Row, Zero } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 
 import EventCategoryFormDialog from './EventCategoryFormDialog';
 import { columns } from './columns';
 
+function eventCategoriesQuery(z: Zero<Schema>) {
+	return z.query.eventCategories.related('coordinator', q =>
+		q.related('coordinatingEventCategories')
+	);
+}
+
+export type EventCategory = Row<ReturnType<typeof eventCategoriesQuery>>;
+
 export default function EventCategoriesView() {
 	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 	const z = useZero();
-	const [eventCategories, status] = useQuery(
-		z.query.eventCategories.related('coordinator', q =>
-			q.related('coordinatingEventCategories')
-		)
-	);
+	const [eventCategories, status] = useQuery(eventCategoriesQuery(z));
 	const table = useTable<EventCategory>({
 		data: eventCategories as EventCategory[],
 		columns

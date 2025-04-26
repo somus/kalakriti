@@ -7,8 +7,8 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { Center } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
+import { Center } from '@/layout/CenterLayout';
 import { defineMeta, filterFn } from '@/lib/filters';
 import { cn } from '@/lib/utils';
 import { Row, createColumnHelper } from '@tanstack/react-table';
@@ -100,7 +100,7 @@ export const columns = [
 				<div className='flex gap-1'>
 					{liaisons.map(liaison => (
 						<Badge variant='outline' key={liaison.userId}>
-							{liaison.user.firstName} {liaison.user.lastName}
+							{liaison.user?.firstName} {liaison.user?.lastName}
 						</Badge>
 					))}
 				</div>
@@ -110,12 +110,13 @@ export const columns = [
 		enableSorting: false,
 		meta: defineMeta('liaisons', {
 			displayName: 'Liaisons',
-			type: 'option',
+			type: 'multiOption',
 			icon: ShieldUser,
 			transformOptionFn(data) {
+				const liaison = data as unknown as Center['liaisons'][number];
 				return {
-					value: data.userId,
-					label: data.user.firstName + ' ' + data.user.lastName,
+					value: liaison.userId,
+					label: liaison.user?.firstName + ' ' + liaison.user?.lastName,
 					icon: <div className={cn('size-2.5 border-none rounded-full')} />
 				};
 			}
@@ -135,7 +136,7 @@ export const columns = [
 				<div className='flex gap-1'>
 					{guardians.map(guardian => (
 						<Badge variant='outline' key={guardian.userId}>
-							{guardian.user.firstName} {guardian.user.lastName}
+							{guardian.user?.firstName} {guardian.user?.lastName}
 						</Badge>
 					))}
 				</div>
@@ -145,12 +146,13 @@ export const columns = [
 		enableSorting: false,
 		meta: defineMeta('guardians', {
 			displayName: 'Guardians',
-			type: 'option',
+			type: 'multiOption',
 			icon: ShieldUser,
 			transformOptionFn(data) {
+				const guardian = data as unknown as Center['guardians'][number];
 				return {
-					value: data.userId,
-					label: data.user.firstName + ' ' + data.user.lastName,
+					value: guardian.userId,
+					label: guardian.user?.firstName + ' ' + guardian.user?.lastName,
 					icon: <div className={cn('size-2.5 border-none rounded-full')} />
 				};
 			}

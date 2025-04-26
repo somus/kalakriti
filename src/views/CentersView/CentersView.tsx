@@ -1,8 +1,8 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Button } from '@/components/ui/button';
-import { Center } from '@/db/schema.zero';
 import useTable from '@/hooks/useTable';
 import useZero from '@/hooks/useZero';
+import { Center } from '@/layout/CenterLayout';
 import { useQuery } from '@rocicorp/zero/react';
 
 import CenterFormDialog from './CenterFormDialog';

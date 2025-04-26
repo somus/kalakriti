@@ -21,20 +21,9 @@ interface AuthData {
 
 // Define permissions with explicit types
 export type User = Row<typeof schema.tables.users>;
-export type EventCategory = Row<typeof schema.tables.eventCategories> & {
-	coordinator: User;
-};
+export type EventCategory = Row<typeof schema.tables.eventCategories>;
 export type Event = Row<typeof schema.tables.events>;
-export type CenterLiaison = Row<typeof schema.tables.centerLiaisons> & {
-	user: User;
-};
-export type CenterGuardian = Row<typeof schema.tables.centerGuardians> & {
-	user: User;
-};
-export type Center = Row<typeof schema.tables.centers> & {
-	liaisons: CenterLiaison[];
-	guardians: CenterGuardian[];
-};
+export type Center = Row<typeof schema.tables.centers>;
 export type ParticipantCategory = Row<
 	typeof schema.tables.participantCategories
 >;

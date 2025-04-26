@@ -8,7 +8,6 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { EventCategory } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
 import { defineMeta, filterFn } from '@/lib/filters';
 import { cn } from '@/lib/utils';
@@ -16,6 +15,7 @@ import { Row, createColumnHelper } from '@tanstack/react-table';
 import { Ellipsis, Heading1Icon, ShieldUser } from 'lucide-react';
 import { useState } from 'react';
 
+import { EventCategory } from './EventCategoriesView';
 import EventCategoryFormDialog from './EventCategoryFormDialog';
 
 const columnHelper = createColumnHelper<EventCategory>();

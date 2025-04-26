@@ -22,10 +22,7 @@ export default function DashboardView() {
 	if (role === 'guardian' && center) {
 		return (
 			<div className='w-full px-4'>
-				<CenterPage
-					// @ts-expect-error fix later
-					center={center}
-				/>
+				<CenterPage center={center} />
 			</div>
 		);
 	}

@@ -17,9 +17,7 @@ const homeNavItem: NavItem = {
 	icon: HomeIcon
 };
 
-const getAdminNavItems = (
-	centers: Omit<Center, 'guardians' | 'liaisons'>[]
-): NavItem[] => [
+const getAdminNavItems = (centers: Center[]): NavItem[] => [
 	homeNavItem,
 	{
 		title: 'Users',
@@ -76,9 +74,7 @@ const getAdminNavItems = (
 	}
 ];
 
-const getGuardianNavItems = (
-	centers: Omit<Center, 'guardians' | 'liaisons'>[]
-): NavItem[] => [
+const getGuardianNavItems = (centers: Center[]): NavItem[] => [
 	homeNavItem,
 	...centers.flatMap(center => [
 		{

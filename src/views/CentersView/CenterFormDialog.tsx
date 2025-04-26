@@ -9,8 +9,8 @@ import {
 	DialogTrigger
 } from '@/components/ui/dialog';
 import MultipleSelector, { Option } from '@/components/ui/input-multiselect';
-import { Center } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
+import { Center } from '@/layout/CenterLayout';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createId } from '@paralleldrive/cuid2';
 import { useQuery } from '@rocicorp/zero/react';

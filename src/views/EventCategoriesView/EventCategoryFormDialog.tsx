@@ -13,7 +13,6 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '@/components/ui/dialog';
-import { EventCategory } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createId } from '@paralleldrive/cuid2';
@@ -22,6 +21,8 @@ import { LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+
+import { EventCategory } from './EventCategoriesView';
 
 const eventCategorySchema = z.object({
 	name: z.string(),
