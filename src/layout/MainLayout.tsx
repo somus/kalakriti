@@ -9,8 +9,6 @@ import {
 } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/sonner';
 import { schema } from '@/db/schema.zero.ts';
-import { useNavItems } from '@/hooks/useNavItems';
-// import { UsersPage } from "@/components/zero-data";
 import LoadingScreen from '@/views/general/LoadingScreen';
 import { RedirectToSignIn, useAuth, useUser } from '@clerk/clerk-react';
 import { Zero } from '@rocicorp/zero';
@@ -28,7 +26,6 @@ if (!PUBLIC_SERVER) {
 export default function MainLayout() {
 	const { isLoaded: isUserLoaded, user } = useUser();
 	const { getToken } = useAuth();
-	const navItems = useNavItems();
 
 	// If not loaded, show loading screen
 	if (!isUserLoaded) {
@@ -60,13 +57,13 @@ export default function MainLayout() {
 		<>
 			<ZeroProvider zero={z}>
 				<SidebarProvider>
-					<AppSidebar navItems={navItems} />
+					<AppSidebar />
 					<SidebarInset>
 						<header className='flex h-16 shrink-0 items-center gap-2'>
 							<div className='flex items-center gap-2 px-4'>
 								<SidebarTrigger className='-ml-1' />
 								<Separator orientation='vertical' className='mr-2 h-4' />
-								<Breadcrumbs navItems={navItems} />
+								<Breadcrumbs />
 							</div>
 						</header>
 						<Outlet />

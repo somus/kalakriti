@@ -1,4 +1,4 @@
-import { NavItem, NavMain } from '@/components/nav-main';
+import { NavMain } from '@/components/nav-main';
 // import { NavProjects } from '@/components/nav-projects';
 import { NavUser } from '@/components/nav-user';
 import {
@@ -10,6 +10,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem
 } from '@/components/ui/sidebar';
+import { useNavItems } from '@/hooks/useNavItems';
 import { useUser } from '@clerk/clerk-react';
 import { Command } from 'lucide-react';
 import * as React from 'react';
@@ -35,11 +36,9 @@ import { Link } from 'react-router';
 // ]
 // };
 
-export function AppSidebar({
-	navItems,
-	...props
-}: React.ComponentProps<typeof Sidebar> & { navItems: NavItem[] }) {
+export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 	const { user } = useUser();
+	const navItems = useNavItems();
 	if (!user) {
 		return null;
 	}

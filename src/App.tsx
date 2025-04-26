@@ -117,10 +117,7 @@ function App() {
 						</Route>
 
 						{/* Center Routes */}
-						<Route
-							path='center'
-							element={<ProtectedRoute allowedRoles={['guardian']} />}
-						>
+						<Route path='center/:id'>
 							<Route
 								path='participants'
 								element={

@@ -1,22 +1,16 @@
+import { useNavItems } from '@/hooks/useNavItems';
 import { useLocation } from 'react-router';
-
-const paths = [
-	'/users',
-	'/events',
-	'/centers',
-	'/center/participants',
-	'/center/events'
-];
 
 export const useActiveView = () => {
 	const { pathname } = useLocation();
+	const navItems = useNavItems();
 	let activePath = '';
 
 	if (pathname === '/') return '/';
 
-	for (const path of paths) {
-		if (pathname.startsWith(path)) {
-			activePath = path;
+	for (const navItem of navItems) {
+		if (pathname.startsWith(navItem.url) && navItem.url !== '/') {
+			activePath = navItem.url;
 			break;
 		}
 	}

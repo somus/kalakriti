@@ -1,6 +1,7 @@
 import { NavItem } from '@/components/nav-main';
-import { Roles } from '@/db/schema.zero';
+import { Center, Roles } from '@/db/schema.zero';
 import { useUser } from '@clerk/clerk-react';
+import { useQuery } from '@rocicorp/zero/react';
 import {
 	HomeIcon,
 	SchoolIcon,
@@ -8,6 +9,8 @@ import {
 	TicketsIcon,
 	UsersIcon
 } from 'lucide-react';
+
+import useZero from './useZero';
 
 const homeNavItem: NavItem = {
 	title: 'Dashboard',
@@ -67,22 +70,28 @@ const adminNavItems: NavItem[] = [
 	}
 ];
 
-const guardianNavItems: NavItem[] = [
+const getGuardianNavItems = (
+	centers: Omit<Center, 'guardians' | 'liaisons'>[]
+): NavItem[] => [
 	homeNavItem,
-	{
-		title: 'Participants',
-		url: '/center/participants',
-		icon: UsersIcon
-	},
-	{
-		title: 'Events',
-		url: '/center/events',
-		icon: TicketsIcon
-	}
+	...centers.flatMap(center => [
+		{
+			title: 'Participants',
+			url: `/center/${center.id}/participants`,
+			icon: UsersIcon
+		},
+		{
+			title: 'Events',
+			url: `/center/${center.id}/events`,
+			icon: TicketsIcon
+		}
+	])
 ];
 
 export const useNavItems = () => {
 	const { user } = useUser();
+	const z = useZero();
+	const [centers] = useQuery(z.query.centers);
 
 	if (!user) {
 		return [];
@@ -95,7 +104,7 @@ export const useNavItems = () => {
 	}
 
 	if (currentUserRole === 'guardian') {
-		return guardianNavItems;
+		return getGuardianNavItems(centers);
 	}
 
 	return [homeNavItem];
