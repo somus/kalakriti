@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/sonner';
 import { schema } from '@/db/schema.zero.ts';
+import { AppProvider } from '@/hooks/useApp';
 import LoadingScreen from '@/views/general/LoadingScreen';
 import { RedirectToSignIn, useAuth, useUser } from '@clerk/clerk-react';
 import { Zero } from '@rocicorp/zero';
@@ -56,19 +57,21 @@ export default function MainLayout() {
 	return (
 		<>
 			<ZeroProvider zero={z}>
-				<SidebarProvider>
-					<AppSidebar />
-					<SidebarInset>
-						<header className='flex h-16 shrink-0 items-center gap-2'>
-							<div className='flex items-center gap-2 px-4'>
-								<SidebarTrigger className='-ml-1' />
-								<Separator orientation='vertical' className='mr-2 h-4' />
-								<Breadcrumbs />
-							</div>
-						</header>
-						<Outlet />
-					</SidebarInset>
-				</SidebarProvider>
+				<AppProvider context={{ user }}>
+					<SidebarProvider>
+						<AppSidebar />
+						<SidebarInset>
+							<header className='flex h-16 shrink-0 items-center gap-2'>
+								<div className='flex items-center gap-2 px-4'>
+									<SidebarTrigger className='-ml-1' />
+									<Separator orientation='vertical' className='mr-2 h-4' />
+									<Breadcrumbs />
+								</div>
+							</header>
+							<Outlet />
+						</SidebarInset>
+					</SidebarProvider>
+				</AppProvider>
 			</ZeroProvider>
 			<Toaster />
 			<PWABadge />

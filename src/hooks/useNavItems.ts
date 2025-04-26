@@ -1,6 +1,7 @@
 import { NavItem } from '@/components/nav-main';
 import { Center, Roles } from '@/db/schema.zero';
-import { useUser } from '@clerk/clerk-react';
+import { useApp } from '@/hooks/useApp';
+import useZero from '@/hooks/useZero';
 import { useQuery } from '@rocicorp/zero/react';
 import {
 	HomeIcon,
@@ -9,8 +10,6 @@ import {
 	TicketsIcon,
 	UsersIcon
 } from 'lucide-react';
-
-import useZero from './useZero';
 
 const homeNavItem: NavItem = {
 	title: 'Dashboard',
@@ -84,19 +83,19 @@ const getGuardianNavItems = (
 	...centers.flatMap(center => [
 		{
 			title: 'Participants',
-			url: `/center/${center.id}/participants`,
+			url: `/centers/${center.id}/participants`,
 			icon: UsersIcon
 		},
 		{
 			title: 'Events',
-			url: `/center/${center.id}/events`,
+			url: `/centers/${center.id}/events`,
 			icon: TicketsIcon
 		}
 	])
 ];
 
 export const useNavItems = () => {
-	const { user } = useUser();
+	const { user } = useApp();
 	const z = useZero();
 	const [centers] = useQuery(z.query.centers);
 

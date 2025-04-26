@@ -1,5 +1,5 @@
 import { Roles } from '@/db/schema.zero';
-import { useUser } from '@clerk/clerk-react';
+import { useApp } from '@/hooks/useApp';
 import { Navigate, Outlet } from 'react-router';
 
 interface ProtectedRouteProps {
@@ -13,7 +13,7 @@ const ProtectedRoute = ({
 	redirectPath = '/',
 	children
 }: ProtectedRouteProps) => {
-	const { user } = useUser();
+	const { user } = useApp();
 	const currentUserRole = user?.publicMetadata.role as Roles | undefined;
 	const isAllowed = !!currentUserRole && allowedRoles.includes(currentUserRole);
 

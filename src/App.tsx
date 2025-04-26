@@ -10,6 +10,7 @@ const MainLayout = lazy(() => import('@/layout/MainLayout'));
 const DefaultView = lazy(() => import('@/views/DefaultView'));
 const UsersView = lazy(() => import('@/views/UsersView/UsersView'));
 const CentersView = lazy(() => import('@/views/CentersView/CentersView'));
+const CenterLayout = lazy(() => import('@/layout/CenterLayout'));
 const CenterView = lazy(() => import('@/views/CenterView/CenterView'));
 const DashboardView = lazy(() => import('@/views/DashboardView'));
 const CenterParticipantsView = lazy(
@@ -70,48 +71,9 @@ function App() {
 								}
 							/>
 
-							<Route path='/centers'>
-								<Route
-									path=''
-									element={
-										<Suspense fallback={<LoadingScreen />}>
-											<CentersView />
-										</Suspense>
-									}
-								/>
-								{/* Center Routes */}
-								<Route path=':id'>
-									<Route
-										path=''
-										element={
-											<Suspense fallback={<LoadingScreen />}>
-												<CenterView />
-											</Suspense>
-										}
-									/>
-									<Route
-										path='participants'
-										element={
-											<Suspense fallback={<LoadingScreen />}>
-												<CenterParticipantsView />
-											</Suspense>
-										}
-									/>
-
-									<Route
-										path='events'
-										element={
-											<Suspense fallback={<LoadingScreen />}>
-												<CenterEventsView />
-											</Suspense>
-										}
-									/>
-								</Route>
-							</Route>
-
 							<Route path='/events'>
 								<Route
-									path=''
+									index
 									element={
 										<Suspense fallback={<LoadingScreen />}>
 											<EventsView />
@@ -141,6 +103,46 @@ function App() {
 									element={
 										<Suspense fallback={<LoadingScreen />}>
 											<ParticipantCategoriesView />
+										</Suspense>
+									}
+								/>
+							</Route>
+						</Route>
+						<Route path='/centers'>
+							<Route
+								index
+								element={
+									<ProtectedRoute allowedRoles={['admin']}>
+										<Suspense fallback={<LoadingScreen />}>
+											<CentersView />
+										</Suspense>
+									</ProtectedRoute>
+								}
+							/>
+							{/* Center Routes */}
+							<Route path=':id' element={<CenterLayout />}>
+								<Route
+									index
+									element={
+										<Suspense fallback={<LoadingScreen />}>
+											<CenterView />
+										</Suspense>
+									}
+								/>
+								<Route
+									path='participants'
+									element={
+										<Suspense fallback={<LoadingScreen />}>
+											<CenterParticipantsView />
+										</Suspense>
+									}
+								/>
+
+								<Route
+									path='events'
+									element={
+										<Suspense fallback={<LoadingScreen />}>
+											<CenterEventsView />
 										</Suspense>
 									}
 								/>

@@ -10,8 +10,8 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem
 } from '@/components/ui/sidebar';
+import { useApp } from '@/hooks/useApp';
 import { useNavItems } from '@/hooks/useNavItems';
-import { useUser } from '@clerk/clerk-react';
 import { Command } from 'lucide-react';
 import * as React from 'react';
 import { Link } from 'react-router';
@@ -37,7 +37,7 @@ import { Link } from 'react-router';
 // };
 
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
-	const { user } = useUser();
+	const { user } = useApp();
 	const navItems = useNavItems();
 	if (!user) {
 		return null;
