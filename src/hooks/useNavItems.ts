@@ -18,7 +18,9 @@ const homeNavItem: NavItem = {
 	icon: HomeIcon
 };
 
-const adminNavItems: NavItem[] = [
+const getAdminNavItems = (
+	centers: Omit<Center, 'guardians' | 'liaisons'>[]
+): NavItem[] => [
 	homeNavItem,
 	{
 		title: 'Users',
@@ -49,7 +51,12 @@ const adminNavItems: NavItem[] = [
 	{
 		title: 'Centers',
 		url: '/centers',
-		icon: SchoolIcon
+		icon: SchoolIcon,
+		items: centers.map(center => ({
+			title: center.name,
+			url: `/centers/${center.id}`,
+			icon: SchoolIcon
+		}))
 	},
 	{
 		title: 'Participants',
@@ -100,7 +107,7 @@ export const useNavItems = () => {
 	const currentUserRole = user.publicMetadata.role as Roles;
 
 	if (currentUserRole === 'admin') {
-		return adminNavItems;
+		return getAdminNavItems(centers);
 	}
 
 	if (currentUserRole === 'guardian') {

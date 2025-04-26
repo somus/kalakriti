@@ -1,7 +1,6 @@
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -16,11 +15,13 @@ import { Row, createColumnHelper } from '@tanstack/react-table';
 import {
 	Ellipsis,
 	Heading1Icon,
+	LinkIcon,
 	MailIcon,
 	Phone,
 	ShieldUser
 } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router';
 
 import CenterFormDialog from './CenterFormDialog';
 
@@ -29,22 +30,18 @@ const columnHelper = createColumnHelper<Center>();
 export const columns = [
 	columnHelper.display({
 		id: 'select',
-		header: ({ table }) => (
-			<Checkbox
-				checked={
-					table.getIsAllPageRowsSelected() ||
-					(table.getIsSomePageRowsSelected() && 'indeterminate')
-				}
-				onCheckedChange={value => table.toggleAllRowsSelected(!!value)}
-				aria-label='Select all'
-			/>
-		),
+		header: () => null,
 		cell: ({ row }) => (
-			<Checkbox
-				checked={row.getIsSelected()}
-				onCheckedChange={value => row.toggleSelected(!!value)}
-				aria-label='Select row'
-			/>
+			<Button
+				aria-label='View center'
+				variant='ghost'
+				className='flex size-8 p-0 data-[state=open]:bg-muted'
+				asChild
+			>
+				<Link to={`/centers/${row.original.id}`}>
+					<LinkIcon className='size-4' />
+				</Link>
+			</Button>
 		),
 		enableSorting: false,
 		enableHiding: false

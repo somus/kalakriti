@@ -54,17 +54,23 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 			eb.cmpLit(authData.meta.role ?? '', '=', 'admin')
 		);
 
-	// const loggedInUserIsGuardianOfCenter = (
-	// 	authData: AuthData,
-	// 	eb: ExpressionBuilder<Schema, 'centers'>
-	// ) =>
-	// 	eb.and(allowIfLoggedIn(authData, eb), eb.cmp('guardianId', authData.sub));
+	const loggedInUserIsGuardianOfCenter = (
+		authData: AuthData,
+		eb: ExpressionBuilder<Schema, 'centers'>
+	) =>
+		eb.and(
+			allowIfLoggedIn(authData, eb),
+			eb.exists('guardians', q => q.where('userId', authData.sub))
+		);
 
-	// const loggedInUserIsLiaisonOfCenter = (
-	// 	authData: AuthData,
-	// 	eb: ExpressionBuilder<Schema, 'centers'>
-	// ) =>
-	// 	eb.and(allowIfLoggedIn(authData, eb), eb.cmp('liaisonId', authData.sub));
+	const loggedInUserIsLiaisonOfCenter = (
+		authData: AuthData,
+		eb: ExpressionBuilder<Schema, 'centers'>
+	) =>
+		eb.and(
+			allowIfLoggedIn(authData, eb),
+			eb.exists('liaisons', q => q.where('userId', authData.sub))
+		);
 
 	return {
 		eventCategories: {
@@ -103,17 +109,13 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 		centers: {
 			row: {
 				select: [
-					loggedInUserIsAdmin
-					// loggedInUserIsGuardianOfCenter,
-					// loggedInUserIsLiaisonOfCenter
+					loggedInUserIsAdmin,
+					loggedInUserIsGuardianOfCenter,
+					loggedInUserIsLiaisonOfCenter
 				],
 				insert: [loggedInUserIsAdmin],
 				update: {
-					preMutation: [
-						loggedInUserIsAdmin
-						// loggedInUserIsGuardianOfCenter,
-						// loggedInUserIsLiaisonOfCenter
-					],
+					preMutation: [loggedInUserIsAdmin],
 					postMutation: [loggedInUserIsAdmin]
 				},
 				delete: [loggedInUserIsAdmin]

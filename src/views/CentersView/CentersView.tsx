@@ -8,7 +8,7 @@ import { useQuery } from '@rocicorp/zero/react';
 import CenterFormDialog from './CenterFormDialog';
 import { columns } from './columns';
 
-export default function UsersView() {
+export default function CentersView() {
 	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 	const z = useZero();
