@@ -2,6 +2,12 @@ import { DataTableColumnHeader } from '@/components/data-table-column-header';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
+	Dialog,
+	DialogContent,
+	DialogTitle,
+	DialogTrigger
+} from '@/components/ui/dialog';
+import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
@@ -19,9 +25,11 @@ import {
 	Heading1Icon,
 	MailIcon,
 	Phone,
+	QrCodeIcon,
 	ShieldUser
 } from 'lucide-react';
 import { useState } from 'react';
+import QRCode from 'react-qr-code';
 
 import UserFormDialog from './UserFormDialog';
 
@@ -155,6 +163,39 @@ export const columns = [
 		},
 		filterFn: filterFn('text')
 	}),
+	{
+		id: 'view-qr-code',
+		cell: ({ row }: { row: Row<User> }) => {
+			return (
+				<Dialog>
+					<DialogTrigger asChild>
+						<Button variant='ghost' size='icon'>
+							<QrCodeIcon className='size-4' aria-hidden='true' />
+						</Button>
+					</DialogTrigger>
+					<DialogContent aria-describedby={undefined}>
+						<DialogTitle>QR Code</DialogTitle>
+						<div
+							style={{
+								height: 'auto',
+								margin: '0 auto',
+								maxWidth: 256,
+								width: '100%'
+							}}
+						>
+							<QRCode
+								size={256}
+								style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
+								value={JSON.stringify({ type: 'user', id: row.original.id })}
+								viewBox={`0 0 256 256`}
+							/>
+						</div>
+					</DialogContent>
+				</Dialog>
+			);
+		},
+		size: 32
+	},
 	{
 		id: 'actions',
 		cell: ({ row }: { row: Row<User> }) => {

@@ -1,10 +1,12 @@
 import { NavMain } from '@/components/nav-main';
 // import { NavProjects } from '@/components/nav-projects';
 import { NavUser } from '@/components/nav-user';
+import { QrScanDialog } from '@/components/qr-scan-dialog';
 import {
 	Sidebar,
 	SidebarContent,
 	SidebarFooter,
+	SidebarGroup,
 	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuButton,
@@ -12,7 +14,7 @@ import {
 } from '@/components/ui/sidebar';
 import { useApp } from '@/hooks/useApp';
 import { useNavItems } from '@/hooks/useNavItems';
-import { Command } from 'lucide-react';
+import { Command, ScanQrCode } from 'lucide-react';
 import * as React from 'react';
 import { Link } from 'react-router';
 
@@ -71,6 +73,20 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 			<SidebarContent>
 				<NavMain items={navItems} />
 				{/* <NavProjects projects={data.projects} /> */}
+				{user.publicMetadata.role === 'admin' && (
+					<SidebarGroup className='group-data-[collapsible=icon]:hidden mt-auto'>
+						<SidebarMenu>
+							<SidebarMenuItem>
+								<QrScanDialog>
+									<SidebarMenuButton>
+										<ScanQrCode />
+										<span>Scan</span>
+									</SidebarMenuButton>
+								</QrScanDialog>
+							</SidebarMenuItem>
+						</SidebarMenu>
+					</SidebarGroup>
+				)}
 			</SidebarContent>
 			<SidebarFooter>
 				<NavUser user={currentUser} />
