@@ -1,5 +1,7 @@
 import { relations } from 'drizzle-orm';
 import {
+	boolean,
+	date,
 	integer,
 	pgEnum,
 	pgTable,
@@ -9,6 +11,7 @@ import {
 } from 'drizzle-orm/pg-core';
 
 export const rolesEnum = pgEnum('roles', ['guardian', 'admin', 'volunteer']);
+export const genderEnum = pgEnum('gender', ['male', 'female']);
 
 export const users = pgTable('users', {
 	id: varchar('id').primaryKey(),
@@ -60,7 +63,7 @@ export const events = pgTable('events', {
 	)
 });
 
-export const eventsRelations = relations(events, ({ one }) => ({
+export const eventsRelations = relations(events, ({ one, many }) => ({
 	coordinator: one(users, {
 		fields: [events.coordinatorId],
 		references: [users.id]
@@ -68,7 +71,8 @@ export const eventsRelations = relations(events, ({ one }) => ({
 	category: one(eventCategories, {
 		fields: [events.eventCategoryId],
 		references: [eventCategories.id]
-	})
+	}),
+	participants: many(eventParticipants)
 }));
 
 export const centers = pgTable('centers', {
@@ -80,7 +84,8 @@ export const centers = pgTable('centers', {
 
 export const centersRelations = relations(centers, ({ many }) => ({
 	liaisons: many(centerLiaisons),
-	guardians: many(centerGuardians)
+	guardians: many(centerGuardians),
+	participants: many(participants)
 }));
 
 export const centerLiaisons = pgTable(
@@ -144,3 +149,64 @@ export const participantCategories = pgTable('participant_categories', {
 	totalEventsAllowed: integer('total_events_allowed').notNull(),
 	maxEventsPerCategory: integer('max_events_per_category').notNull()
 });
+
+export const participantCategoryRelations = relations(
+	participantCategories,
+	({ many }) => ({
+		participants: many(participants)
+	})
+);
+
+export const participants = pgTable('participants', {
+	id: varchar('id').primaryKey(),
+	name: varchar('name').notNull(),
+	dob: date('dob').notNull(),
+	age: integer('age').notNull(),
+	gender: genderEnum().notNull(),
+	centerId: varchar('center_id')
+		.notNull()
+		.references(() => centers.id),
+	participantCategoryId: varchar('participant_category_id')
+		.notNull()
+		.references(() => participantCategories.id)
+});
+
+export const participantsRelations = relations(
+	participants,
+	({ one, many }) => ({
+		center: one(centers, {
+			fields: [participants.centerId],
+			references: [centers.id]
+		}),
+		participantCategory: one(participantCategories, {
+			fields: [participants.participantCategoryId],
+			references: [participantCategories.id]
+		}),
+		events: many(eventParticipants)
+	})
+);
+
+export const eventParticipants = pgTable('event_participants', {
+	id: varchar('id').primaryKey(),
+	eventId: varchar('event_id')
+		.notNull()
+		.references(() => events.id),
+	participantId: varchar('participant_id')
+		.notNull()
+		.references(() => participants.id),
+	attended: boolean('attended').notNull().default(false)
+});
+
+export const eventParticipantsRelations = relations(
+	eventParticipants,
+	({ one }) => ({
+		event: one(events, {
+			fields: [eventParticipants.eventId],
+			references: [events.id]
+		}),
+		participant: one(participants, {
+			fields: [eventParticipants.participantId],
+			references: [participants.id]
+		})
+	})
+);

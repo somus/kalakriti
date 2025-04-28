@@ -26,8 +26,6 @@ export const QrScanDialog = ({ children }: PropsWithChildren) => {
 		zero.query.users.where('id', '=', scanResult?.id ?? '').one()
 	);
 
-	console.log(scanResult, user);
-
 	return (
 		<Dialog>
 			<DialogTrigger asChild>{children}</DialogTrigger>

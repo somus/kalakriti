@@ -56,6 +56,21 @@ export default drizzleZeroConfig(drizzleSchema, {
 			maxGirls: true,
 			totalEventsAllowed: true,
 			maxEventsPerCategory: true
+		},
+		participants: {
+			id: true,
+			name: true,
+			centerId: true,
+			participantCategoryId: true,
+			dob: true,
+			age: true,
+			gender: true
+		},
+		eventParticipants: {
+			id: true,
+			eventId: true,
+			participantId: true,
+			attended: true
 		}
 	}
 });
