@@ -25,6 +25,7 @@ interface SelectFieldProps<T extends FieldValues> {
 	control?: Control<T>;
 	options: SelectOption[];
 	placeholder?: string;
+	disabled?: boolean;
 }
 
 export function SelectField<T extends FieldValues>({
@@ -32,7 +33,8 @@ export function SelectField<T extends FieldValues>({
 	label,
 	control,
 	options,
-	placeholder = 'Select an option'
+	placeholder = 'Select an option',
+	disabled = false
 }: SelectFieldProps<T>) {
 	// If control is not provided, try to get it from context
 	const methods = useFormContext<T>();
@@ -42,10 +44,15 @@ export function SelectField<T extends FieldValues>({
 		<FormField
 			control={resolvedControl}
 			name={name}
+			disabled={disabled}
 			render={({ field }) => (
 				<FormItem>
 					<FormLabel>{label}</FormLabel>
-					<Select onValueChange={field.onChange} defaultValue={field.value}>
+					<Select
+						onValueChange={field.onChange}
+						defaultValue={field.value}
+						disabled={field.disabled}
+					>
 						<FormControl>
 							<SelectTrigger>
 								<SelectValue placeholder={placeholder} />

@@ -45,6 +45,11 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 			eb.cmpLit(authData.meta.role ?? '', '=', 'admin')
 		);
 
+	const loggedInUserIsCurrentUser = (
+		authData: AuthData,
+		eb: ExpressionBuilder<Schema, 'users'>
+	) => eb.and(allowIfLoggedIn(authData, eb), eb.cmp('id', '=', authData.sub));
+
 	const loggedInUserIsGuardianOfCenter = (
 		authData: AuthData,
 		eb: ExpressionBuilder<Schema, 'centers'>
@@ -136,7 +141,7 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 		},
 		users: {
 			row: {
-				select: [loggedInUserIsAdmin],
+				select: [loggedInUserIsAdmin, loggedInUserIsCurrentUser],
 				insert: [loggedInUserIsAdmin],
 				update: {
 					preMutation: [loggedInUserIsAdmin],
@@ -211,7 +216,11 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 						loggedInUserIsGuardianOfParticipantCenter,
 						loggedInUserIsLiaisonOfParticipantCenter
 					],
-					postMutation: [loggedInUserIsAdmin]
+					postMutation: [
+						loggedInUserIsAdmin,
+						loggedInUserIsGuardianOfParticipantCenter,
+						loggedInUserIsLiaisonOfParticipantCenter
+					]
 				},
 				delete: [
 					loggedInUserIsAdmin,
@@ -238,7 +247,11 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 						loggedInUserIsLiaisonOfEventParticipantCenter,
 						loggedInUserIsGuardianOfEventParticipantCenter
 					],
-					postMutation: [loggedInUserIsAdmin]
+					postMutation: [
+						loggedInUserIsAdmin,
+						loggedInUserIsLiaisonOfEventParticipantCenter,
+						loggedInUserIsGuardianOfEventParticipantCenter
+					]
 				},
 				delete: [
 					loggedInUserIsAdmin,

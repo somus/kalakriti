@@ -1,21 +1,45 @@
+import { User } from '@/db/schema.zero';
+import useZero from '@/hooks/useZero';
+import LoadingScreen from '@/views/general/LoadingScreen';
 import { UserResource } from '@clerk/types';
+import { useQuery } from '@rocicorp/zero/react';
 import { PropsWithChildren, createContext, useContext } from 'react';
 
 interface AppContextProps {
-	user: UserResource;
+	clerkUser: UserResource;
+	user: User;
 }
 
 const AppContext = createContext<AppContextProps>({
-	user: {
+	clerkUser: {
 		id: ''
-	} as UserResource
+	} as UserResource,
+	user: {
+		id: '',
+		firstName: '',
+		lastName: '',
+		email: '',
+		phoneNumber: '',
+		role: 'volunteer'
+	}
 });
 
 export const AppProvider = ({
 	children,
 	context
-}: PropsWithChildren<{ context: AppContextProps }>) => {
-	return <AppContext.Provider value={context}>{children}</AppContext.Provider>;
+}: PropsWithChildren<{ context: Omit<AppContextProps, 'user'> }>) => {
+	const z = useZero();
+	const [user, status] = useQuery(z.query.users.one());
+
+	if (status.type !== 'complete' || !user) {
+		return <LoadingScreen />;
+	}
+
+	return (
+		<AppContext.Provider value={{ ...context, user }}>
+			{children}
+		</AppContext.Provider>
+	);
 };
 
 // eslint-disable-next-line react-refresh/only-export-components

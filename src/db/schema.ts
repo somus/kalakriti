@@ -38,7 +38,9 @@ export const usersRelations = relations(users, ({ many, one }) => ({
 export const eventCategories = pgTable('event_categories', {
 	id: varchar('id').primaryKey(),
 	name: varchar('name').notNull(),
-	coordinatorId: varchar('coordinator_id').references(() => users.id)
+	coordinatorId: varchar('coordinator_id').references(() => users.id, {
+		onDelete: 'set null'
+	})
 });
 
 export const eventCategoriesRelations = relations(
@@ -57,9 +59,12 @@ export const events = pgTable('events', {
 	name: varchar('name').notNull(),
 	startTime: timestamp('start_time').notNull(),
 	endTime: timestamp('end_time').notNull(),
-	coordinatorId: varchar('coordinator_id').references(() => users.id),
+	coordinatorId: varchar('coordinator_id').references(() => users.id, {
+		onDelete: 'set null'
+	}),
 	eventCategoryId: varchar('event_category_id').references(
-		() => eventCategories.id
+		() => eventCategories.id,
+		{ onDelete: 'set null' }
 	)
 });
 
@@ -93,10 +98,10 @@ export const centerLiaisons = pgTable(
 	{
 		userId: varchar('user_id')
 			.notNull()
-			.references(() => users.id),
+			.references(() => users.id, { onDelete: 'cascade' }),
 		centerId: varchar('center_id')
 			.notNull()
-			.references(() => centers.id)
+			.references(() => centers.id, { onDelete: 'cascade' })
 	},
 	t => [primaryKey({ columns: [t.userId, t.centerId] })]
 );
@@ -117,10 +122,10 @@ export const centerGuardians = pgTable(
 	{
 		userId: varchar('user_id')
 			.notNull()
-			.references(() => users.id),
+			.references(() => users.id, { onDelete: 'cascade' }),
 		centerId: varchar('center_id')
 			.notNull()
-			.references(() => centers.id)
+			.references(() => centers.id, { onDelete: 'cascade' })
 	},
 	t => [primaryKey({ columns: [t.userId, t.centerId] })]
 );
@@ -165,10 +170,14 @@ export const participants = pgTable('participants', {
 	gender: genderEnum().notNull(),
 	centerId: varchar('center_id')
 		.notNull()
-		.references(() => centers.id),
+		.references(() => centers.id, {
+			onDelete: 'cascade'
+		}),
 	participantCategoryId: varchar('participant_category_id')
 		.notNull()
-		.references(() => participantCategories.id)
+		.references(() => participantCategories.id, {
+			onDelete: 'cascade'
+		})
 });
 
 export const participantsRelations = relations(
@@ -190,10 +199,14 @@ export const eventParticipants = pgTable('event_participants', {
 	id: varchar('id').primaryKey(),
 	eventId: varchar('event_id')
 		.notNull()
-		.references(() => events.id),
+		.references(() => events.id, {
+			onDelete: 'cascade'
+		}),
 	participantId: varchar('participant_id')
 		.notNull()
-		.references(() => participants.id),
+		.references(() => participants.id, {
+			onDelete: 'cascade'
+		}),
 	attended: boolean('attended').notNull().default(false)
 });
 

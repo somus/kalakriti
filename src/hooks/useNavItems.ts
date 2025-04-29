@@ -1,5 +1,5 @@
 import { NavItem } from '@/components/nav-main';
-import { Center, Roles } from '@/db/schema.zero';
+import { Center } from '@/db/schema.zero';
 import { useApp } from '@/hooks/useApp';
 import useZero from '@/hooks/useZero';
 import { useQuery } from '@rocicorp/zero/react';
@@ -99,13 +99,11 @@ export const useNavItems = () => {
 		return [];
 	}
 
-	const currentUserRole = user.publicMetadata.role as Roles;
-
-	if (currentUserRole === 'admin') {
+	if (user.role === 'admin') {
 		return getAdminNavItems(centers);
 	}
 
-	if (currentUserRole === 'guardian') {
+	if (user.role === 'guardian') {
 		return getGuardianNavItems(centers);
 	}
 

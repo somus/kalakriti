@@ -12,13 +12,20 @@ import useZero from '@/hooks/useZero';
 import { defineMeta, filterFn } from '@/lib/filters';
 import { cn } from '@/lib/utils';
 import { Row, createColumnHelper } from '@tanstack/react-table';
-import { Ellipsis, Heading1Icon, ShieldUser } from 'lucide-react';
+import {
+	CalendarIcon,
+	CircleSmall,
+	ComponentIcon,
+	Ellipsis,
+	Heading1Icon,
+	SchoolIcon
+} from 'lucide-react';
 import { useState } from 'react';
 
-import { EventCategory } from './EventCategoriesView';
-import EventCategoryFormDialog from './EventCategoryFormDialog';
+import ParticipantFormDialog from './ParticipantFormDialog';
+import { Participant } from './ParticipantsView';
 
-const columnHelper = createColumnHelper<EventCategory>();
+const columnHelper = createColumnHelper<Participant>();
 
 export const columns = [
 	columnHelper.display({
@@ -57,31 +64,86 @@ export const columns = [
 		filterFn: filterFn('text'),
 		sortingFn: 'alphanumeric'
 	}),
-	columnHelper.accessor(row => row.coordinator, {
-		id: 'coordinator',
+	columnHelper.accessor(row => row.age, {
+		id: 'age',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Coordinator' />
+			<DataTableColumnHeader column={column} title='Age' />
+		),
+		cell: ({ row }) => <div>{row.getValue('age')}</div>,
+		meta: {
+			displayName: 'Age',
+			type: 'number',
+			icon: CalendarIcon
+		},
+		filterFn: filterFn('number'),
+		sortingFn: 'alphanumeric'
+	}),
+	columnHelper.accessor(row => row.gender, {
+		id: 'gender',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Gender' />
+		),
+		cell: ({ row }) => <div>{row.getValue('gender')}</div>,
+		meta: {
+			displayName: 'Gender',
+			type: 'option',
+			icon: CircleSmall,
+			options: [
+				{ label: 'Male', value: 'male' },
+				{ label: 'Female', value: 'female' }
+			]
+		},
+		filterFn: filterFn('option'),
+		sortingFn: 'text'
+	}),
+	columnHelper.accessor(row => row.participantCategory, {
+		id: 'participantCategory',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Participant Category' />
 		),
 		cell: ({ row }) => {
-			const coordinator = row.getValue<
-				EventCategory['coordinator'] | undefined
-			>('coordinator');
-			return coordinator ? (
-				<Badge variant='outline'>
-					{coordinator.firstName} {coordinator.lastName}
-				</Badge>
+			const participantCategory = row.getValue<
+				Participant['participantCategory'] | undefined
+			>('participantCategory');
+			return participantCategory ? (
+				<Badge variant='outline'>{participantCategory.name}</Badge>
 			) : null;
 		},
 		filterFn: filterFn('option'),
 		enableSorting: false,
-		meta: defineMeta('coordinator', {
-			displayName: 'Coordinator',
+		meta: defineMeta('participantCategory', {
+			displayName: 'Participant Category',
 			type: 'option',
-			icon: ShieldUser,
+			icon: ComponentIcon,
+			transformOptionFn(data) {
+				console.log(data);
+				return {
+					value: data.id,
+					label: data.name,
+					icon: <div className={cn('size-2.5 border-none rounded-full')} />
+				};
+			}
+		})
+	}),
+	columnHelper.accessor(row => row.center, {
+		id: 'center',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Center' />
+		),
+		cell: ({ row }) => {
+			const center = row.getValue<Participant['center'] | undefined>('center');
+			return center ? <Badge variant='outline'>{center.name}</Badge> : null;
+		},
+		filterFn: filterFn('option'),
+		enableSorting: false,
+		meta: defineMeta('center', {
+			displayName: 'Center',
+			type: 'option',
+			icon: SchoolIcon,
 			transformOptionFn(data) {
 				return {
 					value: data.id,
-					label: data.firstName + ' ' + data.lastName,
+					label: data.name,
 					icon: <div className={cn('size-2.5 border-none rounded-full')} />
 				};
 			}
@@ -89,15 +151,15 @@ export const columns = [
 	}),
 	{
 		id: 'actions',
-		cell: ({ row }: { row: Row<EventCategory> }) => {
-			return <Actions eventCategory={row.original} />;
+		cell: ({ row }: { row: Row<Participant> }) => {
+			return <Actions participant={row.original} />;
 		},
 		size: 32
 	}
 ];
 
 // eslint-disable-next-line react-refresh/only-export-components
-const Actions = ({ eventCategory }: { eventCategory: EventCategory }) => {
+const Actions = ({ participant }: { participant: Participant }) => {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const z = useZero();
 
@@ -120,19 +182,19 @@ const Actions = ({ eventCategory }: { eventCategory: EventCategory }) => {
 					variant='destructive'
 					onSelect={() => {
 						Promise.all([
-							z.mutate.eventCategories.delete({
-								id: eventCategory.id
+							z.mutate.participants.delete({
+								id: participant.id
 							})
 						]).catch(e => {
-							console.log('Failed to delete event category', e);
+							console.log('Failed to delete participant', e);
 						});
 					}}
 				>
 					Delete
 				</DropdownMenuItem>
 			</DropdownMenuContent>
-			<EventCategoryFormDialog
-				eventCategory={eventCategory}
+			<ParticipantFormDialog
+				participant={participant}
 				open={isDialogOpen}
 				onOpenChange={setIsDialogOpen}
 			/>

@@ -1,16 +1,13 @@
-import { rolesEnum } from '@/db/schema';
 import { useApp } from '@/hooks/useApp';
 import useZero from '@/hooks/useZero';
 import { useQuery } from '@rocicorp/zero/react';
-import { z } from 'zod';
 
 import { CenterPage } from './CenterView/CenterView';
 
 export default function DashboardView() {
 	const {
-		user: { publicMetadata }
+		user: { role }
 	} = useApp();
-	const role = z.enum(rolesEnum.enumValues).parse(publicMetadata.role);
 	const zero = useZero();
 	const [center] = useQuery(
 		zero.query.centers

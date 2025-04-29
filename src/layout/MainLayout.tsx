@@ -57,7 +57,7 @@ export default function MainLayout() {
 	return (
 		<>
 			<ZeroProvider zero={z}>
-				<AppProvider context={{ user }}>
+				<AppProvider context={{ clerkUser: user }}>
 					<SidebarProvider>
 						<AppSidebar />
 						<SidebarInset>

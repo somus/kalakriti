@@ -14,8 +14,7 @@ const ProtectedRoute = ({
 	children
 }: ProtectedRouteProps) => {
 	const { user } = useApp();
-	const currentUserRole = user?.publicMetadata.role as Roles | undefined;
-	const isAllowed = !!currentUserRole && allowedRoles.includes(currentUserRole);
+	const isAllowed = allowedRoles.includes(user.role!);
 
 	if (!isAllowed) {
 		return <Navigate to={redirectPath} replace />;

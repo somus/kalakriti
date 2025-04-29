@@ -39,16 +39,13 @@ import { Link } from 'react-router';
 // };
 
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
-	const { user } = useApp();
+	const { clerkUser } = useApp();
 	const navItems = useNavItems();
-	if (!user) {
-		return null;
-	}
 
 	const currentUser = {
-		name: user.fullName ?? 'Anonymous',
-		email: user.primaryEmailAddress?.emailAddress ?? 'No email',
-		avatar: user.imageUrl
+		name: clerkUser.fullName ?? 'Anonymous',
+		email: clerkUser.primaryEmailAddress?.emailAddress ?? 'No email',
+		avatar: clerkUser.imageUrl
 	};
 
 	return (
@@ -73,7 +70,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 			<SidebarContent>
 				<NavMain items={navItems} />
 				{/* <NavProjects projects={data.projects} /> */}
-				{user.publicMetadata.role === 'admin' && (
+				{clerkUser.publicMetadata.role === 'admin' && (
 					<SidebarGroup className='group-data-[collapsible=icon]:hidden mt-auto'>
 						<SidebarMenu>
 							<SidebarMenuItem>
