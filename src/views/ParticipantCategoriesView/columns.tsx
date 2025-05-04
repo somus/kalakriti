@@ -64,7 +64,8 @@ export const columns = [
 		meta: {
 			displayName: 'Min Age',
 			type: 'number',
-			icon: HashIcon
+			icon: HashIcon,
+			max: 30
 		},
 		filterFn: filterFn('number'),
 		sortingFn: 'alphanumeric'
@@ -78,7 +79,8 @@ export const columns = [
 		meta: {
 			displayName: 'Max Age',
 			type: 'number',
-			icon: HashIcon
+			icon: HashIcon,
+			max: 30
 		},
 		filterFn: filterFn('number'),
 		sortingFn: 'alphanumeric'
@@ -92,7 +94,8 @@ export const columns = [
 		meta: {
 			displayName: 'Max Boys Count',
 			type: 'number',
-			icon: HashIcon
+			icon: HashIcon,
+			max: 50
 		},
 		filterFn: filterFn('number'),
 		sortingFn: 'alphanumeric'
@@ -106,7 +109,8 @@ export const columns = [
 		meta: {
 			displayName: 'Max Girls Count',
 			type: 'number',
-			icon: HashIcon
+			icon: HashIcon,
+			max: 50
 		},
 		filterFn: filterFn('number'),
 		sortingFn: 'alphanumeric'
@@ -120,7 +124,8 @@ export const columns = [
 		meta: {
 			displayName: 'Total Events Allowed',
 			type: 'number',
-			icon: HashIcon
+			icon: HashIcon,
+			max: 10
 		},
 		filterFn: filterFn('number'),
 		sortingFn: 'alphanumeric'
@@ -134,7 +139,8 @@ export const columns = [
 		meta: {
 			displayName: 'Max Events Per Category',
 			type: 'number',
-			icon: HashIcon
+			icon: HashIcon,
+			max: 10
 		},
 		filterFn: filterFn('number'),
 		sortingFn: 'alphanumeric'

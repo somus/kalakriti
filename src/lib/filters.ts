@@ -1,4 +1,4 @@
-import type { Column, Row, RowData } from '@tanstack/react-table';
+import type { AccessorFn, Column, Row, RowData } from '@tanstack/react-table';
 import type { ColumnMeta, Table } from '@tanstack/react-table';
 import '@tanstack/table-core';
 import {
@@ -33,6 +33,9 @@ declare module '@tanstack/react-table' {
 		/* Otherwise, they will be dynamically generated based on the data. */
 		options?: ColumnOption[];
 
+		/* An optional key to access the object value when the column value doesn't have an id field. */
+		objectIdentifierKey?: string;
+
 		/* An optional function to transform columns with type 'option' or 'multiOption'. */
 		/* This is used to convert each raw option into a ColumnOption. */
 		transformOptionFn?: (
@@ -45,19 +48,31 @@ declare module '@tanstack/react-table' {
 	}
 }
 
+/* TODO: Allow both accessorFn and accessorKey */
 export function defineMeta<
 	TData,
-	TKey extends keyof TData,
+	/* Only accessorFn - WORKS */
+	TAccessor extends AccessorFn<TData>,
+	TVal extends ReturnType<TAccessor>,
+	/* Only accessorKey - WORKS */
+	// TAccessor extends DeepKeys<TData>,
+	// TVal extends DeepValue<TData, TAccessor>,
+
+	/* Both accessorKey and accessorFn - BROKEN */
+	/* ISSUE: Won't infer transformOptionFn input type correctly. */
+	// TAccessor extends AccessorFn<TData> | DeepKeys<TData>,
+	// TVal extends TAccessor extends AccessorFn<TData>
+	// ? ReturnType<TAccessor>
+	// : TAccessor extends DeepKeys<TData>
+	// ? DeepValue<TData, TAccessor>
+	// : never,
 	TType extends ColumnDataType
 >(
-	_key: TKey,
-	meta: Omit<ColumnMeta<TData, TData[TKey]>, 'type' | 'transformFn'> & {
+	accessor: TAccessor,
+	meta: Omit<ColumnMeta<TData, TVal>, 'type'> & {
 		type: TType;
-		transformFn?: (
-			value: Exclude<TData[TKey], undefined | null>
-		) => FilterTypes[TType];
 	}
-): ColumnMeta<TData, TData[TKey]> {
+): ColumnMeta<TData, TVal> {
 	return meta;
 }
 
@@ -150,10 +165,10 @@ export interface FilterTypes {
  * - Values: An array of values to be used for the filter.
  *
  */
-export interface FilterValue<T extends ColumnDataType, TData> {
+export interface FilterModel<T extends ColumnDataType, TData> {
 	operator: FilterOperators[T];
 	values: FilterTypes[T][];
-	column: Column<TData>;
+	columnMeta: Column<TData>['columnDef']['meta'];
 }
 
 /*
@@ -610,13 +625,13 @@ export function filterFn(dataType: ColumnDataType) {
 export function optionFilterFn<TData>(
 	row: Row<TData>,
 	columnId: string,
-	filterValue: FilterValue<'option', TData>
+	filterValue: FilterModel<'option', TData>
 ) {
 	const value = row.getValue(columnId);
 
 	if (!value) return false;
 
-	const columnMeta = filterValue.column.columnDef.meta!;
+	const columnMeta = filterValue.columnMeta!;
 
 	if (typeof value === 'string') {
 		return __optionFilterFn(value, filterValue);
@@ -632,7 +647,7 @@ export function optionFilterFn<TData>(
 
 export function __optionFilterFn<TData>(
 	inputData: string,
-	filterValue: FilterValue<'option', TData>
+	filterValue: FilterModel<'option', TData>
 ) {
 	if (!inputData) return false;
 	if (filterValue.values.length === 0) return true;
@@ -651,11 +666,16 @@ export function __optionFilterFn<TData>(
 	}
 }
 
-function isColumnOption(value: unknown): value is ColumnOption {
-	return typeof value === 'object' && value !== null && 'value' in value;
+export function isColumnOption(value: unknown): value is ColumnOption {
+	return (
+		typeof value === 'object' &&
+		value !== null &&
+		'value' in value &&
+		'label' in value
+	);
 }
 
-function isColumnOptionArray(value: unknown): value is ColumnOption[] {
+export function isColumnOptionArray(value: unknown): value is ColumnOption[] {
 	return Array.isArray(value) && value.every(isColumnOption);
 }
 
@@ -666,13 +686,13 @@ function isStringArray(value: unknown): value is string[] {
 export function multiOptionFilterFn<TData>(
 	row: Row<TData>,
 	columnId: string,
-	filterValue: FilterValue<'multiOption', TData>
+	filterValue: FilterModel<'multiOption', TData>
 ) {
 	const value = row.getValue(columnId);
 
 	if (!value) return false;
 
-	const columnMeta = filterValue.column.columnDef.meta!;
+	const columnMeta = filterValue.columnMeta!;
 
 	if (isStringArray(value)) {
 		return __multiOptionFilterFn(value, filterValue);
@@ -697,7 +717,7 @@ export function multiOptionFilterFn<TData>(
 
 export function __multiOptionFilterFn<TData>(
 	inputData: string[],
-	filterValue: FilterValue<'multiOption', TData>
+	filterValue: FilterModel<'multiOption', TData>
 ) {
 	if (!inputData) return false;
 
@@ -731,7 +751,7 @@ export function __multiOptionFilterFn<TData>(
 export function dateFilterFn<TData>(
 	row: Row<TData>,
 	columnId: string,
-	filterValue: FilterValue<'date', TData>
+	filterValue: FilterModel<'date', TData>
 ) {
 	const valueStr = row.getValue<Date>(columnId);
 
@@ -740,7 +760,7 @@ export function dateFilterFn<TData>(
 
 export function __dateFilterFn<TData>(
 	inputData: Date,
-	filterValue: FilterValue<'date', TData>
+	filterValue: FilterModel<'date', TData>
 ) {
 	if (!filterValue || filterValue.values.length === 0) return true;
 
@@ -791,7 +811,7 @@ export function __dateFilterFn<TData>(
 export function textFilterFn<TData>(
 	row: Row<TData>,
 	columnId: string,
-	filterValue: FilterValue<'text', TData>
+	filterValue: FilterModel<'text', TData>
 ) {
 	const value = row.getValue<string>(columnId) ?? '';
 
@@ -800,7 +820,7 @@ export function textFilterFn<TData>(
 
 export function __textFilterFn<TData>(
 	inputData: string,
-	filterValue: FilterValue<'text', TData>
+	filterValue: FilterModel<'text', TData>
 ) {
 	if (!filterValue || filterValue.values.length === 0) return true;
 
@@ -822,7 +842,7 @@ export function __textFilterFn<TData>(
 export function numberFilterFn<TData>(
 	row: Row<TData>,
 	columnId: string,
-	filterValue: FilterValue<'number', TData>
+	filterValue: FilterModel<'number', TData>
 ) {
 	const value = row.getValue<number>(columnId);
 
@@ -831,9 +851,9 @@ export function numberFilterFn<TData>(
 
 export function __numberFilterFn<TData>(
 	inputData: number,
-	filterValue: FilterValue<'number', TData>
+	filterValue: FilterModel<'number', TData>
 ) {
-	if (filterValue?.values?.length === 0) {
+	if (!filterValue?.values || filterValue.values.length === 0) {
 		return true;
 	}
 
@@ -905,4 +925,50 @@ export function getColumnMeta<TData>(table: Table<TData>, id: string) {
 	}
 
 	return column.columnDef.meta;
+}
+
+/*** Table Filter Helpers ***/
+
+export function isFilterableColumn<TData>(column: Column<TData>) {
+	// 'auto' filterFn doesn't count!
+	const hasFilterFn =
+		column.columnDef.filterFn && column.columnDef.filterFn !== 'auto';
+
+	if (
+		column.getCanFilter() &&
+		column.accessorFn &&
+		hasFilterFn &&
+		column.columnDef.meta
+	)
+		return true;
+
+	if (!column.accessorFn || !column.columnDef.meta) {
+		// 1) Column has no accessor function
+		//    We assume this is a display column and thus has no filterable data
+		// 2) Column has no meta
+		//    We assume this column is not intended to be filtered using this component
+		return false;
+	}
+
+	if (!column.accessorFn) {
+		warn(`Column "${column.id}" ignored - no accessor function`);
+	}
+
+	if (!column.getCanFilter()) {
+		warn(`Column "${column.id}" ignored - not filterable`);
+	}
+
+	if (!hasFilterFn) {
+		warn(
+			`Column "${column.id}" ignored - no filter function. use the provided filterFn() helper function`
+		);
+	}
+
+	return false;
+}
+
+function warn(...messages: string[]) {
+	if (process.env.NODE_ENV !== 'production') {
+		console.warn('[◐] [filters]', ...messages);
+	}
 }

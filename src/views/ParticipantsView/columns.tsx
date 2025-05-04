@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import useZero from '@/hooks/useZero';
 import { defineMeta, filterFn } from '@/lib/filters';
-import { cn } from '@/lib/utils';
 import { Row, createColumnHelper } from '@tanstack/react-table';
 import {
 	CalendarIcon,
@@ -73,7 +72,8 @@ export const columns = [
 		meta: {
 			displayName: 'Age',
 			type: 'number',
-			icon: CalendarIcon
+			icon: CalendarIcon,
+			max: 30
 		},
 		filterFn: filterFn('number'),
 		sortingFn: 'alphanumeric'
@@ -111,16 +111,14 @@ export const columns = [
 		},
 		filterFn: filterFn('option'),
 		enableSorting: false,
-		meta: defineMeta('participantCategory', {
+		meta: defineMeta(row => row.participantCategory, {
 			displayName: 'Participant Category',
 			type: 'option',
 			icon: ComponentIcon,
 			transformOptionFn(data) {
-				console.log(data);
 				return {
 					value: data.id,
-					label: data.name,
-					icon: <div className={cn('size-2.5 border-none rounded-full')} />
+					label: data.name
 				};
 			}
 		})
@@ -136,15 +134,14 @@ export const columns = [
 		},
 		filterFn: filterFn('option'),
 		enableSorting: false,
-		meta: defineMeta('center', {
+		meta: defineMeta(row => row.center, {
 			displayName: 'Center',
 			type: 'option',
 			icon: SchoolIcon,
 			transformOptionFn(data) {
 				return {
 					value: data.id,
-					label: data.name,
-					icon: <div className={cn('size-2.5 border-none rounded-full')} />
+					label: data.name
 				};
 			}
 		})

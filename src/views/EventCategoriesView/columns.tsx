@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import useZero from '@/hooks/useZero';
 import { defineMeta, filterFn } from '@/lib/filters';
-import { cn } from '@/lib/utils';
 import { Row, createColumnHelper } from '@tanstack/react-table';
 import { Ellipsis, Heading1Icon, ShieldUser } from 'lucide-react';
 import { useState } from 'react';
@@ -74,15 +73,14 @@ export const columns = [
 		},
 		filterFn: filterFn('option'),
 		enableSorting: false,
-		meta: defineMeta('coordinator', {
+		meta: defineMeta(row => row.coordinator, {
 			displayName: 'Coordinator',
 			type: 'option',
 			icon: ShieldUser,
 			transformOptionFn(data) {
 				return {
 					value: data.id,
-					label: data.firstName + ' ' + data.lastName,
-					icon: <div className={cn('size-2.5 border-none rounded-full')} />
+					label: data.firstName + ' ' + data.lastName
 				};
 			}
 		})

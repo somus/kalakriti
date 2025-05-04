@@ -117,7 +117,7 @@ export const columns = [
 			);
 		},
 		filterFn: filterFn('option'),
-		meta: defineMeta('role', {
+		meta: defineMeta(row => row.role, {
 			displayName: 'Role',
 			type: 'option',
 			icon: ShieldUser,

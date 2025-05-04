@@ -10,7 +10,6 @@ import {
 import useZero from '@/hooks/useZero';
 import { Center } from '@/layout/CenterLayout';
 import { defineMeta, filterFn } from '@/lib/filters';
-import { cn } from '@/lib/utils';
 import { Row, createColumnHelper } from '@tanstack/react-table';
 import {
 	Ellipsis,
@@ -108,16 +107,16 @@ export const columns = [
 		},
 		filterFn: filterFn('multiOption'),
 		enableSorting: false,
-		meta: defineMeta('liaisons', {
+		meta: defineMeta(row => row.liaisons, {
 			displayName: 'Liaisons',
 			type: 'multiOption',
 			icon: ShieldUser,
+			objectIdentifierKey: 'userId',
 			transformOptionFn(data) {
 				const liaison = data as unknown as Center['liaisons'][number];
 				return {
 					value: liaison.userId,
-					label: liaison.user?.firstName + ' ' + liaison.user?.lastName,
-					icon: <div className={cn('size-2.5 border-none rounded-full')} />
+					label: liaison.user?.firstName + ' ' + liaison.user?.lastName
 				};
 			}
 		})
@@ -144,16 +143,16 @@ export const columns = [
 		},
 		filterFn: filterFn('multiOption'),
 		enableSorting: false,
-		meta: defineMeta('guardians', {
+		meta: defineMeta(row => row.guardians, {
 			displayName: 'Guardians',
 			type: 'multiOption',
 			icon: ShieldUser,
+			objectIdentifierKey: 'userId',
 			transformOptionFn(data) {
 				const guardian = data as unknown as Center['guardians'][number];
 				return {
 					value: guardian.userId,
-					label: guardian.user?.firstName + ' ' + guardian.user?.lastName,
-					icon: <div className={cn('size-2.5 border-none rounded-full')} />
+					label: guardian.user?.firstName + ' ' + guardian.user?.lastName
 				};
 			}
 		})
