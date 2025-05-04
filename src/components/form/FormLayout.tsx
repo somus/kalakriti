@@ -1,5 +1,6 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Form } from '@/components/ui/form';
+import { cn } from '@/lib/utils';
 import { ReactNode } from 'react';
 import { FieldValues, FormProvider, UseFormReturn } from 'react-hook-form';
 
@@ -32,7 +33,13 @@ export function FormLayout<T extends FieldValues>({
 						</AlertDescription>
 					</Alert>
 				)}
-				<form onSubmit={handleSubmit} className={className}>
+				<form
+					onSubmit={handleSubmit}
+					className={cn(
+						className,
+						'group-data-[vaul-drawer]/drawer-content:overflow-y-scroll'
+					)}
+				>
 					{children}
 				</form>
 			</Form>

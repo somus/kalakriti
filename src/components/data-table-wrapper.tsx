@@ -23,7 +23,7 @@ export default function DataTableWrapper<TData>({
 	'use no memo';
 	return (
 		<div className='w-full px-4'>
-			<div className='flex items-center py-4 gap-2'>
+			<div className='flex items-center py-4 gap-2 flex-wrap'>
 				<DataTableFilter table={table} />
 				<DataTableViewOptions table={table} />
 				{additionalActions}

@@ -24,7 +24,10 @@ createRoot(document.getElementById('root')!).render(
 				}
 			}}
 		>
-			<App />
+			{/* eslint-disable-next-line react/no-unknown-property */}
+			<div vaul-drawer-wrapper='' className='bg-background'>
+				<App />
+			</div>
 		</ClerkProvider>
 	</StrictMode>
 );

@@ -1,13 +1,14 @@
 import { FormLayout, InputField } from '@/components/form';
 import { Button } from '@/components/ui/button';
 import {
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger
-} from '@/components/ui/dialog';
+	Modal,
+	ModalBody,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+	ModalTitle,
+	ModalTrigger
+} from '@/components/ui/credenza';
 import MultipleSelector, { Option } from '@/components/ui/input-multiselect';
 import useZero from '@/hooks/useZero';
 import { Center } from '@/layout/CenterLayout';
@@ -34,7 +35,7 @@ const centerSchema = z.object({
 
 type CenterFormData = z.infer<typeof centerSchema>;
 
-export default function CenterFormDialog({
+export default function CenterFormModal({
 	center,
 	open,
 	onOpenChange,
@@ -46,7 +47,7 @@ export default function CenterFormDialog({
 	children?: React.ReactNode;
 }) {
 	const zero = useZero();
-	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [guardians] = useQuery(
 		zero.query.users.where('role', 'IS', 'guardian')
@@ -57,7 +58,7 @@ export default function CenterFormDialog({
 
 	if (!children && !(open !== undefined && onOpenChange)) {
 		throw new Error(
-			'CenterFormDialog must have children or pass open and onOpenChange props'
+			'CenterFormModal must have children or pass open and onOpenChange props'
 		);
 	}
 
@@ -191,7 +192,7 @@ export default function CenterFormDialog({
 			if (onOpenChange) {
 				onOpenChange(false);
 			} else {
-				setIsDialogOpen(false);
+				setIsModalOpen(false);
 			}
 		} catch (e) {
 			setIsSubmitting(false);
@@ -202,77 +203,77 @@ export default function CenterFormDialog({
 	};
 
 	return (
-		<Dialog
-			open={open ?? isDialogOpen}
-			onOpenChange={onOpenChange ?? setIsDialogOpen}
+		<Modal
+			open={open ?? isModalOpen}
+			onOpenChange={onOpenChange ?? setIsModalOpen}
 		>
-			<DialogTrigger asChild>{children}</DialogTrigger>
-			<DialogContent className='sm:max-w-[425px]' aria-describedby={undefined}>
-				<DialogHeader>
-					<DialogTitle>
-						{!center ? 'Create Center' : 'Update Center'}
-					</DialogTitle>
-				</DialogHeader>
+			<ModalTrigger asChild>{children}</ModalTrigger>
+			<ModalContent className='sm:max-w-[425px]' aria-describedby={undefined}>
+				<ModalHeader>
+					<ModalTitle>{!center ? 'Create Center' : 'Update Center'}</ModalTitle>
+				</ModalHeader>
 				<FormLayout<CenterFormData>
 					form={form}
 					onSubmit={form.handleSubmit(handleFormSubmit)}
 				>
-					<InputField name='name' label='Name' />
-					<InputField name='phoneNumber' label='Phone Number' />
-					<InputField name='email' label='Email' type='email' />
+					<ModalBody className='space-y-4'>
+						<InputField name='name' label='Name' />
+						<InputField name='phoneNumber' label='Phone Number' />
+						<InputField name='email' label='Email' type='email' />
 
-					<div className='space-y-2'>
-						<label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
-							Liaisons
-						</label>
-						<MultipleSelector
-							defaultOptions={liaisonOptions}
-							placeholder='Select liaisons'
-							emptyIndicator={<p>no results found.</p>}
-							value={form.watch('liaisons')?.map(id => {
-								const option = liaisonOptions.find(opt => opt.value === id);
-								return option ?? { value: id, label: id };
-							})}
-							onChange={options => {
-								form.setValue(
-									'liaisons',
-									options.map(opt => opt.value),
-									{ shouldValidate: true }
-								);
-							}}
-						/>
-					</div>
+						<div className='space-y-2'>
+							<label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
+								Liaisons
+							</label>
+							<MultipleSelector
+								defaultOptions={liaisonOptions}
+								placeholder='Select liaisons'
+								emptyIndicator={<p>no results found.</p>}
+								value={form.watch('liaisons')?.map(id => {
+									const option = liaisonOptions.find(opt => opt.value === id);
+									return option ?? { value: id, label: id };
+								})}
+								onChange={options => {
+									form.setValue(
+										'liaisons',
+										options.map(opt => opt.value),
+										{ shouldValidate: true }
+									);
+								}}
+							/>
+						</div>
 
-					<div className='space-y-2'>
-						<label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
-							Guardians
-						</label>
-						<MultipleSelector
-							defaultOptions={guardianOptions}
-							placeholder='Select guardians'
-							emptyIndicator={<p>no results found.</p>}
-							value={form.watch('guardians')?.map(id => {
-								const option = guardianOptions.find(opt => opt.value === id);
-								return option ?? { value: id, label: id };
-							})}
-							onChange={options => {
-								form.setValue(
-									'guardians',
-									options.map(opt => opt.value),
-									{ shouldValidate: true }
-								);
-							}}
-						/>
-					</div>
+						<div className='space-y-2'>
+							<label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
+								Guardians
+							</label>
+							<MultipleSelector
+								defaultOptions={guardianOptions}
+								placeholder='Select guardians'
+								emptyIndicator={<p>no results found.</p>}
+								value={form.watch('guardians')?.map(id => {
+									const option = guardianOptions.find(opt => opt.value === id);
+									return option ?? { value: id, label: id };
+								})}
+								onChange={options => {
+									form.setValue(
+										'guardians',
+										options.map(opt => opt.value),
+										{ shouldValidate: true }
+									);
+								}}
+							/>
+						</div>
+					</ModalBody>
 
-					<DialogFooter>
+					<ModalFooter>
 						<Button type='submit' disabled={isSubmitting}>
 							{isSubmitting && <LoaderCircle className='animate-spin mr-2' />}
 							Save changes
 						</Button>
-					</DialogFooter>
+					</ModalFooter>
 				</FormLayout>
-			</DialogContent>
-		</Dialog>
+			</ModalContent>
+		</Modal>
 	);
 }

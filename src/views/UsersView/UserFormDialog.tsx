@@ -1,13 +1,14 @@
 import { FormLayout, InputField, SelectField } from '@/components/form';
 import { Button } from '@/components/ui/button';
 import {
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger
-} from '@/components/ui/dialog';
+	Modal,
+	ModalBody,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+	ModalTitle,
+	ModalTrigger
+} from '@/components/ui/credenza';
 import { rolesEnum } from '@/db/schema';
 import { User } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
@@ -46,8 +47,7 @@ const updateUserSchema = clerkUserUpdateInputSchema
 				value => /^[6-9]\d{9}$/.test(value),
 				'Please enter a valid indian mobile number'
 			)
-			.optional(),
-		role: z.enum(rolesEnum.enumValues)
+			.optional()
 	})
 	.omit({ id: true });
 
@@ -55,7 +55,7 @@ type CreateUserFormData = z.infer<typeof createUserSchema>;
 type UpdateUserFormData = z.infer<typeof updateUserSchema>;
 type UserFormData = CreateUserFormData | UpdateUserFormData;
 
-export default function UserFormDialog({
+export default function UserFormModal({
 	user,
 	open,
 	onOpenChange,
@@ -68,7 +68,7 @@ export default function UserFormDialog({
 }) {
 	const { getToken } = useAuth();
 	const zero = useZero();
-	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	// Format user data for form
@@ -165,7 +165,7 @@ export default function UserFormDialog({
 			if (onOpenChange) {
 				onOpenChange(false);
 			} else {
-				setIsDialogOpen(false);
+				setIsModalOpen(false);
 			}
 		} catch (e) {
 			setIsSubmitting(false);
@@ -186,7 +186,7 @@ export default function UserFormDialog({
 
 	if (!children && !(open !== undefined && onOpenChange)) {
 		throw new Error(
-			'UserFormDialog must have children or pass open and onOpenChange props'
+			'UserFormModal must have children or pass open and onOpenChange props'
 		);
 	}
 
@@ -197,37 +197,39 @@ export default function UserFormDialog({
 	}));
 
 	return (
-		<Dialog
-			open={open ?? isDialogOpen}
-			onOpenChange={onOpenChange ?? setIsDialogOpen}
+		<Modal
+			open={open ?? isModalOpen}
+			onOpenChange={onOpenChange ?? setIsModalOpen}
 		>
-			<DialogTrigger asChild>{children}</DialogTrigger>
-			<DialogContent className='sm:max-w-[425px]' aria-describedby={undefined}>
-				<DialogHeader>
-					<DialogTitle>{!user ? 'Create User' : 'Update User'}</DialogTitle>
-				</DialogHeader>
+			<ModalTrigger asChild>{children}</ModalTrigger>
+			<ModalContent className='sm:max-w-[425px]' aria-describedby={undefined}>
+				<ModalHeader>
+					<ModalTitle>{!user ? 'Create User' : 'Update User'}</ModalTitle>
+				</ModalHeader>
 				<FormLayout<UserFormData>
 					form={form}
 					onSubmit={form.handleSubmit(data =>
 						handleFormSubmit(data, form.setError)
 					)}
 				>
-					<InputField name='firstName' label='First Name' />
-					<InputField name='lastName' label='Last Name' />
-					<InputField name='email' label='Email' type='email' />
-					<InputField name='phoneNumber' label='Phone Number' />
-					<SelectField name='role' label='Role' options={roleOptions} />
-					{!user && (
-						<InputField name='password' label='Password' type='password' />
-					)}
-					<DialogFooter>
+					<ModalBody className='space-y-4'>
+						<InputField name='firstName' label='First Name' />
+						<InputField name='lastName' label='Last Name' />
+						<InputField name='email' label='Email' type='email' />
+						<InputField name='phoneNumber' label='Phone Number' />
+						<SelectField name='role' label='Role' options={roleOptions} />
+						{!user && (
+							<InputField name='password' label='Password' type='password' />
+						)}
+					</ModalBody>
+					<ModalFooter>
 						<Button type='submit' disabled={isSubmitting}>
 							{isSubmitting && <LoaderCircle className='animate-spin mr-2' />}
 							Save changes
 						</Button>
-					</DialogFooter>
+					</ModalFooter>
 				</FormLayout>
-			</DialogContent>
-		</Dialog>
+			</ModalContent>
+		</Modal>
 	);
 }

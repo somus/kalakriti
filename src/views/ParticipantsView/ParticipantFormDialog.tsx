@@ -7,13 +7,14 @@ import {
 import { DateField } from '@/components/form/DateField';
 import { Button } from '@/components/ui/button';
 import {
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger
-} from '@/components/ui/dialog';
+	Modal,
+	ModalBody,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+	ModalTitle,
+	ModalTrigger
+} from '@/components/ui/credenza';
 import { genderEnum } from '@/db/schema';
 import { useApp } from '@/hooks/useApp';
 import useZero from '@/hooks/useZero';
@@ -39,7 +40,7 @@ const participantSchema = z.object({
 
 type ParticipantFormData = z.infer<typeof participantSchema>;
 
-export default function ParticipantFormDialog({
+export default function ParticipantFormModal({
 	participant,
 	open,
 	onOpenChange,
@@ -51,7 +52,7 @@ export default function ParticipantFormDialog({
 	children?: React.ReactNode;
 }) {
 	const zero = useZero();
-	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const outletContext = useOutletContext<CenterOutletContext>();
 	const { user } = useApp();
@@ -60,7 +61,7 @@ export default function ParticipantFormDialog({
 
 	if (!children && !(open !== undefined && onOpenChange)) {
 		throw new Error(
-			'ParticipantFormDialog must have children or pass open and onOpenChange props'
+			'ParticipantFormModal must have children or pass open and onOpenChange props'
 		);
 	}
 
@@ -134,7 +135,7 @@ export default function ParticipantFormDialog({
 			if (onOpenChange) {
 				onOpenChange(false);
 			} else {
-				setIsDialogOpen(false);
+				setIsModalOpen(false);
 			}
 		} catch (e) {
 			console.log(e);
@@ -146,49 +147,51 @@ export default function ParticipantFormDialog({
 	};
 
 	return (
-		<Dialog
-			open={open ?? isDialogOpen}
-			onOpenChange={onOpenChange ?? setIsDialogOpen}
+		<Modal
+			open={open ?? isModalOpen}
+			onOpenChange={onOpenChange ?? setIsModalOpen}
 			modal={false}
 		>
-			<DialogTrigger asChild>{children}</DialogTrigger>
-			<DialogContent className='sm:max-w-[425px]' aria-describedby={undefined}>
-				<DialogHeader>
-					<DialogTitle>
+			<ModalTrigger asChild>{children}</ModalTrigger>
+			<ModalContent className='sm:max-w-[425px]' aria-describedby={undefined}>
+				<ModalHeader>
+					<ModalTitle>
 						{!participant ? 'Create Participant' : 'Update Participant'}
-					</DialogTitle>
-				</DialogHeader>
+					</ModalTitle>
+				</ModalHeader>
 				<FormLayout<ParticipantFormData>
 					form={form}
 					onSubmit={form.handleSubmit(handleFormSubmit)}
 				>
-					<InputField name='name' label='Name' />
-					<DateField
-						name='dob'
-						label='Date of Birth'
-						disabled={!!participant}
-					/>
-					<SelectField
-						name='gender'
-						label='Gender'
-						options={genderOptions}
-						disabled={!!participant}
-					/>
-					<SelectField
-						name='center'
-						label='Center'
-						options={centerOptions}
-						disabled={!!participant || user.role !== 'admin'}
-					/>
+					<ModalBody className='space-y-4'>
+						<InputField name='name' label='Name' />
+						<DateField
+							name='dob'
+							label='Date of Birth'
+							disabled={!!participant}
+						/>
+						<SelectField
+							name='gender'
+							label='Gender'
+							options={genderOptions}
+							disabled={!!participant}
+						/>
+						<SelectField
+							name='center'
+							label='Center'
+							options={centerOptions}
+							disabled={!!participant || user.role !== 'admin'}
+						/>
+					</ModalBody>
 
-					<DialogFooter>
+					<ModalFooter>
 						<Button type='submit' disabled={isSubmitting}>
 							{isSubmitting && <LoaderCircle className='animate-spin mr-2' />}
 							Save changes
 						</Button>
-					</DialogFooter>
+					</ModalFooter>
 				</FormLayout>
-			</DialogContent>
-		</Dialog>
+			</ModalContent>
+		</Modal>
 	);
 }

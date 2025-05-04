@@ -6,13 +6,14 @@ import {
 } from '@/components/form';
 import { Button } from '@/components/ui/button';
 import {
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger
-} from '@/components/ui/dialog';
+	Modal,
+	ModalBody,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+	ModalTitle,
+	ModalTrigger
+} from '@/components/ui/credenza';
 import useZero from '@/hooks/useZero';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createId } from '@paralleldrive/cuid2';
@@ -31,7 +32,7 @@ const eventCategorySchema = z.object({
 
 type EventCategoryFormData = z.infer<typeof eventCategorySchema>;
 
-export default function EventCategoryFormDialog({
+export default function EventCategoryFormModal({
 	eventCategory,
 	open,
 	onOpenChange,
@@ -43,7 +44,7 @@ export default function EventCategoryFormDialog({
 	children?: React.ReactNode;
 }) {
 	const zero = useZero();
-	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [volunteers] = useQuery(
 		zero.query.users.where('role', 'IN', ['volunteer', 'admin'])
@@ -51,7 +52,7 @@ export default function EventCategoryFormDialog({
 
 	if (!children && !(open !== undefined && onOpenChange)) {
 		throw new Error(
-			'EventCategoryFormDialog must have children or pass open and onOpenChange props'
+			'EventCategoryFormModal must have children or pass open and onOpenChange props'
 		);
 	}
 
@@ -101,7 +102,7 @@ export default function EventCategoryFormDialog({
 			if (onOpenChange) {
 				onOpenChange(false);
 			} else {
-				setIsDialogOpen(false);
+				setIsModalOpen(false);
 			}
 		} catch (e) {
 			setIsSubmitting(false);
@@ -112,36 +113,38 @@ export default function EventCategoryFormDialog({
 	};
 
 	return (
-		<Dialog
-			open={open ?? isDialogOpen}
-			onOpenChange={onOpenChange ?? setIsDialogOpen}
+		<Modal
+			open={open ?? isModalOpen}
+			onOpenChange={onOpenChange ?? setIsModalOpen}
 		>
-			<DialogTrigger asChild>{children}</DialogTrigger>
-			<DialogContent className='sm:max-w-[425px]' aria-describedby={undefined}>
-				<DialogHeader>
-					<DialogTitle>
+			<ModalTrigger asChild>{children}</ModalTrigger>
+			<ModalContent className='sm:max-w-[425px]' aria-describedby={undefined}>
+				<ModalHeader>
+					<ModalTitle>
 						{!eventCategory ? 'Create Event Category' : 'Update Event Category'}
-					</DialogTitle>
-				</DialogHeader>
+					</ModalTitle>
+				</ModalHeader>
 				<FormLayout<EventCategoryFormData>
 					form={form}
 					onSubmit={form.handleSubmit(handleFormSubmit)}
 				>
-					<InputField name='name' label='Name' />
-					<SelectField
-						name='coordinator'
-						label='Coordinator'
-						options={coordinatorOptions}
-					/>
+					<ModalBody className='space-y-4'>
+						<InputField name='name' label='Name' />
+						<SelectField
+							name='coordinator'
+							label='Coordinator'
+							options={coordinatorOptions}
+						/>
+					</ModalBody>
 
-					<DialogFooter>
+					<ModalFooter>
 						<Button type='submit' disabled={isSubmitting}>
 							{isSubmitting && <LoaderCircle className='animate-spin mr-2' />}
 							Save changes
 						</Button>
-					</DialogFooter>
+					</ModalFooter>
 				</FormLayout>
-			</DialogContent>
-		</Dialog>
+			</ModalContent>
+		</Modal>
 	);
 }
