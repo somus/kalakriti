@@ -40,6 +40,7 @@ function BreadcrumbLink({
 	const Comp = asChild ? Slot : 'a';
 
 	return (
+		// @ts-expect-error ref mismatch
 		<Comp
 			data-slot='breadcrumb-link'
 			className={cn('hover:text-foreground transition-colors', className)}

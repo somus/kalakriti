@@ -127,6 +127,7 @@ export const columns = [
 					label: data,
 					icon: (
 						<div
+							key={data}
 							className={cn(
 								'size-2.5 border-none rounded-full',
 								ROLE_STYLES_MAP[data]

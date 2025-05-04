@@ -47,6 +47,7 @@ function Button({
 	const Comp = asChild ? Slot : 'button';
 
 	return (
+		// @ts-expect-error ref mismatch
 		<Comp
 			data-slot='button'
 			className={cn(buttonVariants({ variant, size, className }))}
@@ -55,4 +56,5 @@ function Button({
 	);
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { Button, buttonVariants };

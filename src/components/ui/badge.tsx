@@ -34,6 +34,7 @@ function Badge({
 	const Comp = asChild ? Slot : 'span';
 
 	return (
+		// @ts-expect-error ref mismatch
 		<Comp
 			data-slot='badge'
 			className={cn(badgeVariants({ variant }), className)}
@@ -42,4 +43,5 @@ function Badge({
 	);
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { Badge, badgeVariants };
