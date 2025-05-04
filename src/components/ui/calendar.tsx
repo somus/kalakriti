@@ -1,5 +1,3 @@
-'use client';
-
 import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { differenceInCalendarDays } from 'date-fns';
@@ -64,6 +62,7 @@ function Calendar({
 	showYearSwitcher = true,
 	yearRange = 12,
 	numberOfMonths,
+	components,
 	...props
 }: CalendarProps) {
 	const [navView, setNavView] = React.useState<NavView>('days');
@@ -80,7 +79,7 @@ function Calendar({
 		}, [yearRange])
 	);
 
-	const { onPrevClick, startMonth, endMonth } = props;
+	const { onNextClick, onPrevClick, startMonth, endMonth } = props;
 
 	const columnsDisplayed = navView === 'years' ? 1 : numberOfMonths;
 
@@ -211,6 +210,7 @@ function Calendar({
 						startMonth={startMonth}
 						endMonth={endMonth}
 						onPrevClick={onPrevClick}
+						onNextClick={onNextClick}
 					/>
 				),
 				CaptionLabel: props => (
@@ -235,7 +235,8 @@ function Calendar({
 					>
 						{children}
 					</MonthGrid>
-				)
+				),
+				...components
 			}}
 			numberOfMonths={columnsDisplayed}
 			{...props}
@@ -321,8 +322,6 @@ function Nav({
 		}
 		goToMonth(previousMonth);
 		onPrevClick?.(previousMonth);
-		// eslint-disable-next-line react-hooks/react-compiler
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [previousMonth, goToMonth]);
 
 	const handleNextClick = React.useCallback(() => {
@@ -343,8 +342,6 @@ function Nav({
 		}
 		goToMonth(nextMonth);
 		onNextClick?.(nextMonth);
-		// eslint-disable-next-line react-hooks/react-compiler
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [goToMonth, nextMonth]);
 	return (
 		<nav className={cn('flex items-center', className)}>
