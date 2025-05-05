@@ -1,4 +1,5 @@
 import { ClerkProvider } from '@clerk/clerk-react';
+import { NuqsAdapter } from 'nuqs/adapters/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -26,7 +27,9 @@ createRoot(document.getElementById('root')!).render(
 		>
 			{/* eslint-disable-next-line react/no-unknown-property */}
 			<div vaul-drawer-wrapper='' className='bg-background'>
-				<App />
+				<NuqsAdapter>
+					<App />
+				</NuqsAdapter>
 			</div>
 		</ClerkProvider>
 	</StrictMode>

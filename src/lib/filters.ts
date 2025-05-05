@@ -1,4 +1,10 @@
-import type { AccessorFn, Column, Row, RowData } from '@tanstack/react-table';
+import type {
+	AccessorFn,
+	Column,
+	ColumnDef,
+	Row,
+	RowData
+} from '@tanstack/react-table';
 import type { ColumnMeta, Table } from '@tanstack/react-table';
 import '@tanstack/table-core';
 import {
@@ -10,6 +16,7 @@ import {
 	startOfDay
 } from 'date-fns';
 import type { LucideIcon } from 'lucide-react';
+import { z } from 'zod';
 
 import { intersection, uniq } from './array';
 
@@ -218,6 +225,49 @@ export type FilterOperatorDetails<
 		| { isNegated: false; negation: FilterOperators[T]; negationOf?: never }
 		| { isNegated: true; negation?: never; negationOf: FilterOperators[T] }
 	);
+
+export const dataTableFilterQuerySchema = z
+	.object({
+		id: z.string(),
+		value: z.object({
+			operator: z.string(),
+			values: z.any()
+		})
+	})
+	.array()
+	.min(0);
+
+type DataTableFilterQuerySchema = z.infer<typeof dataTableFilterQuerySchema>;
+
+export function initializeFiltersFromQuery<TData, TValue>(
+	filters: DataTableFilterQuerySchema,
+	columns: ColumnDef<TData, TValue>[]
+) {
+	return filters && filters.length > 0
+		? filters.map(f => {
+				const columnMeta: ColumnMeta<TData, TValue> = columns.find(
+					c => c.id === f.id
+				)!.meta!;
+
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+				const values =
+					columnMeta.type === 'date'
+						? // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+							f.value.values.map((v: string) => new Date(v))
+						: f.value.values;
+
+				return {
+					...f,
+					value: {
+						operator: f.value.operator,
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+						values,
+						columnMeta
+					}
+				};
+			})
+		: [];
+}
 
 /* Details for all the filter operators for option data type */
 export const optionFilterDetails = {
