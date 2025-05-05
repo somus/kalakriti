@@ -24,7 +24,7 @@
 		"preinstall": "npx only-allow bun",
 		"postinstall": "bun generate",
 		"knip": "bunx --bun knip",
-		"lint": "concurrently \"bun run-eslint\" \"bun run-stylelint\"",
+		"lint": "concurrently \"bun run-eslint\" \"bun run-stylelint\" \"bun typecheck\"",
 		"prepare": "husky",
 		"preview": "concurrently --kill-others \"bun zero-cache\" \"vite preview --open\" \"bun run api/index.ts\"",
 		"run-eslint": "eslint --cache --fix .",
@@ -41,7 +41,8 @@
 		"*": "prettier -uw --cache",
 		"*.css": "stylelint --cache --fix --ignore-path .gitignore",
 		"*.{ts,tsx}": [
-			"eslint --cache --fix"
+			"eslint --cache --fix",
+			"bash -c \"tsc $* --noEmit -p tsconfig.app.json --composite false\""
 		]
 	},
 	"resolutions": {
