@@ -1,12 +1,12 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Button } from '@/components/ui/button';
 import { ParticipantCategory } from '@/db/schema.zero';
-import useTable from '@/hooks/useTable';
 import useZero from '@/hooks/useZero';
 import { useQuery } from '@rocicorp/zero/react';
 
 import ParticipantCategoryFormDialog from './ParticipantCategoryFormDialog';
 import { columns } from './columns';
+import { columnsConfig } from './filters';
 
 export default function ParticipantCategoriesView() {
 	// eslint-disable-next-line react-hooks/react-compiler
@@ -15,10 +15,6 @@ export default function ParticipantCategoriesView() {
 	const [participantCategories, status] = useQuery(
 		z.query.participantCategories
 	);
-	const table = useTable<ParticipantCategory>({
-		data: participantCategories as ParticipantCategory[],
-		columns
-	});
 
 	if (status.type !== 'complete') {
 		return null;
@@ -26,7 +22,9 @@ export default function ParticipantCategoriesView() {
 
 	return (
 		<DataTableWrapper
-			table={table}
+			data={participantCategories as ParticipantCategory[]}
+			columns={columns}
+			columnsConfig={columnsConfig}
 			additionalActions={[
 				<ParticipantCategoryFormDialog key='create-participant-category'>
 					<Button className='h-7'>Create Participant Category</Button>

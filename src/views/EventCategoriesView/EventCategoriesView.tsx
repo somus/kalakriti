@@ -1,13 +1,13 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Button } from '@/components/ui/button';
 import { Schema } from '@/db/schema.zero';
-import useTable from '@/hooks/useTable';
 import useZero from '@/hooks/useZero';
 import { Row, Zero } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 
 import EventCategoryFormDialog from './EventCategoryFormDialog';
 import { columns } from './columns';
+import { columnsConfig } from './filters';
 
 function eventCategoriesQuery(z: Zero<Schema>) {
 	return z.query.eventCategories.related('coordinator', q =>
@@ -22,10 +22,6 @@ export default function EventCategoriesView() {
 	'use no memo';
 	const z = useZero();
 	const [eventCategories, status] = useQuery(eventCategoriesQuery(z));
-	const table = useTable<EventCategory>({
-		data: eventCategories as EventCategory[],
-		columns
-	});
 
 	if (status.type !== 'complete') {
 		return null;
@@ -33,7 +29,9 @@ export default function EventCategoriesView() {
 
 	return (
 		<DataTableWrapper
-			table={table}
+			data={eventCategories as EventCategory[]}
+			columns={columns}
+			columnsConfig={columnsConfig}
 			additionalActions={[
 				<EventCategoryFormDialog key='create-event-category'>
 					<Button className='h-7'>Create Event Category</Button>

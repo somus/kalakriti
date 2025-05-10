@@ -16,18 +16,10 @@ import {
 import { User } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
 import { deleteClerkUser } from '@/lib/clerkUser';
-import { defineMeta, filterFn } from '@/lib/filters';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@clerk/clerk-react';
 import { Row, createColumnHelper } from '@tanstack/react-table';
-import {
-	Ellipsis,
-	Heading1Icon,
-	MailIcon,
-	Phone,
-	QrCodeIcon,
-	ShieldUser
-} from 'lucide-react';
+import { Ellipsis, QrCodeIcon } from 'lucide-react';
 import { useState } from 'react';
 import QRCode from 'react-qr-code';
 
@@ -35,7 +27,7 @@ import UserFormDialog from './UserFormDialog';
 
 const columnHelper = createColumnHelper<User>();
 
-const ROLE_STYLES_MAP = {
+export const ROLE_STYLES_MAP = {
 	admin: 'bg-red-500 border-red-500',
 	volunteer: 'bg-teal-500 border-teal-500',
 	guardian: 'bg-blue-500 border-blue-500'
@@ -71,12 +63,8 @@ export const columns = [
 		),
 		cell: ({ row }) => <div>{row.getValue('firstName')}</div>,
 		meta: {
-			displayName: 'First Name',
-			type: 'text',
-			icon: Heading1Icon
-		},
-		filterFn: filterFn('text'),
-		sortingFn: 'alphanumeric'
+			displayName: 'First Name'
+		}
 	}),
 	columnHelper.accessor(row => row.lastName, {
 		id: 'lastName',
@@ -85,12 +73,8 @@ export const columns = [
 		),
 		cell: ({ row }) => <div>{row.getValue('lastName')}</div>,
 		meta: {
-			displayName: 'Last Name',
-			type: 'text',
-			icon: Heading1Icon
-		},
-		filterFn: filterFn('text'),
-		sortingFn: 'alphanumeric'
+			displayName: 'Last Name'
+		}
 	}),
 	columnHelper.accessor(row => row.role, {
 		id: 'role',
@@ -116,27 +100,9 @@ export const columns = [
 				</div>
 			);
 		},
-		filterFn: filterFn('option'),
-		meta: defineMeta(row => row.role, {
-			displayName: 'Role',
-			type: 'option',
-			icon: ShieldUser,
-			transformOptionFn(data) {
-				return {
-					value: data,
-					label: data,
-					icon: (
-						<div
-							key={data}
-							className={cn(
-								'size-2.5 border-none rounded-full',
-								ROLE_STYLES_MAP[data]
-							)}
-						/>
-					)
-				};
-			}
-		})
+		meta: {
+			displayName: 'Role'
+		}
 	}),
 	columnHelper.accessor(row => row.email, {
 		id: 'email',
@@ -145,11 +111,8 @@ export const columns = [
 		),
 		cell: ({ row }) => <div>{row.getValue('email')}</div>,
 		meta: {
-			displayName: 'Email',
-			type: 'text',
-			icon: MailIcon
-		},
-		filterFn: filterFn('text')
+			displayName: 'Email'
+		}
 	}),
 	columnHelper.accessor(row => row.phoneNumber, {
 		id: 'phoneNumber',
@@ -158,11 +121,8 @@ export const columns = [
 		),
 		cell: ({ row }) => <div>{row.getValue('phoneNumber')}</div>,
 		meta: {
-			displayName: 'Phone Number',
-			type: 'text',
-			icon: Phone
-		},
-		filterFn: filterFn('text')
+			displayName: 'Phone Number'
+		}
 	}),
 	{
 		id: 'view-qr-code',

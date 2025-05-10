@@ -34,7 +34,6 @@ function Badge({
 	const Comp = asChild ? Slot : 'span';
 
 	return (
-		// @ts-expect-error ref mismatch
 		<Comp
 			data-slot='badge'
 			className={cn(badgeVariants({ variant }), className)}

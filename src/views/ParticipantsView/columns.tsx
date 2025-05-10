@@ -9,16 +9,8 @@ import {
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import useZero from '@/hooks/useZero';
-import { defineMeta, filterFn } from '@/lib/filters';
 import { Row, createColumnHelper } from '@tanstack/react-table';
-import {
-	CalendarIcon,
-	CircleSmall,
-	ComponentIcon,
-	Ellipsis,
-	Heading1Icon,
-	SchoolIcon
-} from 'lucide-react';
+import { Ellipsis } from 'lucide-react';
 import { useState } from 'react';
 
 import ParticipantFormDialog from './ParticipantFormDialog';
@@ -55,12 +47,6 @@ export const columns = [
 			<DataTableColumnHeader column={column} title='Name' />
 		),
 		cell: ({ row }) => <div>{row.getValue('name')}</div>,
-		meta: {
-			displayName: 'Name',
-			type: 'text',
-			icon: Heading1Icon
-		},
-		filterFn: filterFn('text'),
 		sortingFn: 'alphanumeric'
 	}),
 	columnHelper.accessor(row => row.age, {
@@ -68,33 +54,16 @@ export const columns = [
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Age' />
 		),
-		cell: ({ row }) => <div>{row.getValue('age')}</div>,
-		meta: {
-			displayName: 'Age',
-			type: 'number',
-			icon: CalendarIcon,
-			max: 30
-		},
-		filterFn: filterFn('number'),
-		sortingFn: 'alphanumeric'
+		cell: ({ row }) => <div>{row.getValue('age')}</div>
 	}),
 	columnHelper.accessor(row => row.gender, {
 		id: 'gender',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Gender' />
 		),
-		cell: ({ row }) => <div>{row.getValue('gender')}</div>,
-		meta: {
-			displayName: 'Gender',
-			type: 'option',
-			icon: CircleSmall,
-			options: [
-				{ label: 'Male', value: 'male' },
-				{ label: 'Female', value: 'female' }
-			]
-		},
-		filterFn: filterFn('option'),
-		sortingFn: 'text'
+		cell: ({ row }) => (
+			<div className='capitalize'>{row.getValue('gender')}</div>
+		)
 	}),
 	columnHelper.accessor(row => row.participantCategory, {
 		id: 'participantCategory',
@@ -109,19 +78,7 @@ export const columns = [
 				<Badge variant='outline'>{participantCategory.name}</Badge>
 			) : null;
 		},
-		filterFn: filterFn('option'),
-		enableSorting: false,
-		meta: defineMeta(row => row.participantCategory, {
-			displayName: 'Participant Category',
-			type: 'option',
-			icon: ComponentIcon,
-			transformOptionFn(data) {
-				return {
-					value: data.id,
-					label: data.name
-				};
-			}
-		})
+		enableSorting: false
 	}),
 	columnHelper.accessor(row => row.center, {
 		id: 'center',
@@ -132,19 +89,7 @@ export const columns = [
 			const center = row.getValue<Participant['center'] | undefined>('center');
 			return center ? <Badge variant='outline'>{center.name}</Badge> : null;
 		},
-		filterFn: filterFn('option'),
-		enableSorting: false,
-		meta: defineMeta(row => row.center, {
-			displayName: 'Center',
-			type: 'option',
-			icon: SchoolIcon,
-			transformOptionFn(data) {
-				return {
-					value: data.id,
-					label: data.name
-				};
-			}
-		})
+		enableSorting: false
 	}),
 	{
 		id: 'actions',

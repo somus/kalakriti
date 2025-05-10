@@ -47,7 +47,6 @@ function Button({
 	const Comp = asChild ? Slot : 'button';
 
 	return (
-		// @ts-expect-error ref mismatch
 		<Comp
 			data-slot='button'
 			className={cn(buttonVariants({ variant, size, className }))}

@@ -9,16 +9,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import useZero from '@/hooks/useZero';
 import { Center } from '@/layout/CenterLayout';
-import { defineMeta, filterFn } from '@/lib/filters';
 import { Row, createColumnHelper } from '@tanstack/react-table';
-import {
-	Ellipsis,
-	Heading1Icon,
-	LinkIcon,
-	MailIcon,
-	Phone,
-	ShieldUser
-} from 'lucide-react';
+import { Ellipsis, LinkIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 
@@ -50,40 +42,21 @@ export const columns = [
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Name' />
 		),
-		cell: ({ row }) => <div>{row.getValue('name')}</div>,
-		meta: {
-			displayName: 'Name',
-			type: 'text',
-			icon: Heading1Icon
-		},
-		filterFn: filterFn('text'),
-		sortingFn: 'alphanumeric'
+		cell: ({ row }) => <div>{row.getValue('name')}</div>
 	}),
 	columnHelper.accessor(row => row.email, {
 		id: 'email',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Email' />
 		),
-		cell: ({ row }) => <div>{row.getValue('email')}</div>,
-		meta: {
-			displayName: 'Email',
-			type: 'text',
-			icon: MailIcon
-		},
-		filterFn: filterFn('text')
+		cell: ({ row }) => <div>{row.getValue('email')}</div>
 	}),
 	columnHelper.accessor(row => row.phoneNumber, {
 		id: 'phoneNumber',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Phone Number' />
 		),
-		cell: ({ row }) => <div>{row.getValue('phoneNumber')}</div>,
-		meta: {
-			displayName: 'Phone Number',
-			type: 'text',
-			icon: Phone
-		},
-		filterFn: filterFn('text')
+		cell: ({ row }) => <div>{row.getValue('phoneNumber')}</div>
 	}),
 	columnHelper.accessor(row => row.liaisons, {
 		id: 'liaisons',
@@ -105,21 +78,7 @@ export const columns = [
 				</div>
 			);
 		},
-		filterFn: filterFn('multiOption'),
-		enableSorting: false,
-		meta: defineMeta(row => row.liaisons, {
-			displayName: 'Liaisons',
-			type: 'multiOption',
-			icon: ShieldUser,
-			objectIdentifierKey: 'userId',
-			transformOptionFn(data) {
-				const liaison = data as unknown as Center['liaisons'][number];
-				return {
-					value: liaison.userId,
-					label: liaison.user?.firstName + ' ' + liaison.user?.lastName
-				};
-			}
-		})
+		enableSorting: false
 	}),
 	columnHelper.accessor(row => row.guardians, {
 		id: 'guardians',
@@ -141,21 +100,7 @@ export const columns = [
 				</div>
 			);
 		},
-		filterFn: filterFn('multiOption'),
-		enableSorting: false,
-		meta: defineMeta(row => row.guardians, {
-			displayName: 'Guardians',
-			type: 'multiOption',
-			icon: ShieldUser,
-			objectIdentifierKey: 'userId',
-			transformOptionFn(data) {
-				const guardian = data as unknown as Center['guardians'][number];
-				return {
-					value: guardian.userId,
-					label: guardian.user?.firstName + ' ' + guardian.user?.lastName
-				};
-			}
-		})
+		enableSorting: false
 	}),
 	{
 		id: 'actions',

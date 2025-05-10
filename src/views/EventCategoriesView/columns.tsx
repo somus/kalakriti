@@ -9,9 +9,8 @@ import {
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import useZero from '@/hooks/useZero';
-import { defineMeta, filterFn } from '@/lib/filters';
 import { Row, createColumnHelper } from '@tanstack/react-table';
-import { Ellipsis, Heading1Icon, ShieldUser } from 'lucide-react';
+import { Ellipsis } from 'lucide-react';
 import { useState } from 'react';
 
 import { EventCategory } from './EventCategoriesView';
@@ -47,14 +46,7 @@ export const columns = [
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Name' />
 		),
-		cell: ({ row }) => <div>{row.getValue('name')}</div>,
-		meta: {
-			displayName: 'Name',
-			type: 'text',
-			icon: Heading1Icon
-		},
-		filterFn: filterFn('text'),
-		sortingFn: 'alphanumeric'
+		cell: ({ row }) => <div>{row.getValue('name')}</div>
 	}),
 	columnHelper.accessor(row => row.coordinator, {
 		id: 'coordinator',
@@ -71,19 +63,7 @@ export const columns = [
 				</Badge>
 			) : null;
 		},
-		filterFn: filterFn('option'),
-		enableSorting: false,
-		meta: defineMeta(row => row.coordinator, {
-			displayName: 'Coordinator',
-			type: 'option',
-			icon: ShieldUser,
-			transformOptionFn(data) {
-				return {
-					value: data.id,
-					label: data.firstName + ' ' + data.lastName
-				};
-			}
-		})
+		enableSorting: false
 	}),
 	{
 		id: 'actions',

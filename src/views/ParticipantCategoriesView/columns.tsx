@@ -9,9 +9,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ParticipantCategory } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
-import { filterFn } from '@/lib/filters';
 import { Row, createColumnHelper } from '@tanstack/react-table';
-import { Ellipsis, HashIcon, Heading1Icon } from 'lucide-react';
+import { Ellipsis } from 'lucide-react';
 import { useState } from 'react';
 
 import ParticipantCategoryFormDialog from './ParticipantCategoryFormDialog';
@@ -46,104 +45,49 @@ export const columns = [
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Name' />
 		),
-		cell: ({ row }) => <div>{row.getValue('name')}</div>,
-		meta: {
-			displayName: 'Name',
-			type: 'text',
-			icon: Heading1Icon
-		},
-		filterFn: filterFn('text'),
-		sortingFn: 'alphanumeric'
+		cell: ({ row }) => <div>{row.getValue('name')}</div>
 	}),
 	columnHelper.accessor(row => row.minAge, {
 		id: 'minAge',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Min Age' />
 		),
-		cell: ({ row }) => <div>{row.getValue('minAge')}</div>,
-		meta: {
-			displayName: 'Min Age',
-			type: 'number',
-			icon: HashIcon,
-			max: 30
-		},
-		filterFn: filterFn('number'),
-		sortingFn: 'alphanumeric'
+		cell: ({ row }) => <div>{row.getValue('minAge')}</div>
 	}),
 	columnHelper.accessor(row => row.maxAge, {
 		id: 'maxAge',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Max Age' />
 		),
-		cell: ({ row }) => <div>{row.getValue('maxAge')}</div>,
-		meta: {
-			displayName: 'Max Age',
-			type: 'number',
-			icon: HashIcon,
-			max: 30
-		},
-		filterFn: filterFn('number'),
-		sortingFn: 'alphanumeric'
+		cell: ({ row }) => <div>{row.getValue('maxAge')}</div>
 	}),
 	columnHelper.accessor(row => row.maxBoys, {
 		id: 'maxBoys',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Max Boys Count' />
 		),
-		cell: ({ row }) => <div>{row.getValue('maxBoys')}</div>,
-		meta: {
-			displayName: 'Max Boys Count',
-			type: 'number',
-			icon: HashIcon,
-			max: 50
-		},
-		filterFn: filterFn('number'),
-		sortingFn: 'alphanumeric'
+		cell: ({ row }) => <div>{row.getValue('maxBoys')}</div>
 	}),
 	columnHelper.accessor(row => row.maxGirls, {
 		id: 'maxGirls',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Max Girls Count' />
 		),
-		cell: ({ row }) => <div>{row.getValue('maxGirls')}</div>,
-		meta: {
-			displayName: 'Max Girls Count',
-			type: 'number',
-			icon: HashIcon,
-			max: 50
-		},
-		filterFn: filterFn('number'),
-		sortingFn: 'alphanumeric'
+		cell: ({ row }) => <div>{row.getValue('maxGirls')}</div>
 	}),
 	columnHelper.accessor(row => row.totalEventsAllowed, {
 		id: 'totalEventsAllowed',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Total Events Allowed' />
 		),
-		cell: ({ row }) => <div>{row.getValue('totalEventsAllowed')}</div>,
-		meta: {
-			displayName: 'Total Events Allowed',
-			type: 'number',
-			icon: HashIcon,
-			max: 10
-		},
-		filterFn: filterFn('number'),
-		sortingFn: 'alphanumeric'
+		cell: ({ row }) => <div>{row.getValue('totalEventsAllowed')}</div>
 	}),
 	columnHelper.accessor(row => row.maxEventsPerCategory, {
 		id: 'maxEventsPerCategory',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Max Events Per Category' />
 		),
-		cell: ({ row }) => <div>{row.getValue('maxEventsPerCategory')}</div>,
-		meta: {
-			displayName: 'Max Events Per Category',
-			type: 'number',
-			icon: HashIcon,
-			max: 10
-		},
-		filterFn: filterFn('number'),
-		sortingFn: 'alphanumeric'
+		cell: ({ row }) => <div>{row.getValue('maxEventsPerCategory')}</div>
 	}),
 	{
 		id: 'actions',

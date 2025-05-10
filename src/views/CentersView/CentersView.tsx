@@ -1,12 +1,12 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Button } from '@/components/ui/button';
-import useTable from '@/hooks/useTable';
 import useZero from '@/hooks/useZero';
 import { Center } from '@/layout/CenterLayout';
 import { useQuery } from '@rocicorp/zero/react';
 
 import CenterFormDialog from './CenterFormDialog';
 import { columns } from './columns';
+import { columnsConfig } from './filters';
 
 export default function CentersView() {
 	// eslint-disable-next-line react-hooks/react-compiler
@@ -17,7 +17,6 @@ export default function CentersView() {
 			.related('guardians', q => q.related('user'))
 			.related('liaisons', q => q.related('user'))
 	);
-	const table = useTable<Center>({ data: centers as Center[], columns });
 
 	if (status.type !== 'complete') {
 		return null;
@@ -25,7 +24,9 @@ export default function CentersView() {
 
 	return (
 		<DataTableWrapper
-			table={table}
+			data={centers as Center[]}
+			columns={columns}
+			columnsConfig={columnsConfig}
 			additionalActions={[
 				<CenterFormDialog key='create-center'>
 					<Button className='h-7'>Create Center</Button>
