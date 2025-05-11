@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { ComponentProps } from 'react';
+import { Matcher } from 'react-day-picker';
 import { Control, FieldValues, Path, useFormContext } from 'react-hook-form';
 
 interface DateFieldProps<T extends FieldValues> {
@@ -23,6 +24,7 @@ interface DateFieldProps<T extends FieldValues> {
 	label: string;
 	control?: Control<T>;
 	disabled?: boolean;
+	disabledDates?: Matcher | Matcher[];
 }
 
 export function DateField<T extends FieldValues>({
@@ -30,6 +32,7 @@ export function DateField<T extends FieldValues>({
 	label,
 	control,
 	disabled = false,
+	disabledDates,
 	...props
 }: DateFieldProps<T> &
 	Omit<ComponentProps<typeof Calendar>, 'name' | 'disabled'>) {
@@ -68,6 +71,8 @@ export function DateField<T extends FieldValues>({
 										selected={date}
 										onSelect={field.onChange}
 										autoFocus
+										disabled={disabledDates}
+										defaultMonth={props.defaultMonth ?? date}
 										{...props}
 									/>
 								</PopoverContent>

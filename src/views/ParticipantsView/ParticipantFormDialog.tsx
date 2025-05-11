@@ -22,7 +22,7 @@ import { CenterOutletContext } from '@/layout/CenterLayout';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createId } from '@paralleldrive/cuid2';
 import { useQuery } from '@rocicorp/zero/react';
-import { differenceInYears } from 'date-fns';
+import { differenceInYears, subYears } from 'date-fns';
 import { LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -92,8 +92,22 @@ export default function ParticipantFormModal({
 		};
 	};
 
+	const today = new Date();
+
+	// Find min and max ages across all categories
+	const oldestAge = Math.max(...participantCategories.map(cat => cat.maxAge));
+	const youngestAge = Math.min(...participantCategories.map(cat => cat.minAge));
+
+	// Set the min and max dates based on the ages
+	const minDate = subYears(today, oldestAge);
+	const maxDate = subYears(today, youngestAge);
+
 	const form = useForm<ParticipantFormData>({
-		resolver: zodResolver(participantSchema),
+		resolver: zodResolver(
+			participantSchema.extend({
+				dob: z.date().min(minDate).max(maxDate)
+			})
+		),
 		defaultValues: getParticipantDefaultValues(participant)
 	});
 
@@ -122,7 +136,6 @@ export default function ParticipantFormModal({
 					participantCategoryId: participantCategory.id
 				});
 			} else {
-				console.log(participant, data);
 				// Update participant
 				await zero.mutate.participants.update({
 					id: participant.id,
@@ -169,6 +182,8 @@ export default function ParticipantFormModal({
 							name='dob'
 							label='Date of Birth'
 							disabled={!!participant}
+							disabledDates={{ before: minDate, after: maxDate }}
+							defaultMonth={participant ? undefined : maxDate}
 						/>
 						<SelectField
 							name='gender'
