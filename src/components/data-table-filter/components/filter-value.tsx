@@ -510,7 +510,7 @@ export function FilterValueOptionController<TData>({
 		<Command loop>
 			<CommandInput autoFocus placeholder={t('search', locale)} />
 			<CommandEmpty>{t('noresults', locale)}</CommandEmpty>
-			<CommandList className='max-h-fit'>
+			<CommandList>
 				<CommandGroup className={cn(selectedOptions.length === 0 && 'hidden')}>
 					{selectedOptions.map(option => (
 						<OptionItem
