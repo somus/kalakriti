@@ -22,7 +22,7 @@ export interface CenterOutletContext {
 export default function CenterLayout() {
 	const params = useParams();
 	const zero = useZero();
-	const centerId = z.string().cuid2().parse(params.id);
+	const centerId = z.string().cuid2().parse(params.centerId);
 	const [center, status] = useQuery(centerQuery(zero, centerId));
 
 	if (!centerId) {

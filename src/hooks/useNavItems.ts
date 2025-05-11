@@ -1,15 +1,9 @@
 import { NavItem } from '@/components/nav-main';
-import { Center } from '@/db/schema.zero';
+import { Center, Event } from '@/db/schema.zero';
 import { useApp } from '@/hooks/useApp';
 import useZero from '@/hooks/useZero';
 import { useQuery } from '@rocicorp/zero/react';
-import {
-	HomeIcon,
-	SchoolIcon,
-	Settings2,
-	TicketsIcon,
-	UsersIcon
-} from 'lucide-react';
+import { HomeIcon, SchoolIcon, TicketsIcon, UsersIcon } from 'lucide-react';
 
 const homeNavItem: NavItem = {
 	title: 'Dashboard',
@@ -17,22 +11,12 @@ const homeNavItem: NavItem = {
 	icon: HomeIcon
 };
 
-const getAdminNavItems = (centers: Center[]): NavItem[] => [
+const getAdminNavItems = (centers: Center[], events: Event[]): NavItem[] => [
 	homeNavItem,
 	{
 		title: 'Users',
 		url: '/users',
 		icon: UsersIcon
-		// items: [
-		// 	{
-		// 		title: 'Create',
-		// 		url: '/users/create'
-		// 	},
-		// 	{
-		// 		title: 'Settings',
-		// 		url: '#'
-		// 	}
-		// ]
 	},
 	{
 		title: 'Events',
@@ -42,7 +26,12 @@ const getAdminNavItems = (centers: Center[]): NavItem[] => [
 			{
 				title: 'Categories',
 				url: '/events/categories'
-			}
+			},
+			...events.map(event => ({
+				title: event.name,
+				url: `/events/${event.id}`,
+				isHidden: true
+			}))
 		]
 	},
 	{
@@ -65,16 +54,16 @@ const getAdminNavItems = (centers: Center[]): NavItem[] => [
 				url: '/participants/categories'
 			}
 		]
-	},
-	{
-		title: 'Settings',
-		url: '/settings',
-		icon: Settings2,
-		items: [] as { title: string; url: string }[]
 	}
+	// {
+	// 	title: 'Settings',
+	// 	url: '/settings',
+	// 	icon: Settings2,
+	// 	items: [] as { title: string; url: string }[]
+	// }
 ];
 
-const getGuardianNavItems = (centers: Center[]): NavItem[] => [
+const getGuardianNavItems = (centers: Center[], events: Event[]): NavItem[] => [
 	homeNavItem,
 	...centers.flatMap(center => [
 		{
@@ -85,7 +74,11 @@ const getGuardianNavItems = (centers: Center[]): NavItem[] => [
 		{
 			title: 'Events',
 			url: `/centers/${center.id}/events`,
-			icon: TicketsIcon
+			icon: TicketsIcon,
+			items: events.map(event => ({
+				title: event.name,
+				url: `/centers/${center.id}/events/${event.id}`
+			}))
 		}
 	])
 ];
@@ -94,17 +87,18 @@ export const useNavItems = () => {
 	const { user } = useApp();
 	const z = useZero();
 	const [centers] = useQuery(z.query.centers);
+	const [events] = useQuery(z.query.events);
 
 	if (!user) {
 		return [];
 	}
 
 	if (user.role === 'admin') {
-		return getAdminNavItems(centers);
+		return getAdminNavItems(centers, events);
 	}
 
 	if (user.role === 'guardian') {
-		return getGuardianNavItems(centers);
+		return getGuardianNavItems(centers, events);
 	}
 
 	return [homeNavItem];

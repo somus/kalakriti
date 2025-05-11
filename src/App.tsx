@@ -19,7 +19,11 @@ const CenterParticipantsView = lazy(
 const CenterEventsView = lazy(
 	() => import('@/views/CenterEventsView/CenterEventsView')
 );
+const CenterEventView = lazy(
+	() => import('@/views/CenterEventView/CenterEventView')
+);
 const EventsView = lazy(() => import('@/views/EventsView/EventsView'));
+const EventView = lazy(() => import('@/views/EventView/EventView'));
 const EventCategoriesView = lazy(
 	() => import('@/views/EventCategoriesView/EventCategoriesView')
 );
@@ -81,6 +85,14 @@ function App() {
 									}
 								/>
 								<Route
+									path=':eventId'
+									element={
+										<Suspense fallback={<LoadingScreen />}>
+											<EventView />
+										</Suspense>
+									}
+								/>
+								<Route
 									path='categories'
 									element={
 										<Suspense fallback={<LoadingScreen />}>
@@ -120,7 +132,7 @@ function App() {
 								}
 							/>
 							{/* Center Routes */}
-							<Route path=':id' element={<CenterLayout />}>
+							<Route path=':centerId' element={<CenterLayout />}>
 								<Route
 									index
 									element={
@@ -138,14 +150,24 @@ function App() {
 									}
 								/>
 
-								<Route
-									path='events'
-									element={
-										<Suspense fallback={<LoadingScreen />}>
-											<CenterEventsView />
-										</Suspense>
-									}
-								/>
+								<Route path='events'>
+									<Route
+										index
+										element={
+											<Suspense fallback={<LoadingScreen />}>
+												<CenterEventsView />
+											</Suspense>
+										}
+									/>
+									<Route
+										path=':eventId'
+										element={
+											<Suspense fallback={<LoadingScreen />}>
+												<CenterEventView />
+											</Suspense>
+										}
+									/>
+								</Route>
 							</Route>
 						</Route>
 					</Route>

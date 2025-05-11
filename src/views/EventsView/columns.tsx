@@ -1,7 +1,6 @@
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -11,8 +10,9 @@ import {
 import useZero from '@/hooks/useZero';
 import { Row, createColumnHelper } from '@tanstack/react-table';
 import { format } from 'date-fns';
-import { Ellipsis } from 'lucide-react';
+import { Ellipsis, LinkIcon } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router';
 
 import EventFormDialog from './EventFormDialog';
 import { Event } from './EventsView';
@@ -22,22 +22,18 @@ const columnHelper = createColumnHelper<Event>();
 export const columns = [
 	columnHelper.display({
 		id: 'select',
-		header: ({ table }) => (
-			<Checkbox
-				checked={
-					table.getIsAllPageRowsSelected() ||
-					(table.getIsSomePageRowsSelected() && 'indeterminate')
-				}
-				onCheckedChange={value => table.toggleAllRowsSelected(!!value)}
-				aria-label='Select all'
-			/>
-		),
+		header: () => null,
 		cell: ({ row }) => (
-			<Checkbox
-				checked={row.getIsSelected()}
-				onCheckedChange={value => row.toggleSelected(!!value)}
-				aria-label='Select row'
-			/>
+			<Button
+				aria-label='View event'
+				variant='ghost'
+				className='flex size-8 p-0 data-[state=open]:bg-muted'
+				asChild
+			>
+				<Link to={`/events/${row.original.id}`}>
+					<LinkIcon className='size-4' />
+				</Link>
+			</Button>
 		),
 		enableSorting: false,
 		enableHiding: false

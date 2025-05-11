@@ -47,14 +47,20 @@ export const columns = [
 			<DataTableColumnHeader column={column} title='Name' />
 		),
 		cell: ({ row }) => <div>{row.getValue('name')}</div>,
-		sortingFn: 'alphanumeric'
+		sortingFn: 'alphanumeric',
+		meta: {
+			displayName: 'Name'
+		}
 	}),
 	columnHelper.accessor(row => row.age, {
 		id: 'age',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Age' />
 		),
-		cell: ({ row }) => <div>{row.getValue('age')}</div>
+		cell: ({ row }) => <div>{row.getValue('age')}</div>,
+		meta: {
+			displayName: 'Age'
+		}
 	}),
 	columnHelper.accessor(row => row.gender, {
 		id: 'gender',
@@ -63,7 +69,10 @@ export const columns = [
 		),
 		cell: ({ row }) => (
 			<div className='capitalize'>{row.getValue('gender')}</div>
-		)
+		),
+		meta: {
+			displayName: 'Gender'
+		}
 	}),
 	columnHelper.accessor(row => row.participantCategory, {
 		id: 'participantCategory',
@@ -78,7 +87,10 @@ export const columns = [
 				<Badge variant='outline'>{participantCategory.name}</Badge>
 			) : null;
 		},
-		enableSorting: false
+		enableSorting: false,
+		meta: {
+			displayName: 'Participant Category'
+		}
 	}),
 	columnHelper.accessor(row => row.center, {
 		id: 'center',
@@ -89,7 +101,10 @@ export const columns = [
 			const center = row.getValue<Participant['center'] | undefined>('center');
 			return center ? <Badge variant='outline'>{center.name}</Badge> : null;
 		},
-		enableSorting: false
+		enableSorting: false,
+		meta: {
+			displayName: 'Center'
+		}
 	}),
 	{
 		id: 'actions',
