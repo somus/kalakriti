@@ -103,6 +103,16 @@ export const columns = [
 			displayName: 'Coordinator'
 		}
 	}),
+	columnHelper.accessor(row => row.participants.length, {
+		id: 'participants',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Participants' />
+		),
+		cell: ({ row }) => <div>{row.getValue('participants')}</div>,
+		meta: {
+			displayName: 'Participants'
+		}
+	}),
 	{
 		id: 'actions',
 		cell: ({ row }: { row: Row<Event> }) => {

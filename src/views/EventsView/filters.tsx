@@ -2,6 +2,7 @@ import { createColumnConfigHelper } from '@/components/data-table-filter/core/fi
 import { format } from 'date-fns';
 import {
 	ComponentIcon,
+	HashIcon,
 	Heading1Icon,
 	ShieldUserIcon,
 	TimerIcon
@@ -73,5 +74,12 @@ export const columnsConfig = [
 			value: c.id,
 			label: c.firstName + ' ' + c.lastName
 		}))
+		.build(),
+	dtf
+		.number()
+		.id('participants')
+		.accessor(row => row.participants)
+		.displayName('Participants')
+		.icon(HashIcon)
 		.build()
 ] as const;

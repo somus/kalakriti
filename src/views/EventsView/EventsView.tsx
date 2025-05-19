@@ -10,7 +10,10 @@ import { columns } from './columns';
 import { columnsConfig } from './filters';
 
 function eventsQuery(z: Zero<Schema>) {
-	return z.query.events.related('coordinator').related('category');
+	return z.query.events
+		.related('coordinator')
+		.related('category')
+		.related('participants');
 }
 
 export type Event = Row<ReturnType<typeof eventsQuery>>;

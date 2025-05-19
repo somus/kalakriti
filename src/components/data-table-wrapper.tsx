@@ -15,6 +15,7 @@ import useTableState from '@/hooks/useTableState';
 import {
 	type ColumnDef,
 	RowData,
+	type Table as TanstackTable,
 	flexRender,
 	getCoreRowModel,
 	getFacetedMinMaxValues,
@@ -42,7 +43,8 @@ export default function DataTableWrapper<TData>({
 	data,
 	columnsConfig,
 	columns,
-	additionalActions
+	additionalActions,
+	children
 }: {
 	data: TData[];
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -50,6 +52,7 @@ export default function DataTableWrapper<TData>({
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	columns: ColumnDef<TData, any>[];
 	additionalActions?: React.ReactNode[];
+	children?: (table: TanstackTable<TData>) => React.ReactNode;
 }) {
 	'use no memo';
 
@@ -122,73 +125,76 @@ export default function DataTableWrapper<TData>({
 	});
 
 	return (
-		<div className='w-full col-span-2 px-4'>
-			<div className='flex items-center py-4 gap-2 flex-wrap'>
-				<DataTableFilter
-					filters={filters}
-					columns={filterColumns}
-					actions={actions}
-					strategy={strategy}
-				/>
-				<DataTableViewOptions table={table} />
-				{additionalActions}
-			</div>
-			<div className='rounded-md border bg-white dark:bg-inherit'>
-				<Table>
-					<TableHeader>
-						{table.getHeaderGroups().map(headerGroup => (
-							<TableRow key={headerGroup.id}>
-								{headerGroup.headers.map(header => {
-									return (
-										<TableHead
-											key={header.id}
-											onClick={header.column.getToggleSortingHandler()}
-										>
-											{header.isPlaceholder
-												? null
-												: flexRender(
-														header.column.columnDef.header,
-														header.getContext()
-													)}
-										</TableHead>
-									);
-								})}
-							</TableRow>
-						))}
-					</TableHeader>
-					<TableBody>
-						{table.getRowModel().rows?.length ? (
-							table.getRowModel().rows.map(row => (
-								<TableRow
-									key={row.id}
-									data-state={row.getIsSelected() && 'selected'}
-								>
-									{row.getVisibleCells().map(cell => (
-										<TableCell key={cell.id}>
-											{flexRender(
-												cell.column.columnDef.cell,
-												cell.getContext()
-											)}
-										</TableCell>
-									))}
+		<>
+			<div className='w-full col-span-2 px-4'>
+				<div className='flex items-center py-4 gap-2 flex-wrap'>
+					<DataTableFilter
+						filters={filters}
+						columns={filterColumns}
+						actions={actions}
+						strategy={strategy}
+					/>
+					<DataTableViewOptions table={table} />
+					{additionalActions}
+				</div>
+				<div className='rounded-md border bg-white dark:bg-inherit'>
+					<Table>
+						<TableHeader>
+							{table.getHeaderGroups().map(headerGroup => (
+								<TableRow key={headerGroup.id}>
+									{headerGroup.headers.map(header => {
+										return (
+											<TableHead
+												key={header.id}
+												onClick={header.column.getToggleSortingHandler()}
+											>
+												{header.isPlaceholder
+													? null
+													: flexRender(
+															header.column.columnDef.header,
+															header.getContext()
+														)}
+											</TableHead>
+										);
+									})}
 								</TableRow>
-							))
-						) : (
-							<TableRow>
-								<TableCell
-									colSpan={table.getAllColumns().length}
-									className='h-24 text-center'
-								>
-									No results.
-								</TableCell>
-							</TableRow>
-						)}
-					</TableBody>
-				</Table>
+							))}
+						</TableHeader>
+						<TableBody>
+							{table.getRowModel().rows?.length ? (
+								table.getRowModel().rows.map(row => (
+									<TableRow
+										key={row.id}
+										data-state={row.getIsSelected() && 'selected'}
+									>
+										{row.getVisibleCells().map(cell => (
+											<TableCell key={cell.id}>
+												{flexRender(
+													cell.column.columnDef.cell,
+													cell.getContext()
+												)}
+											</TableCell>
+										))}
+									</TableRow>
+								))
+							) : (
+								<TableRow>
+									<TableCell
+										colSpan={table.getAllColumns().length}
+										className='h-24 text-center'
+									>
+										No results.
+									</TableCell>
+								</TableRow>
+							)}
+						</TableBody>
+					</Table>
+				</div>
+				<div className='flex flex-col gap-2.5'>
+					<DataTablePagination table={table} />
+				</div>
 			</div>
-			<div className='flex flex-col gap-2.5'>
-				<DataTablePagination table={table} />
-			</div>
-		</div>
+			{children?.(table)}
+		</>
 	);
 }

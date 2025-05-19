@@ -5,6 +5,7 @@ import {
 	SelectOption
 } from '@/components/form';
 import { DateField } from '@/components/form/DateField';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
 	Modal,
@@ -23,7 +24,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { createId } from '@paralleldrive/cuid2';
 import { useQuery } from '@rocicorp/zero/react';
 import { differenceInYears, subYears } from 'date-fns';
-import { LoaderCircle } from 'lucide-react';
+import { AlertCircle, LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useOutletContext } from 'react-router';
@@ -58,6 +59,7 @@ export default function ParticipantFormModal({
 	const { user } = useApp();
 	const [centers] = useQuery(zero.query.centers);
 	const [participantCategories] = useQuery(zero.query.participantCategories);
+	const [participants] = useQuery(zero.query.participants);
 
 	if (!children && !(open !== undefined && onOpenChange)) {
 		throw new Error(
@@ -118,10 +120,25 @@ export default function ParticipantFormModal({
 			if (!participant) {
 				const age = differenceInYears(new Date(), data.dob);
 				const participantCategory = participantCategories.find(
-					category => category.minAge < age && category.maxAge > age
+					category => category.minAge <= age && category.maxAge >= age
 				);
 				if (!participantCategory) {
 					throw new Error('Participant category not found');
+				}
+				const exisitngParticipantsInCategory = participants.filter(
+					p =>
+						p.gender === data.gender &&
+						p.participantCategoryId === participantCategory.id
+				).length;
+				if (
+					exisitngParticipantsInCategory >=
+					(data.gender === 'male'
+						? participantCategory.maxBoys
+						: participantCategory.maxGirls)
+				) {
+					throw new Error(
+						`Maximum number of ${data.gender} participants added for ${participantCategory.name} category`
+					);
 				}
 
 				// Create the participant in db
@@ -150,10 +167,12 @@ export default function ParticipantFormModal({
 			} else {
 				setIsModalOpen(false);
 			}
+			form.reset();
 		} catch (e) {
-			console.log(e);
+			console.error(e);
 			setIsSubmitting(false);
-			form.setError('root.serverError', {
+			form.setError('root', {
+				type: e instanceof Error ? 'submitError' : 'unknownError',
 				message: e instanceof Error ? e.message : 'Something went wrong'
 			});
 		}
@@ -177,6 +196,15 @@ export default function ParticipantFormModal({
 					onSubmit={form.handleSubmit(handleFormSubmit)}
 				>
 					<ModalBody className='space-y-4'>
+						{form.formState.errors.root?.type === 'submitError' && (
+							<Alert variant='destructive'>
+								<AlertCircle className='h-4 w-4' />
+								<AlertTitle>Submit Error</AlertTitle>
+								<AlertDescription>
+									{form.formState.errors.root?.message}
+								</AlertDescription>
+							</Alert>
+						)}
 						<InputField name='name' label='Name' />
 						<DateField
 							name='dob'
