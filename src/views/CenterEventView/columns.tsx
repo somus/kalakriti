@@ -5,10 +5,9 @@ import useZero from '@/hooks/useZero';
 import { Row, createColumnHelper } from '@tanstack/react-table';
 import { CheckIcon, TrashIcon, XIcon } from 'lucide-react';
 
-// import ParticipantFormDialog from './ParticipantFormDialog';
-import { EventParticipant } from './CenterEventView';
+import { SubEventParticipant } from './CenterEventView';
 
-const columnHelper = createColumnHelper<EventParticipant>();
+const columnHelper = createColumnHelper<SubEventParticipant>();
 
 export const columns = [
 	columnHelper.display({
@@ -86,7 +85,7 @@ export const columns = [
 	}),
 	{
 		id: 'actions',
-		cell: ({ row }: { row: Row<EventParticipant> }) => {
+		cell: ({ row }: { row: Row<SubEventParticipant> }) => {
 			return <Actions participantId={row.original.id} />;
 		},
 		size: 32
@@ -103,7 +102,7 @@ const Actions = ({ participantId }: { participantId: string }) => {
 			aria-label='Delete participant from event'
 			className='flex size-8 p-0 text-destructive hover:bg-destructive/10 hover:text-destructive *:[svg]:!text-destructive'
 			onClick={() => {
-				z.mutate.eventParticipants
+				z.mutate.subEventParticipants
 					.delete({
 						id: participantId
 					})

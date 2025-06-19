@@ -66,9 +66,16 @@ export default drizzleZeroConfig(drizzleSchema, {
 			age: true,
 			gender: true
 		},
-		eventParticipants: {
+		subEvents: {
 			id: true,
 			eventId: true,
+			startTime: true,
+			endTime: true,
+			participantCategoryId: true
+		},
+		subEventParticipants: {
+			id: true,
+			subEventId: true,
 			participantId: true,
 			attended: true
 		}

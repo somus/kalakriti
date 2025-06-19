@@ -4,14 +4,24 @@ import useZero from '@/hooks/useZero';
 import { Row, Zero } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 
+import { SubEvent } from '../CenterEventView/CenterEventView';
 import { columns } from './columns';
 import { columnsConfig } from './filters';
 
 function centerEventsQuery(z: Zero<Schema>) {
-	return z.query.events.related('category').related('participants');
+	return z.query.events
+		.related('category')
+		.related('subEvents', q =>
+			q.related('participants').related('participantCategory')
+		);
 }
 
 export type CenterEvent = Row<ReturnType<typeof centerEventsQuery>>;
+export interface CenterEventRow {
+	id: string;
+	event: CenterEvent;
+	subEvent: SubEvent;
+}
 
 export default function CenterEventsView() {
 	// eslint-disable-next-line react-hooks/react-compiler
@@ -24,9 +34,17 @@ export default function CenterEventsView() {
 		return null;
 	}
 
+	const eventRows = events.flatMap(event =>
+		event.subEvents.map(subEvent => ({
+			id: subEvent.id,
+			event,
+			subEvent
+		}))
+	);
+
 	return (
 		<DataTableWrapper
-			data={events as CenterEvent[]}
+			data={eventRows as CenterEventRow[]}
 			columns={columns}
 			columnsConfig={columnsConfig}
 		/>

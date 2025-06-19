@@ -1,4 +1,5 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
+import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Schema } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
@@ -7,20 +8,18 @@ import { useQuery } from '@rocicorp/zero/react';
 import { Navigate, useParams } from 'react-router';
 import { z } from 'zod';
 
-import { Participant } from '../ParticipantsView/ParticipantsView';
-import { columns } from '../ParticipantsView/columns';
-import { columnsConfig } from '../ParticipantsView/filters';
+import { SubEventParticipant } from '../CenterEventView/CenterEventView';
+import { columns } from '../CenterEventView/columns';
+import { columnsConfig } from '../CenterEventView/filters';
 
 function eventQuery(z: Zero<Schema>, eventId: string) {
-	return z.query.events
+	return z.query.subEvents
 		.where('id', eventId)
 		.related('participants', q =>
-			q.related('participant', q =>
-				q.related('participantCategory').related('center')
-			)
+			q.related('participant', q => q.related('center'))
 		)
-		.related('coordinator')
-		.related('category')
+		.related('participantCategory')
+		.related('event', q => q.related('coordinator').related('category'))
 		.one();
 }
 
@@ -33,24 +32,29 @@ export default function EventView() {
 	const params = useParams();
 	const zero = useZero();
 	const eventId = z.string().cuid2().parse(params.eventId);
-	const [event, status] = useQuery(eventQuery(zero, eventId));
+	const [subEvent, status] = useQuery(eventQuery(zero, eventId));
 
 	if (!eventId) {
 		return <Navigate to='/' />;
 	}
 
-	if (status.type !== 'complete' || !event) {
+	if (status.type !== 'complete' || !subEvent) {
 		return null;
 	}
 
 	return (
 		<>
 			<div className='px-4'>
-				<h3 className='text-2xl font-semibold tracking-tight'>{event.name}</h3>
+				<div className='flex gap-2'>
+					<h3 className='text-2xl font-semibold tracking-tight'>
+						{subEvent.event?.name} - {subEvent.participantCategory?.name}
+					</h3>
+					<Badge variant='outline'>{subEvent.event?.category?.name}</Badge>
+				</div>
 				<Separator className='my-4' />
 			</div>
 			<DataTableWrapper
-				data={event.participants.map(p => p.participant) as Participant[]}
+				data={subEvent.participants as SubEventParticipant[]}
 				columns={columns}
 				columnsConfig={columnsConfig}
 			/>

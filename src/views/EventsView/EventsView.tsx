@@ -5,6 +5,7 @@ import useZero from '@/hooks/useZero';
 import { Row, Zero } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 
+import { SubEvent } from '../CenterEventView/CenterEventView';
 import EventFormDialog from './EventFormDialog';
 import { columns } from './columns';
 import { columnsConfig } from './filters';
@@ -13,10 +14,17 @@ function eventsQuery(z: Zero<Schema>) {
 	return z.query.events
 		.related('coordinator')
 		.related('category')
-		.related('participants');
+		.related('subEvents', q =>
+			q.related('participants').related('participantCategory')
+		);
 }
 
 export type Event = Row<ReturnType<typeof eventsQuery>>;
+export interface EventRow {
+	id: string;
+	event: Event;
+	subEvent: SubEvent;
+}
 
 export default function EventsView() {
 	// eslint-disable-next-line react-hooks/react-compiler
@@ -29,9 +37,17 @@ export default function EventsView() {
 		return null;
 	}
 
+	const eventRows = events.flatMap(event =>
+		event.subEvents.map(subEvent => ({
+			id: subEvent.id,
+			event,
+			subEvent
+		}))
+	);
+
 	return (
 		<DataTableWrapper
-			data={events as Event[]}
+			data={eventRows as EventRow[]}
 			columns={columns}
 			columnsConfig={columnsConfig}
 			additionalActions={[

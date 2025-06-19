@@ -8,7 +8,7 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '@/components/ui/dialog';
-import { Event, Participant, ParticipantCategory } from '@/db/schema.zero';
+import { Participant } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
 import LoadingScreen from '@/views/general/LoadingScreen';
 import { createId } from '@paralleldrive/cuid2';
@@ -16,35 +16,46 @@ import { useQuery } from '@rocicorp/zero/react';
 import { Table } from '@tanstack/react-table';
 import { useCallback, useState } from 'react';
 
+import { SubEvent } from '../CenterEventView';
 import { columns } from './columns';
 import { columnsConfig } from './filters';
 
 export default function AddEventParticipantsDialog({
 	children,
-	event,
-	participantCategory,
+	subEvent,
+	eventCategoryId,
 	participantsToBeFiltered = []
 }: {
 	children: React.ReactNode;
-	event: Event;
-	participantCategory: ParticipantCategory;
+	subEvent: SubEvent;
+	eventCategoryId: string;
 	participantsToBeFiltered?: string[];
 }) {
-	'use no memo';
+	// 'use no memo';
 	const zero = useZero();
 	const [participants, status] = useQuery(
 		zero.query.participants
-			.where('participantCategoryId', '=', participantCategory.id)
+			.where(
+				'participantCategoryId',
+				'=',
+				subEvent.participantCategory?.id ?? ''
+			)
 			.where('id', 'NOT IN', participantsToBeFiltered)
-			.related('events', q => q.related('event'))
+			.related('subEvents', q => q.related('subEvent', q => q.related('event')))
 	);
-	const filteredParticipants = participants.filter(
-		participant =>
-			participant.events.length < participantCategory.totalEventsAllowed &&
-			participant.events.filter(
-				e => e.event?.eventCategoryId === event.eventCategoryId
-			).length < participantCategory.maxEventsPerCategory
-	);
+	const totalEventsAllowed = subEvent.participantCategory?.totalEventsAllowed;
+	const maxEventsPerCategory =
+		subEvent.participantCategory?.maxEventsPerCategory;
+	const filteredParticipants =
+		totalEventsAllowed && maxEventsPerCategory
+			? participants.filter(
+					participant =>
+						participant.subEvents.length < totalEventsAllowed &&
+						participant.subEvents.filter(
+							e => e.subEvent?.event?.eventCategoryId === eventCategoryId
+						).length < maxEventsPerCategory
+				)
+			: participants;
 
 	const [open, setOpen] = useState(false);
 	const handleAdd = useCallback(
@@ -55,10 +66,10 @@ export default function AddEventParticipantsDialog({
 			zero
 				.mutateBatch(async tx => {
 					for (const participantId of selectedRows) {
-						await tx.eventParticipants.insert({
+						await tx.subEventParticipants.insert({
 							id: createId(),
 							participantId,
-							eventId: event.id
+							subEventId: subEvent.id
 						});
 					}
 				})
@@ -68,7 +79,7 @@ export default function AddEventParticipantsDialog({
 
 			setOpen(false);
 		},
-		[zero, event.id]
+		[zero, subEvent.id]
 	);
 
 	if (status.type !== 'complete') {

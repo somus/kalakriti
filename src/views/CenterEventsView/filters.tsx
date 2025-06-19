@@ -8,22 +8,24 @@ import {
 } from 'lucide-react';
 
 // import { getTimeOptions } from './EventFormDialog';
-import { CenterEvent } from './CenterEventsView';
+import { CenterEventRow } from './CenterEventsView';
 
-const dtf = createColumnConfigHelper<CenterEvent>();
+const dtf = createColumnConfigHelper<CenterEventRow>();
 
 export const columnsConfig = [
 	dtf
 		.text()
 		.id('name')
-		.accessor(row => row.name)
+		.accessor(
+			row => `${row.event.name} - ${row.subEvent.participantCategory?.name}`
+		)
 		.displayName('Name')
 		.icon(Heading1Icon)
 		.build(),
 	dtf
 		.option()
 		.id('startTime')
-		.accessor(row => row.startTime)
+		.accessor(row => row.subEvent.startTime)
 		.displayName('Start Time')
 		.icon(TimerIcon)
 		// .options(getTimeOptions())
@@ -39,7 +41,7 @@ export const columnsConfig = [
 	dtf
 		.option()
 		.id('endTime')
-		.accessor(row => row.endTime)
+		.accessor(row => row.subEvent.endTime)
 		.displayName('End Time')
 		.icon(TimerIcon)
 		// .options(getTimeOptions())
@@ -55,18 +57,29 @@ export const columnsConfig = [
 	dtf
 		.option()
 		.id('category')
-		.accessor(row => row.category)
+		.accessor(row => row.event.category?.name)
 		.displayName('Category')
 		.icon(ComponentIcon)
 		.transformOptionFn(c => ({
-			value: c.id,
-			label: c.name
+			value: c,
+			label: c
+		}))
+		.build(),
+	dtf
+		.option()
+		.id('participantCategory')
+		.accessor(row => row.subEvent.participantCategory?.name)
+		.displayName('Participant Category')
+		.icon(ComponentIcon)
+		.transformOptionFn(c => ({
+			value: c,
+			label: c
 		}))
 		.build(),
 	dtf
 		.number()
 		.id('participants')
-		.accessor(row => row.participants.length)
+		.accessor(row => row.subEvent.participants.length)
 		.displayName('Participants')
 		.icon(ShieldUserIcon)
 		.max(200)

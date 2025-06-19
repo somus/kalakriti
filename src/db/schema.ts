@@ -17,7 +17,7 @@ export const users = pgTable('users', {
 	id: varchar('id').primaryKey(),
 	firstName: varchar('first_name').notNull(),
 	lastName: varchar('last_name'),
-	role: rolesEnum().default('volunteer'),
+	role: rolesEnum().default('volunteer').notNull(),
 	phoneNumber: varchar('phone_number'),
 	email: varchar('email').notNull()
 });
@@ -57,15 +57,14 @@ export const eventCategoriesRelations = relations(
 export const events = pgTable('events', {
 	id: varchar('id').primaryKey(),
 	name: varchar('name').notNull(),
-	startTime: timestamp('start_time').notNull(),
-	endTime: timestamp('end_time').notNull(),
-	coordinatorId: varchar('coordinator_id').references(() => users.id, {
-		onDelete: 'set null'
-	}),
-	eventCategoryId: varchar('event_category_id').references(
-		() => eventCategories.id,
-		{ onDelete: 'set null' }
-	)
+	coordinatorId: varchar('coordinator_id')
+		.references(() => users.id, {
+			onDelete: 'set null'
+		})
+		.notNull(),
+	eventCategoryId: varchar('event_category_id')
+		.references(() => eventCategories.id, { onDelete: 'set null' })
+		.notNull()
 });
 
 export const eventsRelations = relations(events, ({ one, many }) => ({
@@ -77,13 +76,41 @@ export const eventsRelations = relations(events, ({ one, many }) => ({
 		fields: [events.eventCategoryId],
 		references: [eventCategories.id]
 	}),
-	participants: many(eventParticipants)
+	subEvents: many(subEvents)
+}));
+
+export const subEvents = pgTable('sub_events', {
+	id: varchar('id').primaryKey(),
+	participantCategoryId: varchar('participant_category_id')
+		.references(() => participantCategories.id, {
+			onDelete: 'set null'
+		})
+		.notNull(),
+	startTime: timestamp('start_time').notNull(),
+	endTime: timestamp('end_time').notNull(),
+	eventId: varchar('event_id')
+		.references(() => events.id, {
+			onDelete: 'cascade'
+		})
+		.notNull()
+});
+
+export const subEventsRelations = relations(subEvents, ({ one, many }) => ({
+	participantCategory: one(participantCategories, {
+		fields: [subEvents.participantCategoryId],
+		references: [participantCategories.id]
+	}),
+	event: one(events, {
+		fields: [subEvents.eventId],
+		references: [events.id]
+	}),
+	participants: many(subEventParticipants)
 }));
 
 export const centers = pgTable('centers', {
 	id: varchar('id').primaryKey(),
 	name: varchar('name').notNull(),
-	phoneNumber: varchar('phone_number'),
+	phoneNumber: varchar('phone_number').notNull(),
 	email: varchar('email').notNull()
 });
 
@@ -158,7 +185,8 @@ export const participantCategories = pgTable('participant_categories', {
 export const participantCategoryRelations = relations(
 	participantCategories,
 	({ many }) => ({
-		participants: many(participants)
+		participants: many(participants),
+		subEvents: many(subEvents)
 	})
 );
 
@@ -191,15 +219,15 @@ export const participantsRelations = relations(
 			fields: [participants.participantCategoryId],
 			references: [participantCategories.id]
 		}),
-		events: many(eventParticipants)
+		subEvents: many(subEventParticipants)
 	})
 );
 
-export const eventParticipants = pgTable('event_participants', {
+export const subEventParticipants = pgTable('sub_event_participants', {
 	id: varchar('id').primaryKey(),
-	eventId: varchar('event_id')
+	subEventId: varchar('sub_event_id')
 		.notNull()
-		.references(() => events.id, {
+		.references(() => subEvents.id, {
 			onDelete: 'cascade'
 		}),
 	participantId: varchar('participant_id')
@@ -210,15 +238,15 @@ export const eventParticipants = pgTable('event_participants', {
 	attended: boolean('attended').notNull().default(false)
 });
 
-export const eventParticipantsRelations = relations(
-	eventParticipants,
+export const subEventParticipantsRelations = relations(
+	subEventParticipants,
 	({ one }) => ({
-		event: one(events, {
-			fields: [eventParticipants.eventId],
-			references: [events.id]
+		subEvent: one(subEvents, {
+			fields: [subEventParticipants.subEventId],
+			references: [subEvents.id]
 		}),
 		participant: one(participants, {
-			fields: [eventParticipants.participantId],
+			fields: [subEventParticipants.participantId],
 			references: [participants.id]
 		})
 	})

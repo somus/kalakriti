@@ -6,9 +6,9 @@ import { format } from 'date-fns';
 import { LinkIcon } from 'lucide-react';
 import { Link } from 'react-router';
 
-import { CenterEvent } from './CenterEventsView';
+import { CenterEventRow } from './CenterEventsView';
 
-const columnHelper = createColumnHelper<CenterEvent>();
+const columnHelper = createColumnHelper<CenterEventRow>();
 
 export const columns = [
 	columnHelper.display({
@@ -29,18 +29,21 @@ export const columns = [
 		enableSorting: false,
 		enableHiding: false
 	}),
-	columnHelper.accessor(row => row.name, {
-		id: 'name',
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Name' />
-		),
-		cell: ({ row }) => <div>{row.getValue('name')}</div>,
-		sortingFn: 'alphanumeric',
-		meta: {
-			displayName: 'Name'
+	columnHelper.accessor(
+		row => `${row.event.name} - ${row.subEvent.participantCategory?.name}`,
+		{
+			id: 'name',
+			header: ({ column }) => (
+				<DataTableColumnHeader column={column} title='Name' />
+			),
+			cell: ({ row }) => <div>{row.getValue('name')}</div>,
+			sortingFn: 'alphanumeric',
+			meta: {
+				displayName: 'Name'
+			}
 		}
-	}),
-	columnHelper.accessor(row => row.startTime, {
+	),
+	columnHelper.accessor(row => row.subEvent.startTime, {
 		id: 'startTime',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Start Time' />
@@ -50,7 +53,7 @@ export const columns = [
 			displayName: 'Start Time'
 		}
 	}),
-	columnHelper.accessor(row => row.endTime, {
+	columnHelper.accessor(row => row.subEvent.endTime, {
 		id: 'endTime',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='End Time' />
@@ -60,23 +63,37 @@ export const columns = [
 			displayName: 'End Time'
 		}
 	}),
-	columnHelper.accessor(row => row.category, {
+	columnHelper.accessor(row => row.event.category?.name, {
 		id: 'category',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Category' />
 		),
 		cell: ({ row }) => {
-			const category = row.getValue<CenterEvent['category'] | undefined>(
-				'category'
-			);
-			return category ? <Badge variant='outline'>{category.name}</Badge> : null;
+			const category = row.getValue<string | undefined>('category');
+			return category ? <Badge variant='outline'>{category}</Badge> : null;
 		},
-		enableSorting: false,
 		meta: {
 			displayName: 'Category'
 		}
 	}),
-	columnHelper.accessor(row => row.participants.length, {
+	columnHelper.accessor(row => row.subEvent.participantCategory?.name, {
+		id: 'participantCategory',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Participant Category' />
+		),
+		cell: ({ row }) => {
+			const participantCategory = row.getValue<string | undefined>(
+				'participantCategory'
+			);
+			return participantCategory ? (
+				<Badge variant='outline'>{participantCategory}</Badge>
+			) : null;
+		},
+		meta: {
+			displayName: 'Participant Category'
+		}
+	}),
+	columnHelper.accessor(row => row.subEvent.participants.length, {
 		id: 'participants',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Participants' />

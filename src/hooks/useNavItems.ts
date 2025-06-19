@@ -1,7 +1,8 @@
 import { NavItem } from '@/components/nav-main';
-import { Center, Event } from '@/db/schema.zero';
+import { Center, Schema } from '@/db/schema.zero';
 import { useApp } from '@/hooks/useApp';
 import useZero from '@/hooks/useZero';
+import { Row, Zero } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 import { HomeIcon, SchoolIcon, TicketsIcon, UsersIcon } from 'lucide-react';
 
@@ -75,19 +76,29 @@ const getGuardianNavItems = (centers: Center[], events: Event[]): NavItem[] => [
 			title: 'Events',
 			url: `/centers/${center.id}/events`,
 			icon: TicketsIcon,
-			items: events.map(event => ({
-				title: event.name,
-				url: `/centers/${center.id}/events/${event.id}`
-			}))
+			items: events.flatMap(event =>
+				event.subEvents.map(subEvent => ({
+					title: `${event.name} - ${subEvent.participantCategory?.name}`,
+					url: `/centers/${center.id}/events/${subEvent.id}`
+				}))
+			)
 		}
 	])
 ];
+
+function eventsQuery(z: Zero<Schema>) {
+	return z.query.events.related('subEvents', q =>
+		q.related('participantCategory')
+	);
+}
+
+export type Event = NonNullable<Row<ReturnType<typeof eventsQuery>>>;
 
 export const useNavItems = () => {
 	const { user } = useApp();
 	const z = useZero();
 	const [centers] = useQuery(z.query.centers);
-	const [events] = useQuery(z.query.events);
+	const [events] = useQuery(eventsQuery(z));
 
 	if (!user) {
 		return [];

@@ -23,12 +23,13 @@ interface AuthData {
 export type User = Row<typeof schema.tables.users>;
 export type EventCategory = Row<typeof schema.tables.eventCategories>;
 export type Event = Row<typeof schema.tables.events>;
+export type SubEvent = Row<typeof schema.tables.subEvents>;
 export type Center = Row<typeof schema.tables.centers>;
 export type ParticipantCategory = Row<
 	typeof schema.tables.participantCategories
 >;
 export type Participant = Row<typeof schema.tables.participants>;
-export type EventParticipant = Row<typeof schema.tables.eventParticipants>;
+export type EventParticipant = Row<typeof schema.tables.subEventParticipants>;
 
 export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 	const allowIfLoggedIn = (
@@ -92,7 +93,7 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 
 	const loggedInUserIsGuardianOfEventParticipantCenter = (
 		authData: AuthData,
-		eb: ExpressionBuilder<Schema, 'eventParticipants'>
+		eb: ExpressionBuilder<Schema, 'subEventParticipants'>
 	) =>
 		eb.and(
 			allowIfLoggedIn(authData, eb),
@@ -105,7 +106,7 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 
 	const loggedInUserIsLiaisonOfEventParticipantCenter = (
 		authData: AuthData,
-		eb: ExpressionBuilder<Schema, 'eventParticipants'>
+		eb: ExpressionBuilder<Schema, 'subEventParticipants'>
 	) =>
 		eb.and(
 			allowIfLoggedIn(authData, eb),
@@ -129,6 +130,17 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 			}
 		},
 		events: {
+			row: {
+				select: [allowIfLoggedIn],
+				insert: [loggedInUserIsAdmin],
+				update: {
+					preMutation: [loggedInUserIsAdmin],
+					postMutation: [loggedInUserIsAdmin]
+				},
+				delete: [loggedInUserIsAdmin]
+			}
+		},
+		subEvents: {
 			row: {
 				select: [allowIfLoggedIn],
 				insert: [loggedInUserIsAdmin],
@@ -229,7 +241,7 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 				]
 			}
 		},
-		eventParticipants: {
+		subEventParticipants: {
 			row: {
 				select: [
 					loggedInUserIsAdmin,

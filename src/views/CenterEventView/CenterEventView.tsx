@@ -1,7 +1,6 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Schema } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
 import { Row, Zero } from '@rocicorp/zero';
@@ -13,21 +12,24 @@ import AddEventParticipantsDialog from './AddEventParticipantsDialog/AddEventPar
 import { columns } from './columns';
 import { columnsConfig } from './filters';
 
-function centerEventQuery(z: Zero<Schema>, eventId: string) {
-	return z.query.events
+function subEventQuery(z: Zero<Schema>, eventId: string) {
+	return z.query.subEvents
 		.where('id', eventId)
-		.related('category')
 		.related('participants', q => q.related('participant'))
+		.related('participantCategory')
+		.related('event', q => q.related('category').related('subEvents'))
 		.one();
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function eventParticipantQuery(z: Zero<Schema>) {
-	return z.query.eventParticipants.related('participant');
+function subEventParticipantQuery(z: Zero<Schema>) {
+	return z.query.subEventParticipants.related('participant');
 }
 
-export type CenterEvent = Row<ReturnType<typeof centerEventQuery>>;
-export type EventParticipant = Row<ReturnType<typeof eventParticipantQuery>>;
+export type SubEvent = NonNullable<Row<ReturnType<typeof subEventQuery>>>;
+export type SubEventParticipant = Row<
+	ReturnType<typeof subEventParticipantQuery>
+>;
 
 export default function CenterEventsView() {
 	// eslint-disable-next-line react-hooks/react-compiler
@@ -36,82 +38,41 @@ export default function CenterEventsView() {
 	const params = useParams();
 	const zero = useZero();
 	const eventId = z.string().cuid2().parse(params.eventId);
-	const [event, status] = useQuery(centerEventQuery(zero, eventId));
-	const [participantCategories, participantCategoriesStatus] = useQuery(
-		zero.query.participantCategories
-	);
+	const [subEvent, status] = useQuery(subEventQuery(zero, eventId));
 
 	if (!eventId) {
 		return <Navigate to='/' />;
 	}
 
-	if (
-		status.type !== 'complete' ||
-		!event ||
-		participantCategoriesStatus.type !== 'complete' ||
-		!participantCategories
-	) {
+	if (status.type !== 'complete' || !subEvent) {
 		return null;
 	}
-
-	const defaultParticipantCategory = participantCategories[0]?.id;
 
 	return (
 		<div className='flex flex-col gap-4'>
 			<div className='flex gap-2'>
-				<h3>{event.name}</h3>
-				<Badge variant='outline'>{event.category?.name}</Badge>
+				<h3>
+					{subEvent.event?.name} - {subEvent.participantCategory?.name}
+				</h3>
+				<Badge variant='outline'>{subEvent.event?.category?.name}</Badge>
 			</div>
-			{participantCategories.length > 0 && (
-				<Tabs defaultValue={defaultParticipantCategory} className='gap-4'>
-					<TabsList className='grid w-full grid-cols-2 max-w-[700px]'>
-						{participantCategories.map(category => (
-							<TabsTrigger key={category.id} value={category.id}>
-								{category.name}{' '}
-								<Badge
-									variant='secondary'
-									className='flex h-5 w-5 items-center justify-center rounded-full bg-muted-foreground/30'
-								>
-									{
-										event.participants.filter(
-											participant =>
-												participant.participant?.participantCategoryId ===
-												category.id
-										).length
-									}
-								</Badge>
-							</TabsTrigger>
-						))}
-					</TabsList>
-					{participantCategories.map(category => {
-						const categoryParticipants = event.participants.filter(
-							participant =>
-								participant.participant?.participantCategoryId === category.id
-						);
-						return (
-							<TabsContent value={category.id} key={category.id}>
-								<DataTableWrapper
-									data={categoryParticipants}
-									columns={columns}
-									columnsConfig={columnsConfig}
-									additionalActions={[
-										<AddEventParticipantsDialog
-											key='add-event-participants'
-											event={event}
-											participantCategory={category}
-											participantsToBeFiltered={categoryParticipants.map(
-												participant => participant.participantId
-											)}
-										>
-											<Button className='h-7'>Add Participants</Button>
-										</AddEventParticipantsDialog>
-									]}
-								/>
-							</TabsContent>
-						);
-					})}
-				</Tabs>
-			)}
+			<DataTableWrapper
+				data={subEvent.participants as SubEventParticipant[]}
+				columns={columns}
+				columnsConfig={columnsConfig}
+				additionalActions={[
+					<AddEventParticipantsDialog
+						key='add-event-participants'
+						subEvent={subEvent}
+						eventCategoryId={subEvent.event?.eventCategoryId ?? ''}
+						participantsToBeFiltered={subEvent.participants.map(
+							participant => participant.participantId
+						)}
+					>
+						<Button className='h-7'>Add Participants</Button>
+					</AddEventParticipantsDialog>
+				]}
+			/>
 		</div>
 	);
 }

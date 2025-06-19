@@ -15,9 +15,9 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 
 import EventFormDialog from './EventFormDialog';
-import { Event } from './EventsView';
+import { Event, EventRow } from './EventsView';
 
-const columnHelper = createColumnHelper<Event>();
+const columnHelper = createColumnHelper<EventRow>();
 
 export const columns = [
 	columnHelper.display({
@@ -38,18 +38,21 @@ export const columns = [
 		enableSorting: false,
 		enableHiding: false
 	}),
-	columnHelper.accessor(row => row.name, {
-		id: 'name',
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Name' />
-		),
-		cell: ({ row }) => <div>{row.getValue('name')}</div>,
-		sortingFn: 'alphanumeric',
-		meta: {
-			displayName: 'Name'
+	columnHelper.accessor(
+		row => `${row.event.name} - ${row.subEvent.participantCategory?.name}`,
+		{
+			id: 'name',
+			header: ({ column }) => (
+				<DataTableColumnHeader column={column} title='Name' />
+			),
+			cell: ({ row }) => <div>{row.getValue('name')}</div>,
+			sortingFn: 'alphanumeric',
+			meta: {
+				displayName: 'Name'
+			}
 		}
-	}),
-	columnHelper.accessor(row => row.startTime, {
+	),
+	columnHelper.accessor(row => row.subEvent.startTime, {
 		id: 'startTime',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Start Time' />
@@ -59,7 +62,7 @@ export const columns = [
 			displayName: 'Start Time'
 		}
 	}),
-	columnHelper.accessor(row => row.endTime, {
+	columnHelper.accessor(row => row.subEvent.endTime, {
 		id: 'endTime',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='End Time' />
@@ -69,21 +72,37 @@ export const columns = [
 			displayName: 'End Time'
 		}
 	}),
-	columnHelper.accessor(row => row.category, {
+	columnHelper.accessor(row => row.event.category?.name, {
 		id: 'category',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Category' />
 		),
 		cell: ({ row }) => {
-			const category = row.getValue<Event['category'] | undefined>('category');
-			return category ? <Badge variant='outline'>{category.name}</Badge> : null;
+			const category = row.getValue<string | undefined>('category');
+			return category ? <Badge variant='outline'>{category}</Badge> : null;
 		},
-		enableSorting: false,
 		meta: {
 			displayName: 'Category'
 		}
 	}),
-	columnHelper.accessor(row => row.coordinator, {
+	columnHelper.accessor(row => row.subEvent.participantCategory?.name, {
+		id: 'participantCategory',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Participant Category' />
+		),
+		cell: ({ row }) => {
+			const participantCategory = row.getValue<string | undefined>(
+				'participantCategory'
+			);
+			return participantCategory ? (
+				<Badge variant='outline'>{participantCategory}</Badge>
+			) : null;
+		},
+		meta: {
+			displayName: 'Participant Category'
+		}
+	}),
+	columnHelper.accessor(row => row.event.coordinator, {
 		id: 'coordinator',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Coordinator' />
@@ -103,7 +122,7 @@ export const columns = [
 			displayName: 'Coordinator'
 		}
 	}),
-	columnHelper.accessor(row => row.participants.length, {
+	columnHelper.accessor(row => row.subEvent.participants.length, {
 		id: 'participants',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Participants' />
@@ -115,15 +134,15 @@ export const columns = [
 	}),
 	{
 		id: 'actions',
-		cell: ({ row }: { row: Row<Event> }) => {
-			return <Actions event={row.original} />;
+		cell: ({ row }: { row: Row<EventRow> }) => {
+			return <Actions eventRow={row.original} />;
 		},
 		size: 32
 	}
 ];
 
 // eslint-disable-next-line react-refresh/only-export-components
-const Actions = ({ event }: { event: Event }) => {
+const Actions = ({ eventRow }: { eventRow: EventRow }) => {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const z = useZero();
 
@@ -146,8 +165,8 @@ const Actions = ({ event }: { event: Event }) => {
 					variant='destructive'
 					onSelect={() => {
 						Promise.all([
-							z.mutate.events.delete({
-								id: event.id
+							z.mutate.subEvents.delete({
+								id: eventRow.subEvent.id
 							})
 						]).catch(e => {
 							console.log('Failed to delete event', e);
@@ -158,7 +177,7 @@ const Actions = ({ event }: { event: Event }) => {
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 			<EventFormDialog
-				event={event}
+				event={eventRow.event}
 				open={isDialogOpen}
 				onOpenChange={setIsDialogOpen}
 			/>

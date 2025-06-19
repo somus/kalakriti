@@ -8,9 +8,9 @@ import {
 	XIcon
 } from 'lucide-react';
 
-import { EventParticipant } from './CenterEventView';
+import { SubEventParticipant } from './CenterEventView';
 
-const dtf = createColumnConfigHelper<EventParticipant>();
+const dtf = createColumnConfigHelper<SubEventParticipant>();
 
 export const columnsConfig = [
 	dtf
