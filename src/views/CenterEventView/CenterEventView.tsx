@@ -1,11 +1,17 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger
+} from '@/components/ui/tooltip';
 import { Schema } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
+import { CenterOutletContext } from '@/layout/CenterLayout';
 import { Row, Zero } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
-import { Navigate, useParams } from 'react-router';
+import { Navigate, useOutletContext, useParams } from 'react-router';
 import { z } from 'zod';
 
 import AddEventParticipantsDialog from './AddEventParticipantsDialog/AddEventParticipantsDialog';
@@ -35,6 +41,7 @@ export default function CenterEventsView() {
 	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 
+	const { center } = useOutletContext<CenterOutletContext>();
 	const params = useParams();
 	const zero = useZero();
 	const eventId = z.string().cuid2().parse(params.eventId);
@@ -61,16 +68,31 @@ export default function CenterEventsView() {
 				columns={columns}
 				columnsConfig={columnsConfig}
 				additionalActions={[
-					<AddEventParticipantsDialog
-						key='add-event-participants'
-						subEvent={subEvent}
-						eventCategoryId={subEvent.event?.eventCategoryId ?? ''}
-						participantsToBeFiltered={subEvent.participants.map(
-							participant => participant.participantId
-						)}
-					>
-						<Button className='h-7'>Add Participants</Button>
-					</AddEventParticipantsDialog>
+					center?.isLocked ? (
+						<Tooltip key='create-participant'>
+							<TooltipTrigger asChild>
+								<span>
+									<Button className='h-7' disabled>
+										Add Participants
+									</Button>
+								</span>
+							</TooltipTrigger>
+							<TooltipContent>
+								<p>Editing is locked. Please contact your liason.</p>
+							</TooltipContent>
+						</Tooltip>
+					) : (
+						<AddEventParticipantsDialog
+							key='add-event-participants'
+							subEvent={subEvent}
+							eventCategoryId={subEvent.event?.eventCategoryId ?? ''}
+							participantsToBeFiltered={subEvent.participants.map(
+								participant => participant.participantId
+							)}
+						>
+							<Button className='h-7'>Add Participants</Button>
+						</AddEventParticipantsDialog>
+					)
 				]}
 			/>
 		</div>

@@ -10,7 +10,7 @@ import {
 import useZero from '@/hooks/useZero';
 import { Center } from '@/layout/CenterLayout';
 import { Row, createColumnHelper } from '@tanstack/react-table';
-import { Ellipsis, LinkIcon } from 'lucide-react';
+import { Ellipsis, LinkIcon, LockIcon, LockOpenIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 
@@ -102,6 +102,24 @@ export const columns = [
 		},
 		enableSorting: false
 	}),
+	columnHelper.accessor(row => (row.isLocked ?? false).toString(), {
+		id: 'isLocked',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Locked' />
+		),
+		cell: ({ row }) => (
+			<div className='capitalize'>
+				{row.getValue('isLocked') === 'true' ? (
+					<LockIcon className='size-5' />
+				) : (
+					<LockOpenIcon className='size-5' />
+				)}
+			</div>
+		),
+		meta: {
+			displayName: 'Locked'
+		}
+	}),
 	{
 		id: 'actions',
 		cell: ({ row }: { row: Row<Center> }) => {
@@ -132,15 +150,29 @@ const Actions = ({ center }: { center: Center }) => {
 					Edit
 				</DropdownMenuItem>
 				<DropdownMenuItem
+					onSelect={() => {
+						z.mutate.centers
+							.update({
+								id: center.id,
+								isLocked: !center.isLocked
+							})
+							.catch(e => {
+								console.log('Failed to update center', e);
+							});
+					}}
+				>
+					{center.isLocked ? 'Unlock' : 'Lock'}
+				</DropdownMenuItem>
+				<DropdownMenuItem
 					variant='destructive'
 					onSelect={() => {
-						Promise.all([
-							z.mutate.centers.delete({
+						z.mutate.centers
+							.delete({
 								id: center.id
 							})
-						]).catch(e => {
-							console.log('Failed to delete center', e);
-						});
+							.catch(e => {
+								console.log('Failed to delete center', e);
+							});
 					}}
 				>
 					Delete

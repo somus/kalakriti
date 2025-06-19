@@ -1,0 +1,1 @@
+ALTER TABLE "centers" ADD COLUMN "is_locked" boolean DEFAULT false NOT NULL;

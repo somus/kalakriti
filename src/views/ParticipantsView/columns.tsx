@@ -9,9 +9,11 @@ import {
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import useZero from '@/hooks/useZero';
+import { CenterOutletContext } from '@/layout/CenterLayout';
 import { Row, createColumnHelper } from '@tanstack/react-table';
 import { Ellipsis } from 'lucide-react';
 import { useState } from 'react';
+import { useOutletContext } from 'react-router';
 
 import ParticipantFormDialog from './ParticipantFormDialog';
 import { Participant } from './ParticipantsView';
@@ -117,6 +119,7 @@ export const columns = [
 
 // eslint-disable-next-line react-refresh/only-export-components
 const Actions = ({ participant }: { participant: Participant }) => {
+	const { center } = useOutletContext<CenterOutletContext>();
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const z = useZero();
 
@@ -132,7 +135,10 @@ const Actions = ({ participant }: { participant: Participant }) => {
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align='end'>
-				<DropdownMenuItem onSelect={() => setIsDialogOpen(true)}>
+				<DropdownMenuItem
+					onSelect={() => setIsDialogOpen(true)}
+					disabled={center.isLocked ?? false}
+				>
 					Edit
 				</DropdownMenuItem>
 				<DropdownMenuItem

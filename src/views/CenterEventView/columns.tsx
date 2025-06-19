@@ -2,8 +2,10 @@ import { DataTableColumnHeader } from '@/components/data-table-column-header';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import useZero from '@/hooks/useZero';
+import { CenterOutletContext } from '@/layout/CenterLayout';
 import { Row, createColumnHelper } from '@tanstack/react-table';
 import { CheckIcon, TrashIcon, XIcon } from 'lucide-react';
+import { useOutletContext } from 'react-router';
 
 import { SubEventParticipant } from './CenterEventView';
 
@@ -94,6 +96,7 @@ export const columns = [
 
 // eslint-disable-next-line react-refresh/only-export-components
 const Actions = ({ participantId }: { participantId: string }) => {
+	const { center } = useOutletContext<CenterOutletContext>();
 	const z = useZero();
 
 	return (
@@ -101,6 +104,7 @@ const Actions = ({ participantId }: { participantId: string }) => {
 			variant='ghost'
 			aria-label='Delete participant from event'
 			className='flex size-8 p-0 text-destructive hover:bg-destructive/10 hover:text-destructive *:[svg]:!text-destructive'
+			disabled={center.isLocked ?? false}
 			onClick={() => {
 				z.mutate.subEventParticipants
 					.delete({

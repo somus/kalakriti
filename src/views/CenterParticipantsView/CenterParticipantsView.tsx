@@ -1,14 +1,22 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Button } from '@/components/ui/button';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger
+} from '@/components/ui/tooltip';
 import useZero from '@/hooks/useZero';
+import { CenterOutletContext } from '@/layout/CenterLayout';
 import ParticipantFormDialog from '@/views/ParticipantsView/ParticipantFormDialog';
 import { columns } from '@/views/ParticipantsView/columns';
 import { columnsConfig } from '@/views/ParticipantsView/filters';
 import { useQuery } from '@rocicorp/zero/react';
+import { useOutletContext } from 'react-router';
 
 import { Participant } from '../ParticipantsView/ParticipantsView';
 
 export default function CenterParticipantsView() {
+	const { center } = useOutletContext<CenterOutletContext>();
 	const zero = useZero();
 	const [participants, status] = useQuery(
 		zero.query.participants.related('center').related('participantCategory')
@@ -24,9 +32,26 @@ export default function CenterParticipantsView() {
 			columns={columns}
 			columnsConfig={columnsConfig}
 			additionalActions={[
-				<ParticipantFormDialog key='create-participant'>
-					<Button className='h-7'>Create Participant</Button>
-				</ParticipantFormDialog>
+				center?.isLocked ? (
+					<Tooltip key='create-participant'>
+						<TooltipTrigger asChild>
+							<span>
+								<Button className='h-7' disabled>
+									Create Participant
+								</Button>
+							</span>
+						</TooltipTrigger>
+						<TooltipContent>
+							<p>Editing is locked. Please contact your liason.</p>
+						</TooltipContent>
+					</Tooltip>
+				) : (
+					<ParticipantFormDialog key='create-participant'>
+						<Button className='h-7' disabled={center?.isLocked ?? false}>
+							Create Participant
+						</Button>
+					</ParticipantFormDialog>
+				)
 			]}
 		/>
 	);

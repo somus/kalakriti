@@ -28,8 +28,6 @@ export default drizzleZeroConfig(drizzleSchema, {
 		events: {
 			id: true,
 			name: true,
-			startTime: true,
-			endTime: true,
 			coordinatorId: true,
 			eventCategoryId: true
 		},
@@ -37,7 +35,8 @@ export default drizzleZeroConfig(drizzleSchema, {
 			id: true,
 			name: true,
 			phoneNumber: true,
-			email: true
+			email: true,
+			isLocked: true
 		},
 		centerLiaisons: {
 			userId: true,

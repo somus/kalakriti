@@ -111,7 +111,8 @@ export const centers = pgTable('centers', {
 	id: varchar('id').primaryKey(),
 	name: varchar('name').notNull(),
 	phoneNumber: varchar('phone_number').notNull(),
-	email: varchar('email').notNull()
+	email: varchar('email').notNull(),
+	isLocked: boolean('is_locked').notNull().default(false)
 });
 
 export const centersRelations = relations(centers, ({ many }) => ({
