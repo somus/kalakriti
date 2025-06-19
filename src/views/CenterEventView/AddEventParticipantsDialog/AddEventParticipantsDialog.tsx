@@ -22,7 +22,7 @@ import { columnsConfig } from './filters';
 
 export default function AddEventParticipantsDialog({
 	children,
-	subEvent,
+	subEvent: currentEvent,
 	eventCategoryId,
 	participantsToBeFiltered = []
 }: {
@@ -38,14 +38,16 @@ export default function AddEventParticipantsDialog({
 			.where(
 				'participantCategoryId',
 				'=',
-				subEvent.participantCategory?.id ?? ''
+				currentEvent.participantCategory?.id ?? ''
 			)
 			.where('id', 'NOT IN', participantsToBeFiltered)
 			.related('subEvents', q => q.related('subEvent', q => q.related('event')))
 	);
-	const totalEventsAllowed = subEvent.participantCategory?.totalEventsAllowed;
+
+	const totalEventsAllowed =
+		currentEvent.participantCategory?.totalEventsAllowed;
 	const maxEventsPerCategory =
-		subEvent.participantCategory?.maxEventsPerCategory;
+		currentEvent.participantCategory?.maxEventsPerCategory;
 	const filteredParticipants =
 		totalEventsAllowed && maxEventsPerCategory
 			? participants.filter(
@@ -53,7 +55,14 @@ export default function AddEventParticipantsDialog({
 						participant.subEvents.length < totalEventsAllowed &&
 						participant.subEvents.filter(
 							e => e.subEvent?.event?.eventCategoryId === eventCategoryId
-						).length < maxEventsPerCategory
+						).length < maxEventsPerCategory &&
+						participant.subEvents.every(
+							subEvent =>
+								subEvent?.subEvent?.startTime &&
+								subEvent?.subEvent?.endTime &&
+								(currentEvent.startTime >= subEvent.subEvent.endTime ||
+									currentEvent.endTime <= subEvent.subEvent.startTime)
+						)
 				)
 			: participants;
 
@@ -69,7 +78,7 @@ export default function AddEventParticipantsDialog({
 						await tx.subEventParticipants.insert({
 							id: createId(),
 							participantId,
-							subEventId: subEvent.id
+							subEventId: currentEvent.id
 						});
 					}
 				})
@@ -79,7 +88,7 @@ export default function AddEventParticipantsDialog({
 
 			setOpen(false);
 		},
-		[zero, subEvent.id]
+		[zero, currentEvent.id]
 	);
 
 	if (status.type !== 'complete') {

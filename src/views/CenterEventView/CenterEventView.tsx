@@ -6,11 +6,13 @@ import {
 	TooltipContent,
 	TooltipTrigger
 } from '@/components/ui/tooltip';
+import { H3 } from '@/components/ui/typography';
 import { Schema } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
 import { CenterOutletContext } from '@/layout/CenterLayout';
 import { Row, Zero } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
+import { formatDate } from 'date-fns';
 import { Navigate, useOutletContext, useParams } from 'react-router';
 import { z } from 'zod';
 
@@ -57,10 +59,14 @@ export default function CenterEventsView() {
 
 	return (
 		<div className='flex flex-col gap-4'>
-			<div className='flex gap-2'>
-				<h3>
+			<div className='flex gap-4 items-end'>
+				<H3>
 					{subEvent.event?.name} - {subEvent.participantCategory?.name}
-				</h3>
+				</H3>
+				<p className='italic'>
+					{formatDate(subEvent.startTime, 'p')} -{' '}
+					{formatDate(subEvent.endTime, 'p')}
+				</p>
 				<Badge variant='outline'>{subEvent.event?.category?.name}</Badge>
 			</div>
 			<DataTableWrapper
