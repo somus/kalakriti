@@ -32,7 +32,9 @@ export function CenterPage({ center }: { center: Center }) {
 	const zero = useZero();
 	const [participantCategories] = useQuery(zero.query.participantCategories);
 	const [events] = useQuery(
-		zero.query.events.related('subEvents', q => q.related('participants'))
+		zero.query.events.related('subEvents', q =>
+			q.related('participants', q => q.related('participant'))
+		)
 	);
 
 	const participantsByAgeConfig = participantCategories
@@ -87,7 +89,11 @@ export function CenterPage({ center }: { center: Center }) {
 		? events.map(event => ({
 				name: camelCase(event.name),
 				value: event.subEvents.reduce(
-					(acc, subEvent) => acc + subEvent.participants.length,
+					(acc, subEvent) =>
+						acc +
+						subEvent.participants.filter(
+							p => p.participant?.centerId === center.id
+						).length,
 					0
 				),
 				fill: `var(--color-${camelCase(event.name)})`

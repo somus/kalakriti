@@ -119,7 +119,7 @@ export const columns = [
 
 // eslint-disable-next-line react-refresh/only-export-components
 const Actions = ({ participant }: { participant: Participant }) => {
-	const { center } = useOutletContext<CenterOutletContext>();
+	const context = useOutletContext<CenterOutletContext>();
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const z = useZero();
 
@@ -137,7 +137,7 @@ const Actions = ({ participant }: { participant: Participant }) => {
 			<DropdownMenuContent align='end'>
 				<DropdownMenuItem
 					onSelect={() => setIsDialogOpen(true)}
-					disabled={center.isLocked ?? false}
+					disabled={context?.center.isLocked ?? false}
 				>
 					Edit
 				</DropdownMenuItem>
