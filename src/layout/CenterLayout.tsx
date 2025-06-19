@@ -5,11 +5,13 @@ import { useQuery } from '@rocicorp/zero/react';
 import { Navigate, Outlet, useParams } from 'react-router';
 import { z } from 'zod';
 
-function centerQuery(z: Zero<Schema>, centerId: string) {
+// eslint-disable-next-line react-refresh/only-export-components
+export function centerQuery(z: Zero<Schema>, centerId: string) {
 	return z.query.centers
 		.where('id', centerId)
 		.related('guardians', q => q.related('user'))
 		.related('liaisons', q => q.related('user'))
+		.related('participants', q => q.related('participantCategory'))
 		.one();
 }
 

@@ -2,19 +2,14 @@ import { useApp } from '@/hooks/useApp';
 import useZero from '@/hooks/useZero';
 import { useQuery } from '@rocicorp/zero/react';
 
-import { CenterPage } from './CenterView/CenterView';
+import { CenterPage, centerQuery } from './CenterView/CenterView';
 
 export default function DashboardView() {
 	const {
 		user: { role }
 	} = useApp();
 	const zero = useZero();
-	const [center] = useQuery(
-		zero.query.centers
-			.related('guardians', q => q.related('user'))
-			.related('liaisons', q => q.related('user'))
-			.one()
-	);
+	const [center] = useQuery(centerQuery(zero));
 
 	if (role === 'guardian' && center) {
 		return (

@@ -46,73 +46,113 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 			eb.cmpLit(authData.meta.role ?? '', '=', 'admin')
 		);
 
-	const loggedInUserIsCurrentUser = (
-		authData: AuthData,
-		eb: ExpressionBuilder<Schema, 'users'>
-	) => eb.and(allowIfLoggedIn(authData, eb), eb.cmp('id', '=', authData.sub));
-
-	const loggedInUserIsGuardianOfCenter = (
+	const centerPermission = (
 		authData: AuthData,
 		eb: ExpressionBuilder<Schema, 'centers'>
 	) =>
 		eb.and(
 			allowIfLoggedIn(authData, eb),
-			eb.exists('guardians', q => q.where('userId', authData.sub))
+			eb.or(
+				eb.exists('guardians', q => q.where('userId', authData.sub)),
+				eb.exists('liaisons', q => q.where('userId', authData.sub))
+			)
 		);
 
-	const loggedInUserIsLiaisonOfCenter = (
-		authData: AuthData,
-		eb: ExpressionBuilder<Schema, 'centers'>
-	) =>
-		eb.and(
-			allowIfLoggedIn(authData, eb),
-			eb.exists('liaisons', q => q.where('userId', authData.sub))
-		);
-
-	const loggedInUserIsGuardianOfParticipantCenter = (
+	const participantPermission = (
 		authData: AuthData,
 		eb: ExpressionBuilder<Schema, 'participants'>
 	) =>
 		eb.and(
 			allowIfLoggedIn(authData, eb),
-			eb.exists('center', q =>
-				q.whereExists('guardians', q => q.where('userId', authData.sub))
-			)
-		);
-
-	const loggedInUserIsLiaisonOfParticipantCenter = (
-		authData: AuthData,
-		eb: ExpressionBuilder<Schema, 'participants'>
-	) =>
-		eb.and(
-			allowIfLoggedIn(authData, eb),
-			eb.exists('center', q =>
-				q.whereExists('liaisons', q => q.where('userId', authData.sub))
-			)
-		);
-
-	const loggedInUserIsGuardianOfEventParticipantCenter = (
-		authData: AuthData,
-		eb: ExpressionBuilder<Schema, 'subEventParticipants'>
-	) =>
-		eb.and(
-			allowIfLoggedIn(authData, eb),
-			eb.exists('participant', q =>
-				q.whereExists('center', q =>
+			eb.or(
+				eb.exists('center', q =>
 					q.whereExists('guardians', q => q.where('userId', authData.sub))
+				),
+				eb.exists('center', q =>
+					q.whereExists('liaisons', q => q.where('userId', authData.sub))
 				)
 			)
 		);
 
-	const loggedInUserIsLiaisonOfEventParticipantCenter = (
+	const eventParticipantPermission = (
 		authData: AuthData,
 		eb: ExpressionBuilder<Schema, 'subEventParticipants'>
 	) =>
 		eb.and(
 			allowIfLoggedIn(authData, eb),
-			eb.exists('participant', q =>
-				q.whereExists('center', q =>
+			eb.or(
+				eb.exists('participant', q =>
+					q.whereExists('center', q =>
+						q.whereExists('guardians', q => q.where('userId', authData.sub))
+					)
+				),
+				eb.exists('participant', q =>
+					q.whereExists('center', q =>
+						q.whereExists('liaisons', q => q.where('userId', authData.sub))
+					)
+				)
+			)
+		);
+
+	const centerLiasonPermission = (
+		authData: AuthData,
+		eb: ExpressionBuilder<Schema, 'centerLiaisons'>
+	) =>
+		eb.and(
+			allowIfLoggedIn(authData, eb),
+			eb.or(
+				eb.exists('center', q =>
+					q.whereExists('guardians', q => q.where('userId', authData.sub))
+				),
+				eb.exists('center', q =>
 					q.whereExists('liaisons', q => q.where('userId', authData.sub))
+				)
+			)
+		);
+
+	const centerGuardianPermission = (
+		authData: AuthData,
+		eb: ExpressionBuilder<Schema, 'centerGuardians'>
+	) =>
+		eb.and(
+			allowIfLoggedIn(authData, eb),
+			eb.or(
+				eb.exists('center', q =>
+					q.whereExists('guardians', q => q.where('userId', authData.sub))
+				),
+				eb.exists('center', q =>
+					q.whereExists('liaisons', q => q.where('userId', authData.sub))
+				)
+			)
+		);
+
+	const userReadPermission = (
+		authData: AuthData,
+		eb: ExpressionBuilder<Schema, 'users'>
+	) =>
+		eb.and(
+			allowIfLoggedIn(authData, eb),
+			eb.or(
+				eb.cmp('id', '=', authData.sub),
+				eb.exists('liaisoningCenter', q =>
+					q.whereExists('center', q =>
+						q.whereExists('guardians', q => q.where('userId', authData.sub))
+					)
+				),
+				eb.exists('guardianCenters', q =>
+					q.whereExists('center', q =>
+						q.whereExists('guardians', q => q.where('userId', authData.sub))
+					)
+				),
+				eb.exists('liaisoningCenter', q =>
+					q.whereExists('center', q =>
+						q.whereExists('liaisons', q => q.where('userId', authData.sub))
+					)
+				),
+				eb.exists('guardianCenters', q =>
+					q.whereExists('center', q =>
+						q.whereExists('liaisons', q => q.where('userId', authData.sub))
+					)
 				)
 			)
 		);
@@ -153,7 +193,7 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 		},
 		users: {
 			row: {
-				select: [loggedInUserIsAdmin, loggedInUserIsCurrentUser],
+				select: [loggedInUserIsAdmin, userReadPermission],
 				insert: [loggedInUserIsAdmin],
 				update: {
 					preMutation: [loggedInUserIsAdmin],
@@ -164,11 +204,7 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 		},
 		centers: {
 			row: {
-				select: [
-					loggedInUserIsAdmin,
-					loggedInUserIsGuardianOfCenter,
-					loggedInUserIsLiaisonOfCenter
-				],
+				select: [loggedInUserIsAdmin, centerPermission],
 				insert: [loggedInUserIsAdmin],
 				update: {
 					preMutation: [loggedInUserIsAdmin],
@@ -179,7 +215,7 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 		},
 		centerLiaisons: {
 			row: {
-				select: [loggedInUserIsAdmin],
+				select: [loggedInUserIsAdmin, centerLiasonPermission],
 				insert: [loggedInUserIsAdmin],
 				update: {
 					preMutation: [loggedInUserIsAdmin],
@@ -190,7 +226,7 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 		},
 		centerGuardians: {
 			row: {
-				select: [loggedInUserIsAdmin],
+				select: [loggedInUserIsAdmin, centerGuardianPermission],
 				insert: [loggedInUserIsAdmin],
 				update: {
 					preMutation: [loggedInUserIsAdmin],
@@ -212,64 +248,24 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 		},
 		participants: {
 			row: {
-				select: [
-					loggedInUserIsAdmin,
-					loggedInUserIsGuardianOfParticipantCenter,
-					loggedInUserIsLiaisonOfParticipantCenter
-				],
-				insert: [
-					loggedInUserIsAdmin,
-					loggedInUserIsGuardianOfParticipantCenter,
-					loggedInUserIsLiaisonOfParticipantCenter
-				],
+				select: [loggedInUserIsAdmin, participantPermission],
+				insert: [loggedInUserIsAdmin, participantPermission],
 				update: {
-					preMutation: [
-						loggedInUserIsAdmin,
-						loggedInUserIsGuardianOfParticipantCenter,
-						loggedInUserIsLiaisonOfParticipantCenter
-					],
-					postMutation: [
-						loggedInUserIsAdmin,
-						loggedInUserIsGuardianOfParticipantCenter,
-						loggedInUserIsLiaisonOfParticipantCenter
-					]
+					preMutation: [loggedInUserIsAdmin, participantPermission],
+					postMutation: [loggedInUserIsAdmin, participantPermission]
 				},
-				delete: [
-					loggedInUserIsAdmin,
-					loggedInUserIsGuardianOfParticipantCenter,
-					loggedInUserIsLiaisonOfParticipantCenter
-				]
+				delete: [loggedInUserIsAdmin, participantPermission]
 			}
 		},
 		subEventParticipants: {
 			row: {
-				select: [
-					loggedInUserIsAdmin,
-					loggedInUserIsLiaisonOfEventParticipantCenter,
-					loggedInUserIsGuardianOfEventParticipantCenter
-				],
-				insert: [
-					loggedInUserIsAdmin,
-					loggedInUserIsLiaisonOfEventParticipantCenter,
-					loggedInUserIsGuardianOfEventParticipantCenter
-				],
+				select: [loggedInUserIsAdmin, eventParticipantPermission],
+				insert: [loggedInUserIsAdmin, eventParticipantPermission],
 				update: {
-					preMutation: [
-						loggedInUserIsAdmin,
-						loggedInUserIsLiaisonOfEventParticipantCenter,
-						loggedInUserIsGuardianOfEventParticipantCenter
-					],
-					postMutation: [
-						loggedInUserIsAdmin,
-						loggedInUserIsLiaisonOfEventParticipantCenter,
-						loggedInUserIsGuardianOfEventParticipantCenter
-					]
+					preMutation: [loggedInUserIsAdmin, eventParticipantPermission],
+					postMutation: [loggedInUserIsAdmin, eventParticipantPermission]
 				},
-				delete: [
-					loggedInUserIsAdmin,
-					loggedInUserIsLiaisonOfEventParticipantCenter,
-					loggedInUserIsGuardianOfEventParticipantCenter
-				]
+				delete: [loggedInUserIsAdmin, eventParticipantPermission]
 			}
 		}
 	} satisfies PermissionsConfig<AuthData, Schema>;

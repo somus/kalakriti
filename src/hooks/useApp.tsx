@@ -29,7 +29,9 @@ export const AppProvider = ({
 	context
 }: PropsWithChildren<{ context: Omit<AppContextProps, 'user'> }>) => {
 	const z = useZero();
-	const [user, status] = useQuery(z.query.users.one());
+	const [user, status] = useQuery(
+		z.query.users.where('id', '=', context.clerkUser.id).one()
+	);
 
 	if (status.type !== 'complete' || !user) {
 		return <LoadingScreen />;
