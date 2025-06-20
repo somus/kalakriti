@@ -6,7 +6,7 @@ import {
 	clerkUserCreateInputSchema,
 	clerkUserUpdateInputSchema
 } from 'shared/schema';
-import { z } from 'zod';
+import * as z from 'zod/v4';
 
 interface ClerkError {
 	clerkError: boolean;

@@ -16,7 +16,7 @@ import { createId } from '@paralleldrive/cuid2';
 import { LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
+import * as z from 'zod/v4';
 
 const participantCategorySchema = z.object({
 	name: z.string(),

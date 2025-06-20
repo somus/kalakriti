@@ -1,12 +1,12 @@
 import { createEnv } from '@t3-oss/env-core';
-import { z } from 'zod';
+import * as z from 'zod/v4';
 
 export const env = createEnv({
 	server: {
-		ZERO_UPSTREAM_DB: z.string().url(),
-		ZERO_CVR_DB: z.string().url(),
-		ZERO_CHANGE_DB: z.string().url(),
-		ZERO_AUTH_JWKS_URL: z.string().url(),
+		ZERO_UPSTREAM_DB: z.url(),
+		ZERO_CVR_DB: z.url(),
+		ZERO_CHANGE_DB: z.url(),
+		ZERO_AUTH_JWKS_URL: z.url(),
 		ZERO_REPLICA_FILE: z.string(),
 		CLERK_PUBLISHABLE_KEY: z.string().min(1),
 		CLERK_SECRET_KEY: z.string().min(1)

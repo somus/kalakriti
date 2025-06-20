@@ -2,7 +2,7 @@ import { FiltersState } from '@/components/data-table-filter/core/types';
 import { SortingState, VisibilityState } from '@tanstack/react-table';
 import { parseAsJson, useQueryState } from 'nuqs';
 import { useState } from 'react';
-import z from 'zod';
+import * as z from 'zod/v4';
 
 const filtersSchema = z.custom<FiltersState>();
 

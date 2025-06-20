@@ -24,7 +24,7 @@ import keyBy from 'lodash/keyBy';
 import { LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
+import * as z from 'zod/v4';
 
 import { Event } from './EventsView';
 
@@ -86,9 +86,9 @@ export default function EventFormModal({
 			z.string(),
 			z
 				.object({
-					categoryId: z.string().cuid2(),
-					startTime: z.string().time().optional(),
-					endTime: z.string().time().optional()
+					categoryId: z.cuid2(),
+					startTime: z.iso.time().optional(),
+					endTime: z.iso.time().optional()
 				})
 				.refine(
 					data =>
@@ -102,7 +102,7 @@ export default function EventFormModal({
 				)
 		),
 		coordinator: z.string(),
-		category: z.string().cuid2()
+		category: z.cuid2()
 	});
 
 	type EventFormData = z.infer<typeof eventSchema>;

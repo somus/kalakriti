@@ -14,7 +14,7 @@ import { Row, Zero } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 import { formatDate } from 'date-fns';
 import { Navigate, useOutletContext, useParams } from 'react-router';
-import { z } from 'zod';
+import * as z from 'zod/v4';
 
 import AddEventParticipantsDialog from './AddEventParticipantsDialog/AddEventParticipantsDialog';
 import { columns } from './columns';
@@ -46,7 +46,7 @@ export default function CenterEventsView() {
 	const { center } = useOutletContext<CenterOutletContext>();
 	const params = useParams();
 	const zero = useZero();
-	const eventId = z.string().cuid2().parse(params.eventId);
+	const eventId = z.cuid2().parse(params.eventId);
 	const [subEvent, status] = useQuery(subEventQuery(zero, eventId));
 
 	if (!eventId) {

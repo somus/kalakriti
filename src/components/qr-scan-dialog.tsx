@@ -8,7 +8,7 @@ import useZero from '@/hooks/useZero';
 import { useQuery } from '@rocicorp/zero/react';
 import { Scanner } from '@yudiel/react-qr-scanner';
 import { PropsWithChildren, useState } from 'react';
-import { z } from 'zod';
+import * as z from 'zod/v4';
 
 import { Button } from './ui/button';
 

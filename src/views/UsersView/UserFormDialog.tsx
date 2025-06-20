@@ -26,7 +26,7 @@ import {
 	clerkUserCreateInputSchema,
 	clerkUserUpdateInputSchema
 } from 'shared/schema';
-import * as z from 'zod';
+import * as z from 'zod/v4';
 
 const createUserSchema = clerkUserCreateInputSchema.extend({
 	phoneNumber: z

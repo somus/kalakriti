@@ -1,10 +1,10 @@
-import * as z from 'zod';
+import * as z from 'zod/v4';
 
 export const clerkUserSchema = z.object({
 	id: z.string(),
 	firstName: z.string(),
 	lastName: z.string().optional(),
-	email: z.string().email(),
+	email: z.email(),
 	password: z.string().min(10),
 	role: z.enum(['admin', 'volunteer', 'guardian'])
 });

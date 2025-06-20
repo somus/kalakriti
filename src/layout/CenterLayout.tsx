@@ -3,7 +3,7 @@ import useZero from '@/hooks/useZero';
 import { Row, Zero } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 import { Navigate, Outlet, useParams } from 'react-router';
-import { z } from 'zod';
+import * as z from 'zod/v4';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function centerQuery(z: Zero<Schema>, centerId: string) {
@@ -24,7 +24,7 @@ export interface CenterOutletContext {
 export default function CenterLayout() {
 	const params = useParams();
 	const zero = useZero();
-	const centerId = z.string().cuid2().parse(params.centerId);
+	const centerId = z.cuid2().parse(params.centerId);
 	const [center, status] = useQuery(centerQuery(zero, centerId));
 
 	if (!centerId) {

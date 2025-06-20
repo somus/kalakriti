@@ -6,7 +6,7 @@ import useZero from '@/hooks/useZero';
 import { Row, Zero } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 import { Navigate, useParams } from 'react-router';
-import { z } from 'zod';
+import * as z from 'zod/v4';
 
 import { SubEventParticipant } from '../CenterEventView/CenterEventView';
 import { columns } from '../CenterEventView/columns';
@@ -31,7 +31,7 @@ export default function EventView() {
 
 	const params = useParams();
 	const zero = useZero();
-	const eventId = z.string().cuid2().parse(params.eventId);
+	const eventId = z.cuid2().parse(params.eventId);
 	const [subEvent, status] = useQuery(eventQuery(zero, eventId));
 
 	if (!eventId) {

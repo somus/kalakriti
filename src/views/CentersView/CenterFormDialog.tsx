@@ -18,7 +18,7 @@ import { useQuery } from '@rocicorp/zero/react';
 import { LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
+import * as z from 'zod/v4';
 
 const centerSchema = z.object({
 	name: z.string(),
@@ -28,7 +28,7 @@ const centerSchema = z.object({
 			value => /^[6-9]\d{9}$/.test(value),
 			'Please enter a valid indian mobile number'
 		),
-	email: z.string().email(),
+	email: z.email(),
 	liaisons: z.array(z.string()),
 	guardians: z.array(z.string())
 });

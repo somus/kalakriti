@@ -2,7 +2,7 @@ import { createClerkClient } from '@clerk/backend';
 import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { z } from 'zod';
+import * as z from 'zod/v4';
 
 import {
 	clerkUserCreateInputSchema,

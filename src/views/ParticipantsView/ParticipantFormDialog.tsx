@@ -28,7 +28,7 @@ import { AlertCircle, LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useOutletContext } from 'react-router';
-import * as z from 'zod';
+import * as z from 'zod/v4';
 
 import { Participant } from './ParticipantsView';
 
@@ -36,7 +36,7 @@ const participantSchema = z.object({
 	name: z.string(),
 	dob: z.date(),
 	gender: z.enum(genderEnum.enumValues),
-	center: z.string().cuid2()
+	center: z.cuid2()
 });
 
 type ParticipantFormData = z.infer<typeof participantSchema>;
