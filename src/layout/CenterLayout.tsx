@@ -35,9 +35,5 @@ export default function CenterLayout() {
 		return null;
 	}
 
-	return (
-		<div className='w-full px-4'>
-			<Outlet context={{ center }} />
-		</div>
-	);
+	return <Outlet context={{ center }} />;
 }

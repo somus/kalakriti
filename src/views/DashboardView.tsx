@@ -9,6 +9,7 @@ import { useApp } from '@/hooks/useApp';
 import useZero from '@/hooks/useZero';
 import { useQuery } from '@rocicorp/zero/react';
 import camelCase from 'lodash/camelCase';
+import { Link } from 'react-router';
 
 import { CenterPage, centerQuery } from './CenterView/CenterView';
 
@@ -25,12 +26,11 @@ export default function DashboardView() {
 		zero.query.events.related('subEvents', q => q.related('participants'))
 	);
 
-	if (role === 'guardian' && center) {
-		return (
-			<div className='w-full px-4'>
-				<CenterPage center={center} />
-			</div>
-		);
+	if (
+		(role === 'guardian' && center) ||
+		(role === 'volunteer' && centers.length === 1 && center)
+	) {
+		return <CenterPage center={center} />;
 	}
 
 	const participantsByCentersConfig = centers
@@ -78,44 +78,71 @@ export default function DashboardView() {
 
 	return (
 		<div className='@container/main flex flex-col gap-4 py-4 md:gap-6 md:py-6'>
-			{/* <div className='flex gap-4'>
-			<H2>{center.name}</H2>
-		</div> */}
-			<div className='*:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4 grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card lg:px-6'>
-				<Card className='@container/card'>
-					<CardHeader className='relative'>
-						<CardDescription>Total Volunteers</CardDescription>
-						<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
-							{users.filter(user => user.role === 'volunteer').length}
-						</CardTitle>
-					</CardHeader>
-				</Card>
-				<Card className='@container/card'>
-					<CardHeader className='relative'>
-						<CardDescription>Total Centers</CardDescription>
-						<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
-							{centers.length}
-						</CardTitle>
-					</CardHeader>
-				</Card>
-				<Card className='@container/card'>
-					<CardHeader className='relative'>
-						<CardDescription>Total Guardians</CardDescription>
-						<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
-							{users.filter(user => user.role === 'guardian').length}
-						</CardTitle>
-					</CardHeader>
-				</Card>
-				<Card className='@container/card'>
-					<CardHeader className='relative'>
-						<CardDescription>Total Participants</CardDescription>
-						<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
-							{participants.length}
-						</CardTitle>
-					</CardHeader>
-				</Card>
+			<div className='[&_[data-slot=card]]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4 grid grid-cols-1 gap-4 px-4 [&_[data-slot=card]]:bg-gradient-to-t [&_[data-slot=card]]:from-primary/5 [&_[data-slot=card]]:to-card dark:[&_[data-slot=card]]:bg-card'>
+				{role === 'admin' ? (
+					<>
+						<Link to={`/users`}>
+							<Card className='@container/card'>
+								<CardHeader className='relative'>
+									<CardDescription>Total Volunteers</CardDescription>
+									<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
+										{users.filter(user => user.role === 'volunteer').length}
+									</CardTitle>
+								</CardHeader>
+							</Card>
+						</Link>
+						<Link to={`/centers`}>
+							<Card className='@container/card'>
+								<CardHeader className='relative'>
+									<CardDescription>Total Centers</CardDescription>
+									<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
+										{centers.length}
+									</CardTitle>
+								</CardHeader>
+							</Card>
+						</Link>
+						<Link to={`/users`}>
+							<Card className='@container/card'>
+								<CardHeader className='relative'>
+									<CardDescription>Total Guardians</CardDescription>
+									<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
+										{users.filter(user => user.role === 'guardian').length}
+									</CardTitle>
+								</CardHeader>
+							</Card>
+						</Link>
+						<Link to={`/participants`}>
+							<Card className='@container/card'>
+								<CardHeader className='relative'>
+									<CardDescription>Total Participants</CardDescription>
+									<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
+										{participants.length}
+									</CardTitle>
+								</CardHeader>
+							</Card>
+						</Link>
+					</>
+				) : (
+					<>
+						{/* Liason dashboard for liasons with multiple centers */}
+						{centers.map(center => (
+							<Link to={`/centers/${center.id}`} key={center.id}>
+								<Card className='@container/card'>
+									<CardHeader className='relative'>
+										<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
+											{center.name}
+										</CardTitle>
+										<CardDescription>
+											{center.participants.length} participants
+										</CardDescription>
+									</CardHeader>
+								</Card>
+							</Link>
+						))}
+					</>
+				)}
 			</div>
-			<div className='@xl/main:grid-cols-1 @5xl/main:grid-cols-2 grid grid-cols-1 gap-4 px-4 lg:px-6'>
+			<div className='@xl/main:grid-cols-1 @5xl/main:grid-cols-2 grid grid-cols-1 gap-4 px-4'>
 				<ChartPieDonut
 					title='Participants by Center'
 					dataLabel='Participants'

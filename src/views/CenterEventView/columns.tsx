@@ -1,6 +1,7 @@
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useApp } from '@/hooks/useApp';
 import useZero from '@/hooks/useZero';
 import { CenterOutletContext } from '@/layout/CenterLayout';
 import { Row, createColumnHelper } from '@tanstack/react-table';
@@ -98,13 +99,16 @@ export const columns = [
 const Actions = ({ participantId }: { participantId: string }) => {
 	const { center } = useOutletContext<CenterOutletContext>();
 	const z = useZero();
+	const {
+		user: { role }
+	} = useApp();
 
 	return (
 		<Button
 			variant='ghost'
 			aria-label='Delete participant from event'
 			className='flex size-8 p-0 text-destructive hover:bg-destructive/10 hover:text-destructive *:[svg]:!text-destructive'
-			disabled={center.isLocked ?? false}
+			disabled={!!center.isLocked && role === 'guardian'}
 			onClick={() => {
 				z.mutate.subEventParticipants
 					.delete({

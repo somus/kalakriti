@@ -64,27 +64,50 @@ const getAdminNavItems = (centers: Center[], events: Event[]): NavItem[] => [
 	// }
 ];
 
-const getGuardianNavItems = (centers: Center[], events: Event[]): NavItem[] => [
-	homeNavItem,
-	...centers.flatMap(center => [
-		{
-			title: 'Participants',
-			url: `/centers/${center.id}/participants`,
-			icon: UsersIcon
-		},
-		{
-			title: 'Events',
-			url: `/centers/${center.id}/events`,
-			icon: TicketsIcon,
-			items: events.flatMap(event =>
-				event.subEvents.map(subEvent => ({
-					title: `${event.name} - ${subEvent.participantCategory?.name}`,
-					url: `/centers/${center.id}/events/${subEvent.id}`
-				}))
-			)
-		}
-	])
-];
+const getGuardianAndLiasonNavItems = (
+	centers: Center[],
+	events: Event[]
+): NavItem[] =>
+	centers.length === 1
+		? [
+				homeNavItem,
+				{
+					title: 'Participants',
+					url: `/centers/${centers[0].id}/participants`,
+					icon: UsersIcon
+				},
+				{
+					title: 'Events',
+					url: `/centers/${centers[0].id}/events`,
+					icon: TicketsIcon,
+					items: events.flatMap(event =>
+						event.subEvents.map(subEvent => ({
+							title: `${event.name} - ${subEvent.participantCategory?.name}`,
+							url: `/centers/${centers[0].id}/events/${subEvent.id}`
+						}))
+					)
+				}
+			]
+		: [
+				homeNavItem,
+				...centers.flatMap(center => [
+					{
+						title: center.name,
+						url: `/centers/${center.id}`,
+						icon: UsersIcon,
+						items: [
+							{
+								title: 'Participants',
+								url: `/centers/${center.id}/participants`
+							},
+							{
+								title: 'Events',
+								url: `/centers/${center.id}/events`
+							}
+						]
+					}
+				])
+			];
 
 function eventsQuery(z: Zero<Schema>) {
 	return z.query.events.related('subEvents', q =>
@@ -108,8 +131,8 @@ export const useNavItems = () => {
 		return getAdminNavItems(centers, events);
 	}
 
-	if (user.role === 'guardian') {
-		return getGuardianNavItems(centers, events);
+	if (user.role === 'guardian' || user.role == 'volunteer') {
+		return getGuardianAndLiasonNavItems(centers, events);
 	}
 
 	return [homeNavItem];

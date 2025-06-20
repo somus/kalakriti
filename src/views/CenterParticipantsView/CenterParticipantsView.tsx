@@ -5,6 +5,7 @@ import {
 	TooltipContent,
 	TooltipTrigger
 } from '@/components/ui/tooltip';
+import { useApp } from '@/hooks/useApp';
 import useZero from '@/hooks/useZero';
 import { CenterOutletContext } from '@/layout/CenterLayout';
 import ParticipantFormDialog from '@/views/ParticipantsView/ParticipantFormDialog';
@@ -18,8 +19,14 @@ import { Participant } from '../ParticipantsView/ParticipantsView';
 export default function CenterParticipantsView() {
 	const { center } = useOutletContext<CenterOutletContext>();
 	const zero = useZero();
+	const {
+		user: { role }
+	} = useApp();
 	const [participants, status] = useQuery(
-		zero.query.participants.related('center').related('participantCategory')
+		zero.query.participants
+			.where('centerId', '=', center.id)
+			.related('center')
+			.related('participantCategory')
 	);
 
 	if (status.type !== 'complete') {
@@ -32,7 +39,7 @@ export default function CenterParticipantsView() {
 			columns={columns}
 			columnsConfig={columnsConfig}
 			additionalActions={[
-				center?.isLocked ? (
+				center?.isLocked && role === 'guardian' ? (
 					<Tooltip key='create-participant'>
 						<TooltipTrigger asChild>
 							<span>
@@ -47,9 +54,7 @@ export default function CenterParticipantsView() {
 					</Tooltip>
 				) : (
 					<ParticipantFormDialog key='create-participant'>
-						<Button className='h-7' disabled={center?.isLocked ?? false}>
-							Create Participant
-						</Button>
+						<Button className='h-7'>Create Participant</Button>
 					</ParticipantFormDialog>
 				)
 			]}

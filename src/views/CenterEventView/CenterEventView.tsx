@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/tooltip';
 import { H3 } from '@/components/ui/typography';
 import { Schema } from '@/db/schema.zero';
+import { useApp } from '@/hooks/useApp';
 import useZero from '@/hooks/useZero';
 import { CenterOutletContext } from '@/layout/CenterLayout';
 import { Row, Zero } from '@rocicorp/zero';
@@ -46,6 +47,9 @@ export default function CenterEventsView() {
 	const { center } = useOutletContext<CenterOutletContext>();
 	const params = useParams();
 	const zero = useZero();
+	const {
+		user: { role }
+	} = useApp();
 	const eventId = z.cuid2().parse(params.eventId);
 	const [subEvent, status] = useQuery(subEventQuery(zero, eventId));
 
@@ -58,8 +62,8 @@ export default function CenterEventsView() {
 	}
 
 	return (
-		<div className='flex flex-col gap-4'>
-			<div className='flex gap-4 items-end'>
+		<div className='flex flex-col py-4'>
+			<div className='flex gap-4 items-end px-4'>
 				<H3>
 					{subEvent.event?.name} - {subEvent.participantCategory?.name}
 				</H3>
@@ -74,7 +78,7 @@ export default function CenterEventsView() {
 				columns={columns}
 				columnsConfig={columnsConfig}
 				additionalActions={[
-					center?.isLocked ? (
+					center?.isLocked && role === 'guardian' ? (
 						<Tooltip key='create-participant'>
 							<TooltipTrigger asChild>
 								<span>
