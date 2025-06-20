@@ -39,10 +39,11 @@ declare module '@tanstack/react-table' {
 	}
 }
 
-export default function DataTableWrapper<TData>({
+export default function DataTableWrapper<TData extends { id: string }>({
 	data,
 	columnsConfig,
 	columns,
+	disabledRows,
 	additionalActions,
 	children
 }: {
@@ -51,6 +52,7 @@ export default function DataTableWrapper<TData>({
 	columnsConfig: readonly ColumnConfig<TData, any, any, any>[];
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	columns: ColumnDef<TData, any>[];
+	disabledRows?: string[];
 	additionalActions?: React.ReactNode[];
 	children?: (table: TanstackTable<TData>) => React.ReactNode;
 }) {
@@ -115,6 +117,9 @@ export default function DataTableWrapper<TData>({
 		onSortingChange: setSorting,
 		onColumnVisibilityChange: setColumnVisibility,
 		onRowSelectionChange: setRowSelection,
+		enableRowSelection: disabledRows
+			? row => !disabledRows.includes(row.original?.id)
+			: undefined,
 		state: {
 			sorting,
 			columnFilters: tstFilters,

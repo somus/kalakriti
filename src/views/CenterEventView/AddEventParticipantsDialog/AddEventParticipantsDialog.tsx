@@ -48,23 +48,25 @@ export default function AddEventParticipantsDialog({
 		currentEvent.participantCategory?.totalEventsAllowed;
 	const maxEventsPerCategory =
 		currentEvent.participantCategory?.maxEventsPerCategory;
-	const filteredParticipants =
+	const participantsToDisable =
 		totalEventsAllowed && maxEventsPerCategory
-			? participants.filter(
-					participant =>
-						participant.subEvents.length < totalEventsAllowed &&
-						participant.subEvents.filter(
-							e => e.subEvent?.event?.eventCategoryId === eventCategoryId
-						).length < maxEventsPerCategory &&
-						participant.subEvents.every(
-							subEvent =>
-								subEvent?.subEvent?.startTime &&
-								subEvent?.subEvent?.endTime &&
-								(currentEvent.startTime >= subEvent.subEvent.endTime ||
-									currentEvent.endTime <= subEvent.subEvent.startTime)
-						)
-				)
-			: participants;
+			? participants
+					.filter(
+						participant =>
+							participant.subEvents.length >= totalEventsAllowed ||
+							participant.subEvents.filter(
+								e => e.subEvent?.event?.eventCategoryId === eventCategoryId
+							).length >= maxEventsPerCategory ||
+							participant.subEvents.some(
+								subEvent =>
+									subEvent?.subEvent?.startTime &&
+									subEvent?.subEvent?.endTime &&
+									currentEvent.startTime < subEvent.subEvent.endTime &&
+									currentEvent.endTime > subEvent.subEvent.startTime
+							)
+					)
+					.map(participant => participant.id)
+			: [];
 
 	const [open, setOpen] = useState(false);
 	const handleAdd = useCallback(
@@ -106,9 +108,10 @@ export default function AddEventParticipantsDialog({
 					<DialogTitle>Add participants</DialogTitle>
 				</DialogHeader>
 				<DataTableWrapper
-					data={filteredParticipants as Participant[]}
+					data={participants as Participant[]}
 					columns={columns}
 					columnsConfig={columnsConfig}
+					disabledRows={participantsToDisable}
 				>
 					{table => (
 						<DialogFooter className='col-span-2'>

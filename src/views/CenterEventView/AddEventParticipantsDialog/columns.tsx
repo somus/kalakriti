@@ -1,5 +1,10 @@
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger
+} from '@/components/ui/tooltip';
 import { Participant } from '@/db/schema.zero';
 import { createColumnHelper } from '@tanstack/react-table';
 
@@ -18,13 +23,39 @@ export const columns = [
 				aria-label='Select all'
 			/>
 		),
-		cell: ({ row }) => (
-			<Checkbox
-				checked={row.getIsSelected()}
-				onCheckedChange={value => row.toggleSelected(!!value)}
-				aria-label='Select row'
-			/>
-		),
+		cell: ({ row }) =>
+			row.getCanSelect() ? (
+				<Checkbox
+					checked={row.getIsSelected()}
+					onCheckedChange={value => row.toggleSelected(!!value)}
+					aria-label='Select row'
+				/>
+			) : (
+				<Tooltip key='create-participant'>
+					<TooltipTrigger asChild>
+						<span>
+							<Checkbox
+								checked={row.getIsSelected()}
+								onCheckedChange={value => row.toggleSelected(!!value)}
+								aria-label='Select row'
+								disabled
+							/>
+						</span>
+					</TooltipTrigger>
+					<TooltipContent>
+						<div className='flex flex-col gap-2'>
+							<p>
+								Can&apos;t select this participant because of one of the reasons
+							</p>
+							<ul className='list-disc list-inside'>
+								<li>Participant have reached their total event limit</li>
+								<li>Participant have reached their category event limit</li>
+								<li>Participant have a time conflict with the current event</li>
+							</ul>
+						</div>
+					</TooltipContent>
+				</Tooltip>
+			),
 		enableSorting: false,
 		enableHiding: false
 	}),
