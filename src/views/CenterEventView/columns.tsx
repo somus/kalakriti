@@ -6,6 +6,7 @@ import { CenterOutletContext } from '@/layout/CenterLayout';
 import { Row, createColumnHelper } from '@tanstack/react-table';
 import { CheckIcon, TrashIcon, XIcon } from 'lucide-react';
 import { useOutletContext } from 'react-router';
+import { toast } from 'sonner';
 
 import { SubEventParticipant } from './CenterEventView';
 
@@ -91,7 +92,11 @@ const Actions = ({ participantId }: { participantId: string }) => {
 					.delete({
 						id: participantId
 					})
-					.catch(e => console.log('Failed to delete participant', e));
+					.server.catch((e: Error) => {
+						toast.error('Error deleting participant from event', {
+							description: e.message || 'Something went wrong'
+						});
+					});
 			}}
 		>
 			<TrashIcon />

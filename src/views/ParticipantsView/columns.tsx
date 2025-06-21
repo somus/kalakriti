@@ -13,6 +13,7 @@ import { Row, createColumnHelper } from '@tanstack/react-table';
 import { Ellipsis } from 'lucide-react';
 import { useState } from 'react';
 import { useOutletContext } from 'react-router';
+import { toast } from 'sonner';
 
 import ParticipantFormDialog from './ParticipantFormDialog';
 import { Participant } from './ParticipantsView';
@@ -120,11 +121,17 @@ const Actions = ({ participant }: { participant: Participant }) => {
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					variant='destructive'
-					onSelect={() =>
-						z.mutate.participants.delete({
-							id: participant.id
-						})
-					}
+					onSelect={() => {
+						z.mutate.participants
+							.delete({
+								id: participant.id
+							})
+							.server.catch((e: Error) => {
+								toast.error('Error deleting participant', {
+									description: e.message || 'Something went wrong'
+								});
+							});
+					}}
 				>
 					Delete
 				</DropdownMenuItem>

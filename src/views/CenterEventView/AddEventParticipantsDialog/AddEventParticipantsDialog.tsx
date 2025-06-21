@@ -14,6 +14,7 @@ import { useQuery } from '@rocicorp/zero/react';
 import { Table } from '@tanstack/react-table';
 import { useCallback, useState } from 'react';
 import { Participant } from 'shared/db/schema.zero';
+import { toast } from 'sonner';
 
 import { SubEvent } from '../CenterEventView';
 import { columns } from './columns';
@@ -78,8 +79,10 @@ export default function AddEventParticipantsDialog({
 					participantIds: selectedRows,
 					subEventId: currentEvent.id
 				})
-				.server.catch(e => {
-					console.log('Error adding participants', e);
+				.server.catch((e: Error) => {
+					toast.error('Error adding participants', {
+						description: e.message || 'Something went wrong'
+					});
 				});
 
 			setOpen(false);

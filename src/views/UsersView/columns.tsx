@@ -19,6 +19,7 @@ import { Ellipsis, QrCodeIcon } from 'lucide-react';
 import { useState } from 'react';
 import QRCode from 'react-qr-code';
 import { User } from 'shared/db/schema.zero';
+import { toast } from 'sonner';
 
 import UserFormDialog from './UserFormDialog';
 
@@ -189,11 +190,17 @@ const Actions = ({ user }: { user: User }) => {
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					variant='destructive'
-					onSelect={() =>
-						z.mutate.users.delete({
-							id: user.id
-						})
-					}
+					onSelect={() => {
+						z.mutate.users
+							.delete({
+								id: user.id
+							})
+							.server.catch((e: Error) => {
+								toast.error('Error deleting user', {
+									description: e.message || 'Something went wrong'
+								});
+							});
+					}}
 				>
 					Delete
 				</DropdownMenuItem>

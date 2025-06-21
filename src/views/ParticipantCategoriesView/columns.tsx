@@ -11,6 +11,7 @@ import { Row, createColumnHelper } from '@tanstack/react-table';
 import { Ellipsis } from 'lucide-react';
 import { useState } from 'react';
 import { ParticipantCategory } from 'shared/db/schema.zero';
+import { toast } from 'sonner';
 
 import ParticipantCategoryFormDialog from './ParticipantCategoryFormDialog';
 
@@ -101,11 +102,17 @@ const Actions = ({
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					variant='destructive'
-					onSelect={() =>
-						z.mutate.participantCategories.delete({
-							id: participantCategory.id
-						})
-					}
+					onSelect={() => {
+						z.mutate.participantCategories
+							.delete({
+								id: participantCategory.id
+							})
+							.server.catch((e: Error) => {
+								toast.error('Error deleting participant category', {
+									description: e.message || 'Something went wrong'
+								});
+							});
+					}}
 				>
 					Delete
 				</DropdownMenuItem>

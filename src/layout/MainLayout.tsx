@@ -85,7 +85,7 @@ export default function MainLayout() {
 					</SidebarProvider>
 				</AppProvider>
 			</ZeroProvider>
-			<Toaster />
+			<Toaster position='bottom-right' richColors />
 			<PWABadge />
 		</>
 	);

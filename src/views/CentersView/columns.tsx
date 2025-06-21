@@ -13,6 +13,7 @@ import { Row, createColumnHelper } from '@tanstack/react-table';
 import { Ellipsis, LinkIcon, LockIcon, LockOpenIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
+import { toast } from 'sonner';
 
 import CenterFormDialog from './CenterFormDialog';
 
@@ -151,10 +152,19 @@ const Actions = ({ center }: { center: Center }) => {
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					onSelect={() => {
-						z.mutate.centers.update({
-							id: center.id,
-							isLocked: !center.isLocked
-						});
+						z.mutate.centers
+							.update({
+								id: center.id,
+								isLocked: !center.isLocked
+							})
+							.server.catch((e: Error) => {
+								toast.error(
+									`Error ${center.isLocked ? 'unlocking' : 'locking'} center`,
+									{
+										description: e.message || 'Something went wrong'
+									}
+								);
+							});
 					}}
 				>
 					{center.isLocked ? 'Unlock' : 'Lock'}
@@ -162,9 +172,15 @@ const Actions = ({ center }: { center: Center }) => {
 				<DropdownMenuItem
 					variant='destructive'
 					onSelect={() => {
-						z.mutate.centers.delete({
-							id: center.id
-						});
+						z.mutate.centers
+							.delete({
+								id: center.id
+							})
+							.server.catch((e: Error) => {
+								toast.error('Error deleting center', {
+									description: e.message || 'Something went wrong'
+								});
+							});
 					}}
 				>
 					Delete

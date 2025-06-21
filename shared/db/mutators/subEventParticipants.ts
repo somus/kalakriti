@@ -30,6 +30,10 @@ export function createSubEventParticipantMutators(
 					subEventId: data.subEventId
 				});
 			}
+		},
+		delete: async (tx, { id }: { id: string }) => {
+			await assertIsAdminOrGuardianOrLiasonOfParticipant(tx, authData, id);
+			await tx.mutate.subEventParticipants.delete({ id });
 		}
 	} as const satisfies CustomMutatorDefs<Schema>;
 }

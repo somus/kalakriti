@@ -11,6 +11,7 @@ import useZero from '@/hooks/useZero';
 import { Row, createColumnHelper } from '@tanstack/react-table';
 import { Ellipsis } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 import { EventCategory } from './EventCategoriesView';
 import EventCategoryFormDialog from './EventCategoryFormDialog';
@@ -74,13 +75,15 @@ const Actions = ({ eventCategory }: { eventCategory: EventCategory }) => {
 				<DropdownMenuItem
 					variant='destructive'
 					onSelect={() => {
-						Promise.all([
-							z.mutate.eventCategories.delete({
+						z.mutate.eventCategories
+							.delete({
 								id: eventCategory.id
 							})
-						]).catch(e => {
-							console.log('Failed to delete event category', e);
-						});
+							.server.catch((e: Error) => {
+								toast.error('Error deleting event category', {
+									description: e.message || 'Something went wrong'
+								});
+							});
 					}}
 				>
 					Delete

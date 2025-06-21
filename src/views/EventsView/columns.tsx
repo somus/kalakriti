@@ -13,6 +13,7 @@ import { format } from 'date-fns';
 import { Ellipsis, LinkIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
+import { toast } from 'sonner';
 
 import EventFormDialog from './EventFormDialog';
 import { Event, EventRow } from './EventsView';
@@ -163,11 +164,17 @@ const Actions = ({ eventRow }: { eventRow: EventRow }) => {
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					variant='destructive'
-					onSelect={() =>
-						z.mutate.subEvents.delete({
-							id: eventRow.subEvent.id
-						})
-					}
+					onSelect={() => {
+						z.mutate.subEvents
+							.delete({
+								id: eventRow.subEvent.id
+							})
+							.server.catch((e: Error) => {
+								toast.error('Error deleting event', {
+									description: e.message || 'Something went wrong'
+								});
+							});
+					}}
 				>
 					Delete
 				</DropdownMenuItem>
