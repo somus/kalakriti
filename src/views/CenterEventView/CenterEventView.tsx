@@ -7,11 +7,10 @@ import {
 	TooltipTrigger
 } from '@/components/ui/tooltip';
 import { H3 } from '@/components/ui/typography';
-import { Schema } from '@/db/schema.zero';
 import { useApp } from '@/hooks/useApp';
-import useZero from '@/hooks/useZero';
+import useZero, { Zero } from '@/hooks/useZero';
 import { CenterOutletContext } from '@/layout/CenterLayout';
-import { Row, Zero } from '@rocicorp/zero';
+import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 import { formatDate } from 'date-fns';
 import { Navigate, useOutletContext, useParams } from 'react-router';
@@ -21,7 +20,7 @@ import AddEventParticipantsDialog from './AddEventParticipantsDialog/AddEventPar
 import { columns } from './columns';
 import { columnsConfig } from './filters';
 
-function subEventQuery(z: Zero<Schema>, eventId: string) {
+function subEventQuery(z: Zero, eventId: string) {
 	return z.query.subEvents
 		.where('id', eventId)
 		.related('participants', q => q.related('participant'))
@@ -31,7 +30,7 @@ function subEventQuery(z: Zero<Schema>, eventId: string) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function subEventParticipantQuery(z: Zero<Schema>) {
+function subEventParticipantQuery(z: Zero) {
 	return z.query.subEventParticipants.related('participant');
 }
 

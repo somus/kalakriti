@@ -1,9 +1,9 @@
-import { User } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
 import LoadingScreen from '@/views/general/LoadingScreen';
 import { UserResource } from '@clerk/types';
 import { useQuery } from '@rocicorp/zero/react';
 import { PropsWithChildren, createContext, useContext } from 'react';
+import { User } from 'shared/db/schema.zero';
 
 interface AppContextProps {
 	clerkUser: UserResource;

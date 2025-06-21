@@ -1,22 +1,61 @@
 import { createClerkClient } from '@clerk/backend';
 import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
+import {
+	PostgresJSConnection,
+	PushProcessor,
+	ZQLDatabase
+} from '@rocicorp/zero/pg';
+import { createMutators } from '@shared/db/mutators';
+import { AuthData } from '@shared/db/schema.zero';
+import { schema } from '@shared/db/zero-schema.gen';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import * as z from 'zod/v4';
+import postgres from 'postgres';
 
-import {
-	clerkUserCreateInputSchema,
-	clerkUserUpdateInputSchema
-} from '../shared/schema';
 import { env } from './env.server';
 
-const app = new Hono();
+const processor = new PushProcessor(
+	new ZQLDatabase(
+		new PostgresJSConnection(postgres(env.ZERO_UPSTREAM_DB)),
+		schema
+	)
+);
+
+const app = new Hono().basePath('/api');
 const clerkClient = createClerkClient({
 	secretKey: env.CLERK_SECRET_KEY
 });
 
 app.use('*', cors());
 app.use('*', clerkMiddleware());
+
+app.post('/push', async c => {
+	const auth = getAuth(c);
+	if (!auth?.userId) {
+		return c.json({
+			message: 'You are not logged in.'
+		});
+	}
+
+	try {
+		const user = await clerkClient.users.getUser(auth.userId);
+
+		const result = await processor.process(
+			createMutators(
+				{
+					sub: auth.userId,
+					meta: { role: user.publicMetadata.role as AuthData['meta']['role'] }
+				},
+				clerkClient
+			),
+			c.req.raw
+		);
+		return c.json(result);
+	} catch (e) {
+		return Error.isError(e) ? c.json(e) : c.json({ message: e });
+	}
+});
+
 app.get('/', c => {
 	const auth = getAuth(c);
 	if (!auth?.userId) {
@@ -29,98 +68,6 @@ app.get('/', c => {
 		message: 'You are logged in!',
 		userId: auth.userId
 	});
-});
-
-app.get('/users', async c => {
-	const auth = getAuth(c);
-	if (!auth?.userId) {
-		return c.json({
-			message: 'You are not logged in.'
-		});
-	}
-
-	const users = await clerkClient.users.getUserList();
-
-	return c.json(users);
-});
-
-app.post('/users', async c => {
-	const auth = getAuth(c);
-	if (!auth?.userId) {
-		return c.json({
-			message: 'You are not logged in.'
-		});
-	}
-
-	const body: unknown = await c.req.json();
-	const data = clerkUserCreateInputSchema.parse(body);
-
-	try {
-		const user = await clerkClient.users.createUser({
-			firstName: data.firstName,
-			lastName: data.lastName,
-			emailAddress: [data.email],
-			password: data.password,
-			skipPasswordChecks: true,
-			publicMetadata: {
-				role: data.role
-			}
-		});
-
-		return c.json(user);
-	} catch (e) {
-		return Error.isError(e) ? c.json(e) : c.json({ message: e });
-	}
-});
-
-app.put('/users', async c => {
-	const auth = getAuth(c);
-	if (!auth?.userId) {
-		return c.json({
-			message: 'You are not logged in.'
-		});
-	}
-
-	const body: unknown = await c.req.json();
-	const data = clerkUserUpdateInputSchema.parse(body);
-
-	try {
-		const user = await clerkClient.users.updateUser(data.id, {
-			firstName: data.firstName,
-			lastName: data.lastName,
-			password: data.password,
-			skipPasswordChecks: true,
-			publicMetadata: data.role
-				? {
-						role: data.role
-					}
-				: undefined
-		});
-
-		return c.json(user);
-	} catch (e) {
-		return Error.isError(e) ? c.json(e) : c.json({ message: e });
-	}
-});
-
-app.delete('/users', async c => {
-	const auth = getAuth(c);
-	if (!auth?.userId) {
-		return c.json({
-			message: 'You are not logged in.'
-		});
-	}
-
-	const body: unknown = await c.req.json();
-	const data = z.object({ id: z.string() }).parse(body);
-
-	try {
-		const user = await clerkClient.users.deleteUser(data.id);
-
-		return c.json(user);
-	} catch (e) {
-		return Error.isError(e) ? c.json(e) : c.json({ message: e });
-	}
 });
 
 export default {

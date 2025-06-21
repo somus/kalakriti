@@ -1,6 +1,6 @@
 import { createColumnConfigHelper } from '@/components/data-table-filter/core/filters';
-import { ParticipantCategory } from '@/db/schema.zero';
 import { HashIcon, Heading1Icon } from 'lucide-react';
+import { ParticipantCategory } from 'shared/db/schema.zero';
 
 const dtf = createColumnConfigHelper<ParticipantCategory>();
 

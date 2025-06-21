@@ -5,8 +5,8 @@ import {
 	TooltipContent,
 	TooltipTrigger
 } from '@/components/ui/tooltip';
-import { Participant } from '@/db/schema.zero';
 import { createColumnHelper } from '@tanstack/react-table';
+import { Participant } from 'shared/db/schema.zero';
 
 const columnHelper = createColumnHelper<Participant>();
 

@@ -1,10 +1,10 @@
 import { NavItem } from '@/components/nav-main';
-import { Center, Schema } from '@/db/schema.zero';
 import { useApp } from '@/hooks/useApp';
-import useZero from '@/hooks/useZero';
-import { Row, Zero } from '@rocicorp/zero';
+import useZero, { Zero } from '@/hooks/useZero';
+import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 import { HomeIcon, SchoolIcon, TicketsIcon, UsersIcon } from 'lucide-react';
+import { Center } from 'shared/db/schema.zero';
 
 const homeNavItem: NavItem = {
 	title: 'Dashboard',
@@ -109,7 +109,7 @@ const getGuardianAndLiasonNavItems = (
 				])
 			];
 
-function eventsQuery(z: Zero<Schema>) {
+function eventsQuery(z: Zero) {
 	return z.query.events.related('subEvents', q =>
 		q.related('participantCategory')
 	);

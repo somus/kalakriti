@@ -20,7 +20,7 @@
 		"dev:api": "bun run --hot api/index.ts",
 		"dev:app": "bun --env-file=.env.local vite --open",
 		"format": "prettier -uw --cache .",
-		"generate": "drizzle-zero generate -t tsconfig.app.json -c ./src/db/drizzle-zero.config.ts -o ./src/db/zero-schema.gen.ts -f",
+		"generate": "drizzle-zero generate -t tsconfig.app.json -c ./shared/db/drizzle-zero.config.ts -o ./shared/db/zero-schema.gen.ts -f",
 		"preinstall": "npx only-allow bun",
 		"postinstall": "bun generate",
 		"knip": "bunx --bun knip",
@@ -33,8 +33,8 @@
 		"staging": "bun --env-file=.env.staging vite --open",
 		"typecheck": "tsc --noEmit -p tsconfig.app.json --composite false",
 		"update-packages": "bunx taze -I --recursive",
-		"zero-cache": "bun --env-file=.env.local zero-cache-dev -p src/db/schema.zero.ts --log-level debug",
-		"zero-deploy": "bun --env-file=.env.staging --zero-deploy-permissions -p src/db/schema.zero.ts"
+		"zero-cache": "bun --env-file=.env.local zero-cache-dev -p shared/db/schema.zero.ts --log-level debug",
+		"zero-deploy": "bun --env-file=.env.staging --zero-deploy-permissions -p shared/db/schema.zero.ts"
 	},
 	"lint-staged": {
 		"package.json": "bunx sort-package-json",

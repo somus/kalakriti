@@ -1,7 +1,6 @@
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -21,34 +20,12 @@ import { Participant } from './ParticipantsView';
 const columnHelper = createColumnHelper<Participant>();
 
 export const columns = [
-	columnHelper.display({
-		id: 'select',
-		header: ({ table }) => (
-			<Checkbox
-				checked={
-					table.getIsAllPageRowsSelected() ||
-					(table.getIsSomePageRowsSelected() && 'indeterminate')
-				}
-				onCheckedChange={value => table.toggleAllRowsSelected(!!value)}
-				aria-label='Select all'
-			/>
-		),
-		cell: ({ row }) => (
-			<Checkbox
-				checked={row.getIsSelected()}
-				onCheckedChange={value => row.toggleSelected(!!value)}
-				aria-label='Select row'
-			/>
-		),
-		enableSorting: false,
-		enableHiding: false
-	}),
 	columnHelper.accessor(row => row.name, {
 		id: 'name',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Name' />
+			<DataTableColumnHeader className='ml-2' column={column} title='Name' />
 		),
-		cell: ({ row }) => <div>{row.getValue('name')}</div>,
+		cell: ({ row }) => <div className='pl-4'>{row.getValue('name')}</div>,
 		sortingFn: 'alphanumeric',
 		meta: {
 			displayName: 'Name'
@@ -143,15 +120,11 @@ const Actions = ({ participant }: { participant: Participant }) => {
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					variant='destructive'
-					onSelect={() => {
-						Promise.all([
-							z.mutate.participants.delete({
-								id: participant.id
-							})
-						]).catch(e => {
-							console.log('Failed to delete participant', e);
-						});
-					}}
+					onSelect={() =>
+						z.mutate.participants.delete({
+							id: participant.id
+						})
+					}
 				>
 					Delete
 				</DropdownMenuItem>

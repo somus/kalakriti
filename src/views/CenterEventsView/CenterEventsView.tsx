@@ -1,14 +1,13 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
-import { Schema } from '@/db/schema.zero';
-import useZero from '@/hooks/useZero';
-import { Row, Zero } from '@rocicorp/zero';
+import useZero, { Zero } from '@/hooks/useZero';
+import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 
 import { SubEvent } from '../CenterEventView/CenterEventView';
 import { columns } from './columns';
 import { columnsConfig } from './filters';
 
-function centerEventsQuery(z: Zero<Schema>) {
+function centerEventsQuery(z: Zero) {
 	return z.query.events
 		.related('category')
 		.related('subEvents', q =>

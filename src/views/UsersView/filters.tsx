@@ -1,5 +1,4 @@
 import { createColumnConfigHelper } from '@/components/data-table-filter/core/filters';
-import { User } from '@/db/schema.zero';
 import { cn } from '@/lib/utils';
 import {
 	Heading1Icon,
@@ -7,6 +6,7 @@ import {
 	PhoneIcon,
 	ShieldUserIcon
 } from 'lucide-react';
+import { User } from 'shared/db/schema.zero';
 
 import { ROLE_STYLES_MAP } from './columns';
 

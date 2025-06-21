@@ -1,9 +1,8 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Schema } from '@/db/schema.zero';
-import useZero from '@/hooks/useZero';
-import { Row, Zero } from '@rocicorp/zero';
+import useZero, { Zero } from '@/hooks/useZero';
+import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 import { Navigate, useParams } from 'react-router';
 import * as z from 'zod/v4';
@@ -12,7 +11,7 @@ import { SubEventParticipant } from '../CenterEventView/CenterEventView';
 import { columns } from '../CenterEventView/columns';
 import { columnsConfig } from '../CenterEventView/filters';
 
-function eventQuery(z: Zero<Schema>, eventId: string) {
+function eventQuery(z: Zero, eventId: string) {
 	return z.query.subEvents
 		.where('id', eventId)
 		.related('participants', q =>

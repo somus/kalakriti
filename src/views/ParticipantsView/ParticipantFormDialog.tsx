@@ -16,18 +16,17 @@ import {
 	ModalTitle,
 	ModalTrigger
 } from '@/components/ui/credenza';
-import { genderEnum } from '@/db/schema';
 import { useApp } from '@/hooks/useApp';
 import useZero from '@/hooks/useZero';
 import { CenterOutletContext } from '@/layout/CenterLayout';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createId } from '@paralleldrive/cuid2';
 import { useQuery } from '@rocicorp/zero/react';
-import { differenceInYears, subYears } from 'date-fns';
+import { subYears } from 'date-fns';
 import { AlertCircle, LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useOutletContext } from 'react-router';
+import { genderEnum } from 'shared/db/schema';
 import * as z from 'zod/v4';
 
 import { Participant } from './ParticipantsView';
@@ -59,7 +58,6 @@ export default function ParticipantFormModal({
 	const { user } = useApp();
 	const [centers] = useQuery(zero.query.centers);
 	const [participantCategories] = useQuery(zero.query.participantCategories);
-	const [participants] = useQuery(zero.query.participants);
 
 	if (!children && !(open !== undefined && onOpenChange)) {
 		throw new Error(
@@ -118,46 +116,18 @@ export default function ParticipantFormModal({
 
 		try {
 			if (!participant) {
-				const age = differenceInYears(new Date(), data.dob);
-				const participantCategory = participantCategories.find(
-					category => category.minAge <= age && category.maxAge >= age
-				);
-				if (!participantCategory) {
-					throw new Error('Participant category not found');
-				}
-				const exisitngParticipantsInCategory = participants.filter(
-					p =>
-						p.gender === data.gender &&
-						p.participantCategoryId === participantCategory.id
-				).length;
-				if (
-					exisitngParticipantsInCategory >=
-					(data.gender === 'male'
-						? participantCategory.maxBoys
-						: participantCategory.maxGirls)
-				) {
-					throw new Error(
-						`Maximum number of ${data.gender} participants added for ${participantCategory.name} category`
-					);
-				}
-
-				// Create the participant in db
-				const participantId = createId();
-				await zero.mutate.participants.insert({
-					id: participantId,
+				await zero.mutate.participants.create({
 					name: data.name,
 					dob: data.dob.getTime(),
-					age,
 					gender: data.gender,
-					centerId: data.center ?? defaultCenter,
-					participantCategoryId: participantCategory.id
-				});
+					centerId: data.center ?? defaultCenter
+				}).server;
 			} else {
 				// Update participant
 				await zero.mutate.participants.update({
 					id: participant.id,
 					name: data.name
-				});
+				}).server;
 			}
 
 			// Close dialog on success

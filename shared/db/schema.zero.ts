@@ -12,7 +12,7 @@ export { schema, type Schema };
 
 export type Roles = (typeof drizzleSchema.rolesEnum.enumValues)[number];
 
-interface AuthData {
+export interface AuthData {
 	sub: string; // assuming sub is the user identifier
 	meta: {
 		role?: Roles;
@@ -160,112 +160,52 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 	return {
 		eventCategories: {
 			row: {
-				select: [allowIfLoggedIn],
-				insert: [loggedInUserIsAdmin],
-				update: {
-					preMutation: [loggedInUserIsAdmin],
-					postMutation: [loggedInUserIsAdmin]
-				},
-				delete: [loggedInUserIsAdmin]
+				select: [allowIfLoggedIn]
 			}
 		},
 		events: {
 			row: {
-				select: [allowIfLoggedIn],
-				insert: [loggedInUserIsAdmin],
-				update: {
-					preMutation: [loggedInUserIsAdmin],
-					postMutation: [loggedInUserIsAdmin]
-				},
-				delete: [loggedInUserIsAdmin]
+				select: [allowIfLoggedIn]
 			}
 		},
 		subEvents: {
 			row: {
-				select: [allowIfLoggedIn],
-				insert: [loggedInUserIsAdmin],
-				update: {
-					preMutation: [loggedInUserIsAdmin],
-					postMutation: [loggedInUserIsAdmin]
-				},
-				delete: [loggedInUserIsAdmin]
+				select: [allowIfLoggedIn]
 			}
 		},
 		users: {
 			row: {
-				select: [loggedInUserIsAdmin, userReadPermission],
-				insert: [loggedInUserIsAdmin],
-				update: {
-					preMutation: [loggedInUserIsAdmin],
-					postMutation: [loggedInUserIsAdmin]
-				},
-				delete: [loggedInUserIsAdmin]
+				select: [loggedInUserIsAdmin, userReadPermission]
 			}
 		},
 		centers: {
 			row: {
-				select: [loggedInUserIsAdmin, centerPermission],
-				insert: [loggedInUserIsAdmin],
-				update: {
-					preMutation: [loggedInUserIsAdmin],
-					postMutation: [loggedInUserIsAdmin]
-				},
-				delete: [loggedInUserIsAdmin]
+				select: [loggedInUserIsAdmin, centerPermission]
 			}
 		},
 		centerLiaisons: {
 			row: {
-				select: [loggedInUserIsAdmin, centerLiasonPermission],
-				insert: [loggedInUserIsAdmin],
-				update: {
-					preMutation: [loggedInUserIsAdmin],
-					postMutation: [loggedInUserIsAdmin]
-				},
-				delete: [loggedInUserIsAdmin]
+				select: [loggedInUserIsAdmin, centerLiasonPermission]
 			}
 		},
 		centerGuardians: {
 			row: {
-				select: [loggedInUserIsAdmin, centerGuardianPermission],
-				insert: [loggedInUserIsAdmin],
-				update: {
-					preMutation: [loggedInUserIsAdmin],
-					postMutation: [loggedInUserIsAdmin]
-				},
-				delete: [loggedInUserIsAdmin]
+				select: [loggedInUserIsAdmin, centerGuardianPermission]
 			}
 		},
 		participantCategories: {
 			row: {
-				select: [allowIfLoggedIn],
-				insert: [loggedInUserIsAdmin],
-				update: {
-					preMutation: [loggedInUserIsAdmin],
-					postMutation: [loggedInUserIsAdmin]
-				},
-				delete: [loggedInUserIsAdmin]
+				select: [allowIfLoggedIn]
 			}
 		},
 		participants: {
 			row: {
-				select: [loggedInUserIsAdmin, participantPermission],
-				insert: [loggedInUserIsAdmin, participantPermission],
-				update: {
-					preMutation: [loggedInUserIsAdmin, participantPermission],
-					postMutation: [loggedInUserIsAdmin, participantPermission]
-				},
-				delete: [loggedInUserIsAdmin, participantPermission]
+				select: [loggedInUserIsAdmin, participantPermission]
 			}
 		},
 		subEventParticipants: {
 			row: {
-				select: [loggedInUserIsAdmin, eventParticipantPermission],
-				insert: [loggedInUserIsAdmin, eventParticipantPermission],
-				update: {
-					preMutation: [loggedInUserIsAdmin, eventParticipantPermission],
-					postMutation: [loggedInUserIsAdmin, eventParticipantPermission]
-				},
-				delete: [loggedInUserIsAdmin, eventParticipantPermission]
+				select: [loggedInUserIsAdmin, eventParticipantPermission]
 			}
 		}
 	} satisfies PermissionsConfig<AuthData, Schema>;

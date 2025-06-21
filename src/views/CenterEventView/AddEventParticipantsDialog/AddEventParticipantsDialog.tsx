@@ -8,13 +8,12 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '@/components/ui/dialog';
-import { Participant } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
 import LoadingScreen from '@/views/general/LoadingScreen';
-import { createId } from '@paralleldrive/cuid2';
 import { useQuery } from '@rocicorp/zero/react';
 import { Table } from '@tanstack/react-table';
 import { useCallback, useState } from 'react';
+import { Participant } from 'shared/db/schema.zero';
 
 import { SubEvent } from '../CenterEventView';
 import { columns } from './columns';
@@ -74,17 +73,12 @@ export default function AddEventParticipantsDialog({
 			const selectedRows = table
 				.getFilteredSelectedRowModel()
 				.rows.map(row => row.original.id);
-			zero
-				.mutateBatch(async tx => {
-					for (const participantId of selectedRows) {
-						await tx.subEventParticipants.insert({
-							id: createId(),
-							participantId,
-							subEventId: currentEvent.id
-						});
-					}
+			zero.mutate.subEventParticipants
+				.createBatch({
+					participantIds: selectedRows,
+					subEventId: currentEvent.id
 				})
-				.catch(e => {
+				.server.catch(e => {
 					console.log('Error adding participants', e);
 				});
 

@@ -13,7 +13,6 @@ import MultipleSelector, { Option } from '@/components/ui/input-multiselect';
 import useZero from '@/hooks/useZero';
 import { Center } from '@/layout/CenterLayout';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createId } from '@paralleldrive/cuid2';
 import { useQuery } from '@rocicorp/zero/react';
 import { LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
@@ -21,16 +20,20 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod/v4';
 
 const centerSchema = z.object({
-	name: z.string(),
+	name: z.string({ error: 'Name is required' }),
 	phoneNumber: z
-		.string()
+		.string({ error: 'Phone number is required' })
 		.refine(
 			value => /^[6-9]\d{9}$/.test(value),
 			'Please enter a valid indian mobile number'
 		),
-	email: z.email(),
-	liaisons: z.array(z.string()),
-	guardians: z.array(z.string())
+	email: z.email({ error: 'Email is required' }),
+	liaisons: z
+		.array(z.string(), { error: 'Liaisons are required' })
+		.min(1, { error: 'Liaisons are required' }),
+	guardians: z
+		.array(z.string(), { error: 'Guardians are required' })
+		.min(1, { error: 'Guardians are required' })
 });
 
 type CenterFormData = z.infer<typeof centerSchema>;
@@ -88,6 +91,7 @@ export default function CenterFormModal({
 		resolver: zodResolver(centerSchema),
 		defaultValues: getCenterDefaultValues(center)
 	});
+	const errors = form.formState.errors;
 
 	const handleFormSubmit = async (data: CenterFormData) => {
 		setIsSubmitting(true);
@@ -95,96 +99,10 @@ export default function CenterFormModal({
 		try {
 			if (!center) {
 				// Create the center in db
-				await zero.mutateBatch(async tx => {
-					const centerId = createId();
-					await tx.centers.insert({
-						id: centerId,
-						name: data.name,
-						phoneNumber: data.phoneNumber,
-						email: data.email
-					});
-
-					for (const liaisonId of data.liaisons) {
-						await tx.centerLiaisons.insert({
-							centerId,
-							userId: liaisonId
-						});
-					}
-
-					for (const guardianId of data.guardians) {
-						await tx.centerGuardians.insert({
-							centerId,
-							userId: guardianId
-						});
-					}
-				});
+				await zero.mutate.centers.create(data).server;
 			} else {
 				// Update center
-				await zero.mutateBatch(async tx => {
-					// Update center information
-					await tx.centers.update({
-						id: center.id,
-						name: data.name,
-						phoneNumber: data.phoneNumber,
-						email: data.email
-					});
-
-					// Get current liaisons and guardians
-					const currentLiasonIds = center.liaisons.map(
-						liaison => liaison.userId
-					);
-					const currentGuardianIds = center.guardians.map(
-						guardian => guardian.userId
-					);
-
-					// Determine which liaisons to remove and which to add
-					const liaisonsToRemove = currentLiasonIds.filter(
-						id => !data.liaisons.includes(id)
-					);
-					const liaisonsToAdd = data.liaisons.filter(
-						id => !currentLiasonIds.includes(id)
-					);
-
-					// Determine which guardians to remove and which to add
-					const guardiansToRemove = currentGuardianIds.filter(
-						id => !data.guardians.includes(id)
-					);
-					const guardiansToAdd = data.guardians.filter(
-						id => !currentGuardianIds.includes(id)
-					);
-
-					// Remove deleted liaisons
-					for (const userId of liaisonsToRemove) {
-						await tx.centerLiaisons.delete({
-							centerId: center.id,
-							userId
-						});
-					}
-
-					// Remove deleted guardians
-					for (const userId of guardiansToRemove) {
-						await tx.centerGuardians.delete({
-							centerId: center.id,
-							userId
-						});
-					}
-
-					// Add new liaisons
-					for (const userId of liaisonsToAdd) {
-						await tx.centerLiaisons.insert({
-							centerId: center.id,
-							userId
-						});
-					}
-
-					// Add new guardians
-					for (const userId of guardiansToAdd) {
-						await tx.centerGuardians.insert({
-							centerId: center.id,
-							userId
-						});
-					}
-				});
+				await zero.mutate.centers.update({ id: center.id, ...data }).server;
 			}
 
 			// Close dialog on success
@@ -241,6 +159,14 @@ export default function CenterFormModal({
 									);
 								}}
 							/>
+							{errors.liaisons && (
+								<p
+									data-slot='form-message'
+									className='text-destructive text-sm'
+								>
+									{errors.liaisons.message}
+								</p>
+							)}
 						</div>
 
 						<div className='space-y-2'>
@@ -263,6 +189,14 @@ export default function CenterFormModal({
 									);
 								}}
 							/>
+							{errors.guardians && (
+								<p
+									data-slot='form-message'
+									className='text-destructive text-sm'
+								>
+									{errors.guardians.message}
+								</p>
+							)}
 						</div>
 					</ModalBody>
 

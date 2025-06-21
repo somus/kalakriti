@@ -9,23 +9,28 @@ import {
 	ModalTitle,
 	ModalTrigger
 } from '@/components/ui/credenza';
-import { ParticipantCategory } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createId } from '@paralleldrive/cuid2';
 import { LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { ParticipantCategory } from 'shared/db/schema.zero';
 import * as z from 'zod/v4';
 
 const participantCategorySchema = z.object({
-	name: z.string(),
-	minAge: z.number().min(0).max(20),
-	maxAge: z.number().min(0).max(20),
-	maxBoys: z.number().min(0).max(50),
-	maxGirls: z.number().min(0).max(50),
-	totalEventsAllowed: z.number().min(0).max(10),
-	maxEventsPerCategory: z.number().min(0).max(10)
+	name: z.string({ error: 'Name is required' }),
+	minAge: z.number({ error: 'Min age is required' }).min(0).max(20),
+	maxAge: z.number({ error: 'Max age is required' }).min(0).max(20),
+	maxBoys: z.number({ error: 'Max boys is required' }).min(0).max(50),
+	maxGirls: z.number({ error: 'Max girls is required' }).min(0).max(50),
+	totalEventsAllowed: z
+		.number({ error: 'Total events allowed is required' })
+		.min(0)
+		.max(10),
+	maxEventsPerCategory: z
+		.number({ error: 'Max events per category is required' })
+		.min(0)
+		.max(10)
 });
 
 type ParticipantCategoryFormData = z.infer<typeof participantCategorySchema>;
@@ -79,29 +84,13 @@ export default function ParticipantCategoryFormModal({
 		try {
 			if (!participantCategory) {
 				// Create the participantCategory in db
-				const participantCategoryId = createId();
-				await zero.mutate.participantCategories.insert({
-					id: participantCategoryId,
-					name: data.name,
-					minAge: data.minAge,
-					maxAge: data.maxAge,
-					maxBoys: data.maxBoys,
-					maxGirls: data.maxGirls,
-					totalEventsAllowed: data.totalEventsAllowed,
-					maxEventsPerCategory: data.maxEventsPerCategory
-				});
+				await zero.mutate.participantCategories.create(data).server;
 			} else {
 				// Update participantCategory
 				await zero.mutate.participantCategories.update({
 					id: participantCategory.id,
-					name: data.name,
-					minAge: data.minAge,
-					maxAge: data.maxAge,
-					maxBoys: data.maxBoys,
-					maxGirls: data.maxGirls,
-					totalEventsAllowed: data.totalEventsAllowed,
-					maxEventsPerCategory: data.maxEventsPerCategory
-				});
+					...data
+				}).server;
 			}
 
 			// Close dialog on success

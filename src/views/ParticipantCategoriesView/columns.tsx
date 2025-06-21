@@ -1,51 +1,28 @@
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { ParticipantCategory } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
 import { Row, createColumnHelper } from '@tanstack/react-table';
 import { Ellipsis } from 'lucide-react';
 import { useState } from 'react';
+import { ParticipantCategory } from 'shared/db/schema.zero';
 
 import ParticipantCategoryFormDialog from './ParticipantCategoryFormDialog';
 
 const columnHelper = createColumnHelper<ParticipantCategory>();
 
 export const columns = [
-	columnHelper.display({
-		id: 'select',
-		header: ({ table }) => (
-			<Checkbox
-				checked={
-					table.getIsAllPageRowsSelected() ||
-					(table.getIsSomePageRowsSelected() && 'indeterminate')
-				}
-				onCheckedChange={value => table.toggleAllRowsSelected(!!value)}
-				aria-label='Select all'
-			/>
-		),
-		cell: ({ row }) => (
-			<Checkbox
-				checked={row.getIsSelected()}
-				onCheckedChange={value => row.toggleSelected(!!value)}
-				aria-label='Select row'
-			/>
-		),
-		enableSorting: false,
-		enableHiding: false
-	}),
 	columnHelper.accessor(row => row.name, {
 		id: 'name',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Name' />
+			<DataTableColumnHeader className='ml-2' column={column} title='Name' />
 		),
-		cell: ({ row }) => <div>{row.getValue('name')}</div>
+		cell: ({ row }) => <div className='pl-4'>{row.getValue('name')}</div>
 	}),
 	columnHelper.accessor(row => row.minAge, {
 		id: 'minAge',
@@ -124,15 +101,11 @@ const Actions = ({
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					variant='destructive'
-					onSelect={() => {
-						Promise.all([
-							z.mutate.participantCategories.delete({
-								id: participantCategory.id
-							})
-						]).catch(e => {
-							console.log('Failed to delete center', e);
-						});
-					}}
+					onSelect={() =>
+						z.mutate.participantCategories.delete({
+							id: participantCategory.id
+						})
+					}
 				>
 					Delete
 				</DropdownMenuItem>

@@ -1,8 +1,7 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Button } from '@/components/ui/button';
-import { Schema } from '@/db/schema.zero';
-import useZero from '@/hooks/useZero';
-import { Row, Zero } from '@rocicorp/zero';
+import useZero, { Zero } from '@/hooks/useZero';
+import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 
 import { SubEvent } from '../CenterEventView/CenterEventView';
@@ -10,7 +9,7 @@ import EventFormDialog from './EventFormDialog';
 import { columns } from './columns';
 import { columnsConfig } from './filters';
 
-function eventsQuery(z: Zero<Schema>) {
+function eventsQuery(z: Zero) {
 	return z.query.events
 		.related('coordinator')
 		.related('category')

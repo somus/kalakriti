@@ -151,14 +151,10 @@ const Actions = ({ center }: { center: Center }) => {
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					onSelect={() => {
-						z.mutate.centers
-							.update({
-								id: center.id,
-								isLocked: !center.isLocked
-							})
-							.catch(e => {
-								console.log('Failed to update center', e);
-							});
+						z.mutate.centers.update({
+							id: center.id,
+							isLocked: !center.isLocked
+						});
 					}}
 				>
 					{center.isLocked ? 'Unlock' : 'Lock'}
@@ -166,13 +162,9 @@ const Actions = ({ center }: { center: Center }) => {
 				<DropdownMenuItem
 					variant='destructive'
 					onSelect={() => {
-						z.mutate.centers
-							.delete({
-								id: center.id
-							})
-							.catch(e => {
-								console.log('Failed to delete center', e);
-							});
+						z.mutate.centers.delete({
+							id: center.id
+						});
 					}}
 				>
 					Delete

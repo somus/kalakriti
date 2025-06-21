@@ -3,8 +3,8 @@ import type { Config } from 'drizzle-kit';
 import { env } from './api/env.server';
 
 export default {
-	schema: './src/db/schema.ts',
-	out: 'src/db/drizzle',
+	schema: './shared/db/schema.ts',
+	out: 'shared/db/drizzle',
 	dialect: 'postgresql',
 	strict: true,
 	verbose: true,

@@ -19,7 +19,7 @@ import useZero from '@/hooks/useZero';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createId } from '@paralleldrive/cuid2';
 import { useQuery } from '@rocicorp/zero/react';
-import { format, set } from 'date-fns';
+import { format } from 'date-fns';
 import keyBy from 'lodash/keyBy';
 import { LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
@@ -81,7 +81,7 @@ export default function EventFormModal({
 	);
 
 	const eventSchema = z.object({
-		name: z.string(),
+		name: z.string({ error: 'Name is required' }),
 		timings: z.record(
 			z.string(),
 			z
@@ -101,8 +101,8 @@ export default function EventFormModal({
 					}
 				)
 		),
-		coordinator: z.string(),
-		category: z.cuid2()
+		coordinator: z.string({ error: 'Coordinator is required' }),
+		category: z.cuid2({ error: 'Category is required' })
 	});
 
 	type EventFormData = z.infer<typeof eventSchema>;
@@ -198,79 +198,15 @@ export default function EventFormModal({
 				id: event?.id ?? createId(),
 				name: data.name,
 				coordinatorId: data.coordinator,
-				eventCategoryId: data.category
+				eventCategoryId: data.category,
+				timings: data.timings
 			};
 			if (!event) {
 				// Create the event in db
-				zero
-					.mutateBatch(async tx => {
-						await zero.mutate.events.insert(mutationData);
-						for (const subCategoryId of Object.keys(data.timings)) {
-							const subEvent = data.timings[subCategoryId];
-							if (subEvent.startTime && subEvent.endTime) {
-								await tx.subEvents.insert({
-									id: createId(),
-									eventId: mutationData.id,
-									participantCategoryId: subEvent.categoryId,
-									startTime: set(new Date(2025, 8, 25), {
-										hours: parseInt(subEvent.startTime.split(':')[0]),
-										minutes: parseInt(subEvent.startTime.split(':')[1])
-									}).getTime(),
-									endTime: set(new Date(2025, 8, 25), {
-										hours: parseInt(subEvent.endTime.split(':')[0]),
-										minutes: parseInt(subEvent.endTime.split(':')[1])
-									}).getTime()
-								});
-							}
-						}
-					})
-					.catch(e => {
-						console.log('Error adding participants', e);
-					});
+				await zero.mutate.events.create(mutationData).server;
 			} else {
 				// Update event
-				const existingSubEventIds = event.subEvents.map(
-					subEvent => subEvent.id
-				);
-				await zero
-					.mutateBatch(async tx => {
-						await tx.events.update(mutationData);
-						for (const subCategoryId of Object.keys(data.timings)) {
-							const subEvent = data.timings[subCategoryId];
-							if (subEvent.startTime && subEvent.endTime) {
-								if (existingSubEventIds.includes(subCategoryId)) {
-									await tx.subEvents.update({
-										id: subCategoryId,
-										startTime: set(new Date(2025, 8, 25), {
-											hours: parseInt(subEvent.startTime.split(':')[0]),
-											minutes: parseInt(subEvent.startTime.split(':')[1])
-										}).getTime(),
-										endTime: set(new Date(2025, 8, 25), {
-											hours: parseInt(subEvent.endTime.split(':')[0]),
-											minutes: parseInt(subEvent.endTime.split(':')[1])
-										}).getTime()
-									});
-								} else {
-									await tx.subEvents.insert({
-										id: subCategoryId,
-										eventId: event.id,
-										participantCategoryId: subEvent.categoryId,
-										startTime: set(new Date(2025, 8, 25), {
-											hours: parseInt(subEvent.startTime.split(':')[0]),
-											minutes: parseInt(subEvent.startTime.split(':')[1])
-										}).getTime(),
-										endTime: set(new Date(2025, 8, 25), {
-											hours: parseInt(subEvent.endTime.split(':')[0]),
-											minutes: parseInt(subEvent.endTime.split(':')[1])
-										}).getTime()
-									});
-								}
-							}
-						}
-					})
-					.catch(e => {
-						console.log('Error updating participants', e);
-					});
+				await zero.mutate.events.update(mutationData).server;
 			}
 
 			// Close dialog on success

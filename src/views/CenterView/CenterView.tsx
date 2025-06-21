@@ -6,16 +6,14 @@ import {
 	CardTitle
 } from '@/components/ui/card';
 import { H3 } from '@/components/ui/typography';
-import { Schema } from '@/db/schema.zero';
-import useZero from '@/hooks/useZero';
+import useZero, { Zero } from '@/hooks/useZero';
 import { Center, CenterOutletContext } from '@/layout/CenterLayout';
-import { Zero } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 import camelCase from 'lodash/camelCase';
 import { Link, useOutletContext } from 'react-router';
 
 // eslint-disable-next-line react-refresh/only-export-components
-export function centerQuery(z: Zero<Schema>) {
+export function centerQuery(z: Zero) {
 	return z.query.centers
 		.related('guardians', q => q.related('user'))
 		.related('liaisons', q => q.related('user'))

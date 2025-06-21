@@ -1,8 +1,8 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Button } from '@/components/ui/button';
-import { User } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
 import { useQuery } from '@rocicorp/zero/react';
+import { User } from 'shared/db/schema.zero';
 
 import UserFormDialog from './UserFormDialog';
 import { columns } from './columns';

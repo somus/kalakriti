@@ -1,6 +1,6 @@
 import { createColumnConfigHelper } from '@/components/data-table-filter/core/filters';
-import { Participant } from '@/db/schema.zero';
 import { CalendarIcon, CircleSmallIcon, Heading1Icon } from 'lucide-react';
+import { Participant } from 'shared/db/schema.zero';
 
 const dtf = createColumnConfigHelper<Participant>();
 

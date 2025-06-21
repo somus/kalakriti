@@ -1,8 +1,8 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Button } from '@/components/ui/button';
-import { ParticipantCategory } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
 import { useQuery } from '@rocicorp/zero/react';
+import { ParticipantCategory } from 'shared/db/schema.zero';
 
 import ParticipantCategoryFormDialog from './ParticipantCategoryFormDialog';
 import { columns } from './columns';

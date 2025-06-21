@@ -9,51 +9,33 @@ import {
 	ModalTitle,
 	ModalTrigger
 } from '@/components/ui/credenza';
-import { rolesEnum } from '@/db/schema';
-import { User } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
-import {
-	clearClerkUser,
-	deleteClerkUser,
-	updateClerkUser
-} from '@/lib/clerkUser';
-import { useAuth } from '@clerk/clerk-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 import { UseFormSetError, useForm } from 'react-hook-form';
-import {
-	clerkUserCreateInputSchema,
-	clerkUserUpdateInputSchema
-} from 'shared/schema';
+import { rolesEnum } from 'shared/db/schema';
+import { User } from 'shared/db/schema.zero';
 import * as z from 'zod/v4';
 
-const createUserSchema = clerkUserCreateInputSchema.extend({
+const userSchema = z.object({
+	firstName: z.string({ error: 'Please enter a valid first name' }),
+	lastName: z.string().optional(),
+	email: z.email({ error: 'Please enter a valid email address' }),
+	password: z
+		.string({ error: 'Password must be at least 10 characters long' })
+		.min(10),
+	role: z.enum(rolesEnum.enumValues).default('volunteer').optional(),
 	phoneNumber: z
 		.string()
 		.refine(
 			value => /^[6-9]\d{9}$/.test(value),
 			'Please enter a valid indian mobile number'
 		)
-		.optional(),
-	role: z.enum(rolesEnum.enumValues).default('volunteer')
+		.optional()
 });
 
-const updateUserSchema = clerkUserUpdateInputSchema
-	.extend({
-		phoneNumber: z
-			.string()
-			.refine(
-				value => /^[6-9]\d{9}$/.test(value),
-				'Please enter a valid indian mobile number'
-			)
-			.optional()
-	})
-	.omit({ id: true });
-
-type CreateUserFormData = z.infer<typeof createUserSchema>;
-type UpdateUserFormData = z.infer<typeof updateUserSchema>;
-type UserFormData = CreateUserFormData | UpdateUserFormData;
+type UserFormData = z.infer<typeof userSchema>;
 
 export default function UserFormModal({
 	user,
@@ -66,7 +48,6 @@ export default function UserFormModal({
 	onOpenChange?: (open: boolean) => void;
 	children?: React.ReactNode;
 }) {
-	const { getToken } = useAuth();
 	const zero = useZero();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -93,71 +74,18 @@ export default function UserFormModal({
 		setError: UseFormSetError<UserFormData>
 	) => {
 		setIsSubmitting(true);
-		let clerkUserId: string | undefined;
-		const isCreating = !user;
 
 		try {
 			// Prepare data based on create or update flow
-			if (isCreating) {
-				// Create flow
-				const { password, ...createData } = data as CreateUserFormData;
-
-				// Create user in Clerk
-				const clerkResult = await clearClerkUser({
-					getToken,
-					user: { password, ...createData }
-				});
-
-				// Handle Clerk errors
-				if ('clerkError' in clerkResult) {
-					setError(
-						clerkResult.errors[0].code === 'form_identifier_exists'
-							? 'email'
-							: 'root.submissionError',
-						{
-							message: clerkResult.errors[0].message
-						}
-					);
-					setIsSubmitting(false);
-					return;
-				}
-
-				clerkUserId = clerkResult.id;
-
-				// Create user in database
-				await zero.mutate.users.insert({
-					id: clerkUserId,
-					...createData
-				});
+			if (!user) {
+				// Create user
+				await zero.mutate.users.create({
+					...data,
+					role: data.role ?? 'volunteer'
+				}).server;
 			} else {
-				// Update flow
-				const { password, ...updateData } = data as UpdateUserFormData;
-
-				// Update user in Clerk
-				const clerkResult = await updateClerkUser({
-					getToken,
-					user: { id: user.id, password, ...updateData }
-				});
-
-				// Handle Clerk errors
-				if ('clerkError' in clerkResult) {
-					setError(
-						clerkResult.errors[0].code === 'form_identifier_exists'
-							? 'email'
-							: 'root.submissionError',
-						{
-							message: clerkResult.errors[0].message
-						}
-					);
-					setIsSubmitting(false);
-					return;
-				}
-
-				// Update user in database
-				await zero.mutate.users.update({
-					id: user.id,
-					...updateData
-				});
+				// Update user
+				await zero.mutate.users.update({ id: user.id, ...data }).server;
 			}
 
 			// Close dialog on success
@@ -169,10 +97,6 @@ export default function UserFormModal({
 			}
 		} catch (e) {
 			setIsSubmitting(false);
-			if (isCreating && clerkUserId) {
-				// Cleanup the user if the user creation fails
-				await deleteClerkUser({ getToken, userId: clerkUserId });
-			}
 			setError('root.submissionError', {
 				message: e instanceof Error ? e.message : 'Something went wrong'
 			});
@@ -180,7 +104,7 @@ export default function UserFormModal({
 	};
 
 	const form = useForm<UserFormData>({
-		resolver: zodResolver(!user ? createUserSchema : updateUserSchema),
+		resolver: zodResolver(userSchema),
 		defaultValues: getUserDefaultValues(user)
 	});
 

@@ -1,6 +1,5 @@
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
 	Dialog,
 	DialogContent,
@@ -13,15 +12,13 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { User } from '@/db/schema.zero';
 import useZero from '@/hooks/useZero';
-import { deleteClerkUser } from '@/lib/clerkUser';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@clerk/clerk-react';
 import { Row, createColumnHelper } from '@tanstack/react-table';
 import { Ellipsis, QrCodeIcon } from 'lucide-react';
 import { useState } from 'react';
 import QRCode from 'react-qr-code';
+import { User } from 'shared/db/schema.zero';
 
 import UserFormDialog from './UserFormDialog';
 
@@ -34,34 +31,38 @@ export const ROLE_STYLES_MAP = {
 } as const;
 
 export const columns = [
-	columnHelper.display({
-		id: 'select',
-		header: ({ table }) => (
-			<Checkbox
-				checked={
-					table.getIsAllPageRowsSelected() ||
-					(table.getIsSomePageRowsSelected() && 'indeterminate')
-				}
-				onCheckedChange={value => table.toggleAllRowsSelected(!!value)}
-				aria-label='Select all'
-			/>
-		),
-		cell: ({ row }) => (
-			<Checkbox
-				checked={row.getIsSelected()}
-				onCheckedChange={value => row.toggleSelected(!!value)}
-				aria-label='Select row'
-			/>
-		),
-		enableSorting: false,
-		enableHiding: false
-	}),
+	// columnHelper.display({
+	// 	id: 'select',
+	// 	header: ({ table }) => (
+	// 		<Checkbox
+	// 			checked={
+	// 				table.getIsAllPageRowsSelected() ||
+	// 				(table.getIsSomePageRowsSelected() && 'indeterminate')
+	// 			}
+	// 			onCheckedChange={value => table.toggleAllRowsSelected(!!value)}
+	// 			aria-label='Select all'
+	// 		/>
+	// 	),
+	// 	cell: ({ row }) => (
+	// 		<Checkbox
+	// 			checked={row.getIsSelected()}
+	// 			onCheckedChange={value => row.toggleSelected(!!value)}
+	// 			aria-label='Select row'
+	// 		/>
+	// 	),
+	// 	enableSorting: false,
+	// 	enableHiding: false
+	// }),
 	columnHelper.accessor(row => row.firstName, {
 		id: 'firstName',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='First Name' />
+			<DataTableColumnHeader
+				className='ml-2'
+				column={column}
+				title='First Name'
+			/>
 		),
-		cell: ({ row }) => <div>{row.getValue('firstName')}</div>,
+		cell: ({ row }) => <div className='pl-4'>{row.getValue('firstName')}</div>,
 		meta: {
 			displayName: 'First Name'
 		}
@@ -169,7 +170,6 @@ export const columns = [
 // eslint-disable-next-line react-refresh/only-export-components
 const Actions = ({ user }: { user: User }) => {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
-	const { getToken } = useAuth();
 	const z = useZero();
 
 	return (
@@ -189,16 +189,11 @@ const Actions = ({ user }: { user: User }) => {
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					variant='destructive'
-					onSelect={() => {
-						Promise.all([
-							z.mutate.users.delete({
-								id: user.id
-							}),
-							deleteClerkUser({ getToken, userId: user.id })
-						]).catch(e => {
-							console.log('Failed to delete user', e);
-						});
-					}}
+					onSelect={() =>
+						z.mutate.users.delete({
+							id: user.id
+						})
+					}
 				>
 					Delete
 				</DropdownMenuItem>

@@ -1,6 +1,6 @@
-import { Roles } from '@/db/schema.zero';
 import { useApp } from '@/hooks/useApp';
 import { Navigate, Outlet } from 'react-router';
+import { Roles } from 'shared/db/schema.zero';
 
 interface ProtectedRouteProps {
 	allowedRoles: Roles[];

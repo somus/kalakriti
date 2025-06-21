@@ -8,13 +8,14 @@ import {
 	SidebarTrigger
 } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/sonner';
-import { schema } from '@/db/schema.zero.ts';
 import { AppProvider } from '@/hooks/useApp';
 import LoadingScreen from '@/views/general/LoadingScreen';
 import { RedirectToSignIn, useAuth, useUser } from '@clerk/clerk-react';
 import { Zero } from '@rocicorp/zero';
 import { ZeroProvider } from '@rocicorp/zero/react';
 import { Outlet } from 'react-router';
+import { createMutators } from 'shared/db/mutators';
+import { AuthData, schema } from 'shared/db/schema.zero';
 
 import { env } from '../env.client';
 
@@ -51,7 +52,11 @@ export default function MainLayout() {
 		},
 		server: PUBLIC_SERVER,
 		schema,
-		kvStore: 'idb'
+		kvStore: 'idb',
+		mutators: createMutators({
+			sub: user.id,
+			meta: { role: user.publicMetadata.role as AuthData['meta']['role'] }
+		})
 	});
 
 	return (

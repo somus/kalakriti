@@ -1,15 +1,14 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Button } from '@/components/ui/button';
-import { Schema } from '@/db/schema.zero';
-import useZero from '@/hooks/useZero';
-import { Row, Zero } from '@rocicorp/zero';
+import useZero, { Zero } from '@/hooks/useZero';
+import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 
 import ParticipantFormDialog from './ParticipantFormDialog';
 import { columns } from './columns';
 import { columnsConfig } from './filters';
 
-function participantsQuery(z: Zero<Schema>) {
+function participantsQuery(z: Zero) {
 	return z.query.participants.related('center').related('participantCategory');
 }
 

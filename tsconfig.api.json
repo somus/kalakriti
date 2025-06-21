@@ -5,6 +5,8 @@
 		"jsxImportSource": "hono/jsx",
 		"module": "ESNext",
 		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
+		"noEmit": true,
 		"paths": {
 			"@shared/*": ["./shared/*"]
 		}

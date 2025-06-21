@@ -163,15 +163,11 @@ const Actions = ({ eventRow }: { eventRow: EventRow }) => {
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					variant='destructive'
-					onSelect={() => {
-						Promise.all([
-							z.mutate.subEvents.delete({
-								id: eventRow.subEvent.id
-							})
-						]).catch(e => {
-							console.log('Failed to delete event', e);
-						});
-					}}
+					onSelect={() =>
+						z.mutate.subEvents.delete({
+							id: eventRow.subEvent.id
+						})
+					}
 				>
 					Delete
 				</DropdownMenuItem>

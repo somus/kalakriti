@@ -16,7 +16,6 @@ import {
 } from '@/components/ui/credenza';
 import useZero from '@/hooks/useZero';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createId } from '@paralleldrive/cuid2';
 import { useQuery } from '@rocicorp/zero/react';
 import { LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
@@ -82,19 +81,14 @@ export default function EventCategoryFormModal({
 		try {
 			if (!eventCategory) {
 				// Create the eventCategory in db
-				const eventCategoryId = createId();
-				await zero.mutate.eventCategories.insert({
-					id: eventCategoryId,
-					name: data.name,
-					coordinatorId: data.coordinator
-				});
+				await zero.mutate.eventCategories.create(data).server;
 			} else {
 				// Update eventCategory
 				await zero.mutate.eventCategories.update({
 					id: eventCategory.id,
 					name: data.name,
 					coordinatorId: data.coordinator
-				});
+				}).server;
 			}
 
 			// Close dialog on success
