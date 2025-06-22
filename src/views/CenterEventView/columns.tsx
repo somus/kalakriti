@@ -86,7 +86,7 @@ const Actions = ({ participantId }: { participantId: string }) => {
 			variant='ghost'
 			aria-label='Delete participant from event'
 			className='flex size-8 p-0 text-destructive hover:bg-destructive/10 hover:text-destructive *:[svg]:!text-destructive'
-			disabled={!!center.isLocked && role === 'guardian'}
+			disabled={!!center.isLocked && role !== 'admin'}
 			onClick={() => {
 				z.mutate.subEventParticipants
 					.delete({

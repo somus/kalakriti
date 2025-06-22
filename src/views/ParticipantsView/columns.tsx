@@ -121,6 +121,7 @@ const Actions = ({ participant }: { participant: Participant }) => {
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					variant='destructive'
+					disabled={context?.center.isLocked ?? false}
 					onSelect={() => {
 						z.mutate.participants
 							.delete({

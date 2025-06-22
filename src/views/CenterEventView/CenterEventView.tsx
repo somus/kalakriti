@@ -77,7 +77,7 @@ export default function CenterEventsView() {
 				columns={columns}
 				columnsConfig={columnsConfig}
 				additionalActions={[
-					center?.isLocked && role === 'guardian' ? (
+					center?.isLocked && role !== 'admin' ? (
 						<Tooltip key='create-participant'>
 							<TooltipTrigger asChild>
 								<span>
