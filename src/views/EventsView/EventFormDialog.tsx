@@ -30,15 +30,17 @@ import { Event } from './EventsView';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const getTimeOptions = () =>
-	Array.from({ length: 96 }).map((_, i) => {
-		const hour = Math.floor(i / 4)
-			.toString()
-			.padStart(2, '0');
+	Array.from({ length: 49 }).map((_, i) => {
+		const hour24 = Math.floor(i / 4) + 6;
 		const minute = ((i % 4) * 15).toString().padStart(2, '0');
 
+		const hour12 = hour24 === 12 ? 12 : hour24 > 12 ? hour24 - 12 : hour24;
+		const ampm = hour24 < 12 ? 'AM' : 'PM';
+		const hour24Str = hour24.toString().padStart(2, '0');
+
 		return {
-			label: `${hour}:${minute}`,
-			value: `${hour}:${minute}`
+			label: `${hour12}:${minute} ${ampm}`,
+			value: `${hour24Str}:${minute}`
 		};
 	});
 
