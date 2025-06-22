@@ -80,7 +80,7 @@ export function createEventMutators(authData: AuthData | undefined) {
 							});
 						} else {
 							await tx.mutate.subEvents.insert({
-								id: subCategoryId,
+								id: createId(),
 								eventId: event.id,
 								participantCategoryId: subEvent.categoryId,
 								startTime: set(new Date(2025, 8, 25), {
