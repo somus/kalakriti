@@ -19,7 +19,8 @@ export const users = pgTable('users', {
 	lastName: varchar('last_name'),
 	role: rolesEnum().default('volunteer').notNull(),
 	phoneNumber: varchar('phone_number'),
-	email: varchar('email').notNull()
+	email: varchar('email').notNull(),
+	canLogin: boolean('can_login').default(false).notNull()
 });
 
 export const usersRelations = relations(users, ({ many, one }) => ({

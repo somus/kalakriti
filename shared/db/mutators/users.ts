@@ -10,8 +10,9 @@ export interface CreateUserArgs {
 	firstName: string;
 	lastName?: string;
 	email: string;
-	password: string;
+	password?: string;
 	role: 'admin' | 'volunteer' | 'guardian';
+	canLogin: boolean;
 }
 
 export function createUserMutators(
@@ -21,7 +22,12 @@ export function createUserMutators(
 	return {
 		create: async (tx, { password, ...data }: CreateUserArgs) => {
 			assertIsAdmin(authData);
-			if (tx.location === 'client') {
+
+			if (data.canLogin && !password) {
+				throw new Error('Password is required for login-enabled users');
+			}
+
+			if (tx.location === 'client' || !data.canLogin) {
 				await tx.mutate.users.insert({ id: createId(), ...data });
 			} else {
 				if (!clerkClient) {
@@ -50,23 +56,21 @@ export function createUserMutators(
 				}
 			}
 		},
-		update: async (
-			tx,
-			{
-				password,
-				...change
-			}: UpdateValue<Schema['tables']['users']> & { password?: string }
-		) => {
+		update: async (tx, change: UpdateValue<Schema['tables']['users']>) => {
 			assertIsAdmin(authData);
-			if (tx.location === 'server') {
+
+			const user = await tx.query.users.where('id', change.id).one();
+			if (!user) {
+				throw new Error('User not found');
+			}
+
+			if (tx.location === 'server' && user.canLogin) {
 				if (!clerkClient) {
 					throw new Error('Clerk client is required');
 				}
 				await clerkClient.users.updateUser(change.id, {
 					firstName: change.firstName,
 					lastName: change.lastName === null ? undefined : change.lastName,
-					password,
-					skipPasswordChecks: true,
 					publicMetadata: change.role
 						? {
 								role: change.role
@@ -79,7 +83,13 @@ export function createUserMutators(
 		},
 		delete: async (tx, { id }: { id: string }) => {
 			assertIsAdmin(authData);
-			if (tx.location === 'server') {
+
+			const user = await tx.query.users.where('id', id).one();
+			if (!user) {
+				throw new Error('User not found');
+			}
+
+			if (tx.location === 'server' && user.canLogin) {
 				if (!clerkClient) {
 					throw new Error('Clerk client is required');
 				}

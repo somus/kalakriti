@@ -45,8 +45,16 @@ export const columnsConfig = [
 		.displayName('Attended')
 		.icon(ListCheckIcon)
 		.options([
-			{ label: 'Yes', value: 'true', icon: CheckIcon },
-			{ label: 'No', value: 'false', icon: XIcon }
+			{
+				label: 'Yes',
+				value: 'true',
+				icon: <CheckIcon className='text-green-500' />
+			},
+			{
+				label: 'No',
+				value: 'false',
+				icon: <XIcon className='text-destructive' />
+			}
 		])
 		.build()
 ] as const;

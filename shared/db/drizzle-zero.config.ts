@@ -18,7 +18,8 @@ export default drizzleZeroConfig(drizzleSchema, {
 			lastName: true,
 			role: true,
 			phoneNumber: true,
-			email: true
+			email: true,
+			canLogin: true
 		},
 		eventCategories: {
 			id: true,

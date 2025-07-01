@@ -15,7 +15,7 @@ import {
 import useZero from '@/hooks/useZero';
 import { cn } from '@/lib/utils';
 import { Row, createColumnHelper } from '@tanstack/react-table';
-import { Ellipsis, QrCodeIcon } from 'lucide-react';
+import { CheckIcon, Ellipsis, QrCodeIcon, XIcon } from 'lucide-react';
 import { useState } from 'react';
 import QRCode from 'react-qr-code';
 import { User } from 'shared/db/schema.zero';
@@ -124,6 +124,24 @@ export const columns = [
 		cell: ({ row }) => <div>{row.getValue('phoneNumber')}</div>,
 		meta: {
 			displayName: 'Phone Number'
+		}
+	}),
+	columnHelper.accessor(row => (row.canLogin ?? false).toString(), {
+		id: 'canLogin',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Can Login?' />
+		),
+		cell: ({ row }) => (
+			<div className='capitalize'>
+				{row.getValue('canLogin') === 'true' ? (
+					<CheckIcon className='size-5 text-green-500' />
+				) : (
+					<XIcon className='size-5 text-destructive' />
+				)}
+			</div>
+		),
+		meta: {
+			displayName: 'Can Login?'
 		}
 	}),
 	{

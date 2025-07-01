@@ -1,4 +1,9 @@
-import { FormLayout, InputField, SelectField } from '@/components/form';
+import {
+	CheckboxField,
+	FormLayout,
+	InputField,
+	SelectField
+} from '@/components/form';
 import { Button } from '@/components/ui/button';
 import {
 	Modal,
@@ -18,22 +23,35 @@ import { rolesEnum } from 'shared/db/schema';
 import { User } from 'shared/db/schema.zero';
 import * as z from 'zod/v4';
 
-const userSchema = z.object({
-	firstName: z.string({ error: 'Please enter a valid first name' }),
-	lastName: z.string().optional(),
-	email: z.email({ error: 'Please enter a valid email address' }),
-	password: z
-		.string({ error: 'Password must be at least 10 characters long' })
-		.min(10),
-	role: z.enum(rolesEnum.enumValues).default('volunteer').optional(),
-	phoneNumber: z
-		.string()
-		.refine(
-			value => /^[6-9]\d{9}$/.test(value),
-			'Please enter a valid indian mobile number'
-		)
-		.optional()
-});
+const userSchema = z
+	.object({
+		firstName: z.string({ error: 'Please enter a valid first name' }),
+		lastName: z.string().optional(),
+		email: z.email({ error: 'Please enter a valid email address' }),
+		password: z.string().optional(),
+		role: z.enum(rolesEnum.enumValues).default('volunteer').optional(),
+		canLogin: z.boolean().default(false).optional(),
+		phoneNumber: z
+			.string()
+			.refine(
+				value => /^[6-9]\d{9}$/.test(value),
+				'Please enter a valid indian mobile number'
+			)
+			.optional()
+	})
+	.check(ctx => {
+		if (
+			(ctx.value.canLogin || ctx.value.role === 'admin') &&
+			(!ctx.value.password || ctx.value.password.length < 10)
+		) {
+			ctx.issues.push({
+				code: 'custom',
+				message: 'Password must be at least 10 characters long',
+				path: ['password'],
+				input: ctx.value.password
+			});
+		}
+	});
 
 type UserFormData = z.infer<typeof userSchema>;
 
@@ -63,6 +81,7 @@ export default function UserFormModal({
 			firstName: user.firstName,
 			lastName: user.lastName ?? undefined,
 			email: user.email,
+			canLogin: user.canLogin ?? false,
 			phoneNumber: user.phoneNumber ?? undefined,
 			role: user.role ?? 'volunteer'
 		};
@@ -81,7 +100,8 @@ export default function UserFormModal({
 				// Create user
 				await zero.mutate.users.create({
 					...data,
-					role: data.role ?? 'volunteer'
+					role: data.role ?? 'volunteer',
+					canLogin: data.role === 'admin' || data.canLogin ? true : false
 				}).server;
 			} else {
 				// Update user
@@ -100,6 +120,8 @@ export default function UserFormModal({
 			setError('root.submissionError', {
 				message: e instanceof Error ? e.message : 'Something went wrong'
 			});
+		} finally {
+			form.reset();
 		}
 	};
 
@@ -142,9 +164,13 @@ export default function UserFormModal({
 						<InputField name='email' label='Email' type='email' />
 						<InputField name='phoneNumber' label='Phone Number' />
 						<SelectField name='role' label='Role' options={roleOptions} />
-						{!user && (
-							<InputField name='password' label='Password' type='password' />
+						{!user && form.watch('role') !== 'admin' && (
+							<CheckboxField name='canLogin' label='Should allow login?' />
 						)}
+						{!user &&
+							(form.watch('canLogin') ?? form.watch('role') === 'admin') && (
+								<InputField name='password' label='Password' type='password' />
+							)}
 					</ModalBody>
 					<ModalFooter>
 						<Button type='submit' disabled={isSubmitting}>

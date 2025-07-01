@@ -1,10 +1,13 @@
 import { createColumnConfigHelper } from '@/components/data-table-filter/core/filters';
 import { cn } from '@/lib/utils';
 import {
+	CheckIcon,
 	Heading1Icon,
+	ListCheckIcon,
 	MailIcon,
 	PhoneIcon,
-	ShieldUserIcon
+	ShieldUserIcon,
+	XIcon
 } from 'lucide-react';
 import { User } from 'shared/db/schema.zero';
 
@@ -52,5 +55,24 @@ export const columnsConfig = [
 		.accessor(row => row.phoneNumber)
 		.displayName('Phone Number')
 		.icon(PhoneIcon)
+		.build(),
+	dtf
+		.option()
+		.id('canLogin')
+		.accessor(row => (row.canLogin ?? false).toString())
+		.displayName('Can Login?')
+		.icon(ListCheckIcon)
+		.options([
+			{
+				label: 'Yes',
+				value: 'true',
+				icon: <CheckIcon className='text-green-500' />
+			},
+			{
+				label: 'No',
+				value: 'false',
+				icon: <XIcon className='text-destructive' />
+			}
+		])
 		.build()
 ] as const;
