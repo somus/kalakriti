@@ -42,7 +42,7 @@ services:
       - 'replica:/zero_data'
   api:
     build:
-      dockerfile: ../api/Dockerfile
+      dockerfile: api/Dockerfile
     depends_on:
       postgres:
         condition: service_healthy
