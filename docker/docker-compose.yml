@@ -1,5 +1,5 @@
 services:
-  kalakriti_postgres:
+  postgres:
     image: postgres:16.2-alpine
     shm_size: 1g
     user: postgres
@@ -25,7 +25,34 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./:/docker-entrypoint-initdb.d
+  zero_cache:
+    image: 'rocicorp/zero:latest'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - 'ZERO_UPSTREAM_DB=postgresql://${PG_USER}:${PG_PASSWORD}@postgres:5432/${PG_DB}'
+      - 'ZERO_CVR_DB=postgresql://${PG_USER}:${PG_PASSWORD}@postgres:5432/${PG_DB}'
+      - 'ZERO_CHANGE_DB=postgresql://${PG_USER}:${PG_PASSWORD}@postgres:5432/${PG_DB}'
+      - 'ZERO_AUTH_JWKS_URL=${ZERO_AUTH_JWKS_URL}'
+      - ZERO_PUSH_URL=http://api:3000
+      - ZERO_REPLICA_FILE=/zero_data/zchat_replica.db
+      - ZERO_PORT=4848
+    volumes:
+      - 'replica:/zero_data'
+  api:
+    build:
+      dockerfile: ../api/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      zero_cache:
+        condition: service_started
+    environment:
+      - 'ZERO_UPSTREAM_DB=postgresql://${PG_USER}:${PG_PASSWORD}@postgres:5432/${PG_DB}'
+      - 'CLERK_SECRET_KEY=${CLERK_SECRET_KEY}'
 
 volumes:
   pgdata:
     driver: local
+  replica:
