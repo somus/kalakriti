@@ -137,6 +137,10 @@
 		"workbox-core": "^7.3.0",
 		"workbox-window": "^7.3.0"
 	},
+	"engines": {
+		"bun": ">=1.2.5",
+		"node": ">=22.14.0"
+	},
 	"trustedDependencies": [
 		"@clerk/shared",
 		"@rocicorp/zero-sqlite3",
