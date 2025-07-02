@@ -5,7 +5,6 @@ WORKDIR /app
 
 COPY . .
 RUN bun install --lockfile-only
-RUN bun generate
 
 ARG PORT
 EXPOSE ${PORT:-3000}

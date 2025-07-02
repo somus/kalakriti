@@ -16,7 +16,6 @@ dev-dist
 .stylelintcache
 .env.*
 !.env.example
-shared/db/zero-schema.gen.ts
 
 # Editor directories and files
 .vscode/*
