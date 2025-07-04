@@ -15,6 +15,10 @@ services:
       POSTGRES_USER: ${PG_USER}
       POSTGRES_DB: ${PG_DB}
       POSTGRES_PASSWORD: ${PG_PASSWORD}
+    labels:
+      - coolify.type=service
+      - coolify.service.subType=database
+      - coolify.service.subName=postgres
     command: |
       postgres
       -c wal_level=logical
