@@ -1,0 +1,4 @@
+[phases.setup]
+buildImage = 'ghcr.io/railwayapp/nixpacks:latest'
+nixpkgsArchive = '6a42e78cc3be97f53ee4307c3c79bfaca4c02ece'
+nixPkgs = ['nodejs_22', 'bun']
