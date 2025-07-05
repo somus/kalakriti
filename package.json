@@ -35,7 +35,7 @@
 		"typecheck": "tsc --noEmit -p tsconfig.app.json --composite false",
 		"update-packages": "bunx taze -I --recursive",
 		"zero-cache": "bun --env-file=.env.local zero-cache-dev -p shared/db/schema.zero.ts --log-level debug",
-		"zero-deploy": "bun --env-file=.env.staging --zero-deploy-permissions -p shared/db/schema.zero.ts"
+		"zero-deploy": "bun --env-file=.env.staging zero-deploy-permissions -p shared/db/schema.zero.ts"
 	},
 	"lint-staged": {
 		"package.json": "bunx sort-package-json",
