@@ -19,7 +19,7 @@ import useZero from '@/hooks/useZero';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createId } from '@paralleldrive/cuid2';
 import { useQuery } from '@rocicorp/zero/react';
-import { format } from 'date-fns';
+import { format, set } from 'date-fns';
 import keyBy from 'lodash/keyBy';
 import { LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
@@ -201,7 +201,27 @@ export default function EventFormModal({
 				name: data.name,
 				coordinatorId: data.coordinator,
 				eventCategoryId: data.category,
-				timings: data.timings
+				timings: Object.keys(data.timings).reduce((acc, timingKey) => {
+					const timing = data.timings[timingKey];
+					return {
+						...acc,
+						[timingKey]: {
+							...timing,
+							startTime:
+								timing.startTime &&
+								set(new Date(2025, 8, 14), {
+									hours: parseInt(timing.startTime.split(':')[0]),
+									minutes: parseInt(timing.startTime.split(':')[1])
+								}).getTime(),
+							endTime:
+								timing.endTime &&
+								set(new Date(2025, 8, 14), {
+									hours: parseInt(timing.endTime.split(':')[0]),
+									minutes: parseInt(timing.endTime.split(':')[1])
+								}).getTime()
+						}
+					};
+				}, {})
 			};
 			if (!event) {
 				// Create the event in db
@@ -224,6 +244,11 @@ export default function EventFormModal({
 			form.setError('root.serverError', {
 				message: e instanceof Error ? e.message : 'Something went wrong'
 			});
+		} finally {
+			if (!event) {
+				// Reset form values after creation
+				form.reset();
+			}
 		}
 	};
 

@@ -1,7 +1,6 @@
 // mutators.ts
 import { createId } from '@paralleldrive/cuid2';
 import { CustomMutatorDefs, UpdateValue } from '@rocicorp/zero';
-import { set } from 'date-fns';
 
 import { assertIsAdmin } from '../permissions.ts';
 import { AuthData, Schema } from '../schema.zero.ts';
@@ -15,8 +14,8 @@ export interface CreateEventArgs {
 		string,
 		{
 			categoryId: string;
-			startTime?: string;
-			endTime?: string;
+			startTime?: number;
+			endTime?: number;
 		}
 	>;
 }
@@ -33,14 +32,8 @@ export function createEventMutators(authData: AuthData | undefined) {
 						id: createId(),
 						eventId: data.id,
 						participantCategoryId: subEvent.categoryId,
-						startTime: set(new Date(2025, 8, 25), {
-							hours: parseInt(subEvent.startTime.split(':')[0]),
-							minutes: parseInt(subEvent.startTime.split(':')[1])
-						}).getTime(),
-						endTime: set(new Date(2025, 8, 25), {
-							hours: parseInt(subEvent.endTime.split(':')[0]),
-							minutes: parseInt(subEvent.endTime.split(':')[1])
-						}).getTime()
+						startTime: subEvent.startTime,
+						endTime: subEvent.endTime
 					});
 				}
 			}
@@ -69,28 +62,16 @@ export function createEventMutators(authData: AuthData | undefined) {
 						if (existingSubEventIds.includes(subCategoryId)) {
 							await tx.mutate.subEvents.update({
 								id: subCategoryId,
-								startTime: set(new Date(2025, 8, 25), {
-									hours: parseInt(subEvent.startTime.split(':')[0]),
-									minutes: parseInt(subEvent.startTime.split(':')[1])
-								}).getTime(),
-								endTime: set(new Date(2025, 8, 25), {
-									hours: parseInt(subEvent.endTime.split(':')[0]),
-									minutes: parseInt(subEvent.endTime.split(':')[1])
-								}).getTime()
+								startTime: subEvent.startTime,
+								endTime: subEvent.endTime
 							});
 						} else {
 							await tx.mutate.subEvents.insert({
 								id: createId(),
 								eventId: event.id,
 								participantCategoryId: subEvent.categoryId,
-								startTime: set(new Date(2025, 8, 25), {
-									hours: parseInt(subEvent.startTime.split(':')[0]),
-									minutes: parseInt(subEvent.startTime.split(':')[1])
-								}).getTime(),
-								endTime: set(new Date(2025, 8, 25), {
-									hours: parseInt(subEvent.endTime.split(':')[0]),
-									minutes: parseInt(subEvent.endTime.split(':')[1])
-								}).getTime()
+								startTime: subEvent.startTime,
+								endTime: subEvent.endTime
 							});
 						}
 					}
