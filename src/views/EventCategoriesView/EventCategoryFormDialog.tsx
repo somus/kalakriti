@@ -26,7 +26,7 @@ import { EventCategory } from './EventCategoriesView';
 
 const eventCategorySchema = z.object({
 	name: z.string(),
-	coordinator: z.string().nullable().optional()
+	coordinatorId: z.string().nullable().optional()
 });
 
 type EventCategoryFormData = z.infer<typeof eventCategorySchema>;
@@ -66,7 +66,7 @@ export default function EventCategoryFormModal({
 
 		return {
 			name: eventCategory.name,
-			coordinator: eventCategory.coordinator?.id ?? undefined
+			coordinatorId: eventCategory.coordinator?.id ?? undefined
 		};
 	};
 
@@ -87,7 +87,7 @@ export default function EventCategoryFormModal({
 				await zero.mutate.eventCategories.update({
 					id: eventCategory.id,
 					name: data.name,
-					coordinatorId: data.coordinator
+					coordinatorId: data.coordinatorId
 				}).server;
 			}
 
@@ -103,6 +103,11 @@ export default function EventCategoryFormModal({
 			form.setError('root.serverError', {
 				message: e instanceof Error ? e.message : 'Something went wrong'
 			});
+		} finally {
+			if (!eventCategory) {
+				// Reset form values after creation
+				form.reset();
+			}
 		}
 	};
 
@@ -125,7 +130,7 @@ export default function EventCategoryFormModal({
 					<ModalBody className='space-y-4'>
 						<InputField name='name' label='Name' />
 						<SelectField
-							name='coordinator'
+							name='coordinatorId'
 							label='Coordinator'
 							options={coordinatorOptions}
 						/>
