@@ -41,7 +41,9 @@ const userSchema = z
 	})
 	.check(ctx => {
 		if (
-			(ctx.value.canLogin || ctx.value.role === 'admin') &&
+			(ctx.value.canLogin === undefined
+				? false
+				: ctx.value.canLogin || ctx.value.role === 'admin') &&
 			(!ctx.value.password || ctx.value.password.length < 10)
 		) {
 			ctx.issues.push({
@@ -81,7 +83,6 @@ export default function UserFormModal({
 			firstName: user.firstName,
 			lastName: user.lastName ?? undefined,
 			email: user.email,
-			canLogin: user.canLogin ?? false,
 			phoneNumber: user.phoneNumber ?? undefined,
 			role: user.role ?? 'volunteer'
 		};
