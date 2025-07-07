@@ -22,7 +22,7 @@ import { useQuery } from '@rocicorp/zero/react';
 import { format, set } from 'date-fns';
 import keyBy from 'lodash/keyBy';
 import { LoaderCircle } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod/v4';
 
@@ -110,7 +110,7 @@ export default function EventFormModal({
 	type EventFormData = z.infer<typeof eventSchema>;
 
 	// Get event default values
-	const getEventDefaultValues = (event?: Event) => {
+	const defaultValues = useMemo(() => {
 		if (!event) {
 			return {
 				timings: participantCategories.reduce<
@@ -183,9 +183,7 @@ export default function EventFormModal({
 			coordinator: event.coordinator?.id,
 			category: event.category?.id
 		};
-	};
-
-	const defaultValues = getEventDefaultValues(event);
+	}, [event, participantCategories]);
 
 	const form = useForm<EventFormData>({
 		resolver: zodResolver(eventSchema),

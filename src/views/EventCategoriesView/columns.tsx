@@ -89,11 +89,13 @@ const Actions = ({ eventCategory }: { eventCategory: EventCategory }) => {
 					Delete
 				</DropdownMenuItem>
 			</DropdownMenuContent>
-			<EventCategoryFormDialog
-				eventCategory={eventCategory}
-				open={isDialogOpen}
-				onOpenChange={setIsDialogOpen}
-			/>
+			{isDialogOpen && (
+				<EventCategoryFormDialog
+					eventCategory={eventCategory}
+					open={isDialogOpen}
+					onOpenChange={setIsDialogOpen}
+				/>
+			)}
 		</DropdownMenu>
 	);
 };

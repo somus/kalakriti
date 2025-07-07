@@ -17,7 +17,7 @@ import {
 import useZero from '@/hooks/useZero';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LoaderCircle } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { UseFormSetError, useForm } from 'react-hook-form';
 import { rolesEnum } from 'shared/db/schema';
 import { User } from 'shared/db/schema.zero';
@@ -73,7 +73,7 @@ export default function UserFormModal({
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	// Format user data for form
-	const getUserDefaultValues = (user?: User) => {
+	const defaultValues = useMemo(() => {
 		if (!user)
 			return {
 				role: rolesEnum.enumValues[2]
@@ -86,7 +86,7 @@ export default function UserFormModal({
 			phoneNumber: user.phoneNumber ?? undefined,
 			role: user.role ?? 'volunteer'
 		};
-	};
+	}, [user]);
 
 	// Form submission handler
 	const handleFormSubmit = async (
@@ -122,13 +122,16 @@ export default function UserFormModal({
 				message: e instanceof Error ? e.message : 'Something went wrong'
 			});
 		} finally {
-			form.reset();
+			if (!user) {
+				// Reset form values after creation
+				form.reset();
+			}
 		}
 	};
 
 	const form = useForm<UserFormData>({
 		resolver: zodResolver(userSchema),
-		defaultValues: getUserDefaultValues(user)
+		defaultValues
 	});
 
 	if (!children && !(open !== undefined && onOpenChange)) {

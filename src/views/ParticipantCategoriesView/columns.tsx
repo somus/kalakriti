@@ -117,11 +117,13 @@ const Actions = ({
 					Delete
 				</DropdownMenuItem>
 			</DropdownMenuContent>
-			<ParticipantCategoryFormDialog
-				participantCategory={participantCategory}
-				open={isDialogOpen}
-				onOpenChange={setIsDialogOpen}
-			/>
+			{isDialogOpen && (
+				<ParticipantCategoryFormDialog
+					participantCategory={participantCategory}
+					open={isDialogOpen}
+					onOpenChange={setIsDialogOpen}
+				/>
+			)}
 		</DropdownMenu>
 	);
 };

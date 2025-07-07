@@ -179,11 +179,13 @@ const Actions = ({ eventRow }: { eventRow: EventRow }) => {
 					Delete
 				</DropdownMenuItem>
 			</DropdownMenuContent>
-			<EventFormDialog
-				event={eventRow.event}
-				open={isDialogOpen}
-				onOpenChange={setIsDialogOpen}
-			/>
+			{isDialogOpen && (
+				<EventFormDialog
+					event={eventRow.event}
+					open={isDialogOpen}
+					onOpenChange={setIsDialogOpen}
+				/>
+			)}
 		</DropdownMenu>
 	);
 };

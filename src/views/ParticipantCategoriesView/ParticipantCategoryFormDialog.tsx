@@ -12,7 +12,7 @@ import {
 import useZero from '@/hooks/useZero';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LoaderCircle } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ParticipantCategory } from 'shared/db/schema.zero';
 import * as z from 'zod/v4';
@@ -57,9 +57,7 @@ export default function ParticipantCategoryFormModal({
 	}
 
 	// Get participantCategory default values
-	const getParticipantCategoryDefaultValues = (
-		participantCategory?: ParticipantCategory
-	) => {
+	const defaultValues = useMemo(() => {
 		if (!participantCategory) return {};
 
 		return {
@@ -71,11 +69,11 @@ export default function ParticipantCategoryFormModal({
 			totalEventsAllowed: participantCategory.totalEventsAllowed,
 			maxEventsPerCategory: participantCategory.maxEventsPerCategory
 		};
-	};
+	}, [participantCategory]);
 
 	const form = useForm<ParticipantCategoryFormData>({
 		resolver: zodResolver(participantCategorySchema),
-		defaultValues: getParticipantCategoryDefaultValues(participantCategory)
+		defaultValues
 	});
 
 	const handleFormSubmit = async (data: ParticipantCategoryFormData) => {
@@ -105,6 +103,11 @@ export default function ParticipantCategoryFormModal({
 			form.setError('root.serverError', {
 				message: e instanceof Error ? e.message : 'Something went wrong'
 			});
+		} finally {
+			if (!participantCategory) {
+				// Reset form values after creation
+				form.reset();
+			}
 		}
 	};
 

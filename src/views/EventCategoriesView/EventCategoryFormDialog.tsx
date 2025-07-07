@@ -18,7 +18,7 @@ import useZero from '@/hooks/useZero';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@rocicorp/zero/react';
 import { LoaderCircle } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod/v4';
 
@@ -61,18 +61,18 @@ export default function EventCategoryFormModal({
 	}));
 
 	// Get eventCategory default values
-	const getEventCategoryDefaultValues = (eventCategory?: EventCategory) => {
+	const defaultValues = useMemo(() => {
 		if (!eventCategory) return {};
 
 		return {
 			name: eventCategory.name,
 			coordinatorId: eventCategory.coordinator?.id ?? undefined
 		};
-	};
+	}, [eventCategory]);
 
 	const form = useForm<EventCategoryFormData>({
 		resolver: zodResolver(eventCategorySchema),
-		defaultValues: getEventCategoryDefaultValues(eventCategory)
+		defaultValues
 	});
 
 	const handleFormSubmit = async (data: EventCategoryFormData) => {

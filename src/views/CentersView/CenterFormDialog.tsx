@@ -15,7 +15,7 @@ import { Center } from '@/layout/CenterLayout';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@rocicorp/zero/react';
 import { LoaderCircle } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod/v4';
 
@@ -75,7 +75,7 @@ export default function CenterFormModal({
 	}));
 
 	// Get center default values
-	const getCenterDefaultValues = (center?: Center) => {
+	const defaultValues = useMemo(() => {
 		if (!center) return {};
 
 		return {
@@ -85,11 +85,11 @@ export default function CenterFormModal({
 			liaisons: center.liaisons.map(cl => cl.userId),
 			guardians: center.guardians.map(cg => cg.userId)
 		};
-	};
+	}, [center]);
 
 	const form = useForm<CenterFormData>({
 		resolver: zodResolver(centerSchema),
-		defaultValues: getCenterDefaultValues(center)
+		defaultValues
 	});
 	const errors = form.formState.errors;
 
@@ -117,6 +117,11 @@ export default function CenterFormModal({
 			form.setError('root.serverError', {
 				message: e instanceof Error ? e.message : 'Something went wrong'
 			});
+		} finally {
+			if (!center) {
+				// Reset form values after creation
+				form.reset();
+			}
 		}
 	};
 

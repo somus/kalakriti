@@ -223,11 +223,13 @@ const Actions = ({ user }: { user: User }) => {
 					Delete
 				</DropdownMenuItem>
 			</DropdownMenuContent>
-			<UserFormDialog
-				user={user}
-				open={isDialogOpen}
-				onOpenChange={setIsDialogOpen}
-			/>
+			{isDialogOpen && (
+				<UserFormDialog
+					user={user}
+					open={isDialogOpen}
+					onOpenChange={setIsDialogOpen}
+				/>
+			)}
 		</DropdownMenu>
 	);
 };

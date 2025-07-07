@@ -23,7 +23,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@rocicorp/zero/react';
 import { subYears } from 'date-fns';
 import { AlertCircle, LoaderCircle } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useOutletContext } from 'react-router';
 import { genderEnum } from 'shared/db/schema';
@@ -77,7 +77,7 @@ export default function ParticipantFormModal({
 		user.role === 'admin' ? undefined : outletContext?.center?.id;
 
 	// Get participant default values
-	const getParticipantDefaultValues = (participant?: Participant) => {
+	const defaultValues = useMemo(() => {
 		if (!participant) {
 			return {
 				center: defaultCenter
@@ -90,7 +90,7 @@ export default function ParticipantFormModal({
 			gender: participant.gender,
 			center: participant.center?.id
 		};
-	};
+	}, [participant, defaultCenter]);
 
 	const today = new Date();
 
@@ -108,7 +108,7 @@ export default function ParticipantFormModal({
 				dob: z.date().min(minDate).max(maxDate)
 			})
 		),
-		defaultValues: getParticipantDefaultValues(participant)
+		defaultValues
 	});
 
 	const handleFormSubmit = async (data: ParticipantFormData) => {
@@ -137,7 +137,6 @@ export default function ParticipantFormModal({
 			} else {
 				setIsModalOpen(false);
 			}
-			form.reset();
 		} catch (e) {
 			console.error(e);
 			setIsSubmitting(false);
@@ -145,6 +144,11 @@ export default function ParticipantFormModal({
 				type: e instanceof Error ? 'submitError' : 'unknownError',
 				message: e instanceof Error ? e.message : 'Something went wrong'
 			});
+		} finally {
+			if (!participant) {
+				// Reset form values after creation
+				form.reset();
+			}
 		}
 	};
 

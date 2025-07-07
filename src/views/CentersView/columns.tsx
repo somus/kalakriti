@@ -186,11 +186,13 @@ const Actions = ({ center }: { center: Center }) => {
 					Delete
 				</DropdownMenuItem>
 			</DropdownMenuContent>
-			<CenterFormDialog
-				center={center}
-				open={isDialogOpen}
-				onOpenChange={setIsDialogOpen}
-			/>
+			{isDialogOpen && (
+				<CenterFormDialog
+					center={center}
+					open={isDialogOpen}
+					onOpenChange={setIsDialogOpen}
+				/>
+			)}
 		</DropdownMenu>
 	);
 };
