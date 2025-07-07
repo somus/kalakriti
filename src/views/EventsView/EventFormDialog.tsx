@@ -214,7 +214,7 @@ export default function EventFormModal({
 					return {
 						...acc,
 						[timingKey]: {
-							...timing,
+							categoryId: event ? timing.categoryId : timingKey,
 							startTime:
 								timing.startTime &&
 								set(new Date(2025, 8, 14), {
