@@ -45,7 +45,8 @@ export default function DataTableWrapper<TData extends { id: string }>({
 	columns,
 	disabledRows,
 	additionalActions,
-	children
+	children,
+	enableRowSelection = false
 }: {
 	data: TData[];
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -55,6 +56,7 @@ export default function DataTableWrapper<TData extends { id: string }>({
 	disabledRows?: string[];
 	additionalActions?: React.ReactNode[];
 	children?: (table: TanstackTable<TData>) => React.ReactNode;
+	enableRowSelection?: boolean;
 }) {
 	'use no memo';
 
@@ -119,7 +121,7 @@ export default function DataTableWrapper<TData extends { id: string }>({
 		onRowSelectionChange: setRowSelection,
 		enableRowSelection: disabledRows
 			? row => !disabledRows.includes(row.original?.id)
-			: undefined,
+			: enableRowSelection,
 		state: {
 			sorting,
 			columnFilters: tstFilters,
@@ -196,7 +198,10 @@ export default function DataTableWrapper<TData extends { id: string }>({
 					</Table>
 				</div>
 				<div className='flex flex-col gap-2.5'>
-					<DataTablePagination table={table} />
+					<DataTablePagination
+						table={table}
+						enableRowSelection={enableRowSelection}
+					/>
 				</div>
 			</div>
 			{children?.(table)}
