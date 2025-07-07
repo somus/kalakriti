@@ -126,6 +126,38 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 			)
 		);
 
+	const eventCoordinatorPermission = (
+		authData: AuthData,
+		eb: ExpressionBuilder<Schema, 'eventCoordinators'>
+	) =>
+		eb.and(
+			allowIfLoggedIn(authData, eb),
+			eb.or(
+				eb.exists('event', q =>
+					q.whereExists('coordinators', q => q.where('userId', authData.sub))
+				),
+				eb.exists('event', q =>
+					q.whereExists('volunteers', q => q.where('userId', authData.sub))
+				)
+			)
+		);
+
+	const eventVolunteerPermission = (
+		authData: AuthData,
+		eb: ExpressionBuilder<Schema, 'eventVolunteers'>
+	) =>
+		eb.and(
+			allowIfLoggedIn(authData, eb),
+			eb.or(
+				eb.exists('event', q =>
+					q.whereExists('coordinators', q => q.where('userId', authData.sub))
+				),
+				eb.exists('event', q =>
+					q.whereExists('volunteers', q => q.where('userId', authData.sub))
+				)
+			)
+		);
+
 	const userReadPermission = (
 		authData: AuthData,
 		eb: ExpressionBuilder<Schema, 'users'>
@@ -134,7 +166,7 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 			allowIfLoggedIn(authData, eb),
 			eb.or(
 				eb.cmp('id', '=', authData.sub),
-				eb.exists('liaisoningCenter', q =>
+				eb.exists('liaisoningCenters', q =>
 					q.whereExists('center', q =>
 						q.whereExists('guardians', q => q.where('userId', authData.sub))
 					)
@@ -144,7 +176,7 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 						q.whereExists('guardians', q => q.where('userId', authData.sub))
 					)
 				),
-				eb.exists('liaisoningCenter', q =>
+				eb.exists('liaisoningCenters', q =>
 					q.whereExists('center', q =>
 						q.whereExists('liaisons', q => q.where('userId', authData.sub))
 					)
@@ -152,6 +184,26 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 				eb.exists('guardianCenters', q =>
 					q.whereExists('center', q =>
 						q.whereExists('liaisons', q => q.where('userId', authData.sub))
+					)
+				),
+				eb.exists('coordinatingEvents', q =>
+					q.whereExists('event', q =>
+						q.whereExists('coordinators', q => q.where('userId', authData.sub))
+					)
+				),
+				eb.exists('coordinatingEvents', q =>
+					q.whereExists('event', q =>
+						q.whereExists('volunteers', q => q.where('userId', authData.sub))
+					)
+				),
+				eb.exists('volunteeringEvents', q =>
+					q.whereExists('event', q =>
+						q.whereExists('coordinators', q => q.where('userId', authData.sub))
+					)
+				),
+				eb.exists('volunteeringEvents', q =>
+					q.whereExists('event', q =>
+						q.whereExists('volunteers', q => q.where('userId', authData.sub))
 					)
 				)
 			)
@@ -166,6 +218,16 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 		events: {
 			row: {
 				select: [allowIfLoggedIn]
+			}
+		},
+		eventCoordinators: {
+			row: {
+				select: [loggedInUserIsAdmin, eventCoordinatorPermission]
+			}
+		},
+		eventVolunteers: {
+			row: {
+				select: [loggedInUserIsAdmin, eventVolunteerPermission]
 			}
 		},
 		subEvents: {

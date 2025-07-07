@@ -15,9 +15,9 @@ import {
 	ModalTrigger
 } from '@/components/ui/credenza';
 import { FormItem, FormLabel } from '@/components/ui/form';
+import MultipleSelector, { Option } from '@/components/ui/input-multiselect';
 import useZero from '@/hooks/useZero';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createId } from '@paralleldrive/cuid2';
 import { useQuery } from '@rocicorp/zero/react';
 import { format, set } from 'date-fns';
 import keyBy from 'lodash/keyBy';
@@ -58,9 +58,7 @@ export default function EventFormModal({
 	const zero = useZero();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [coordinators] = useQuery(
-		zero.query.users.where('role', 'IS', 'volunteer')
-	);
+	const [users] = useQuery(zero.query.users.where('role', 'volunteer'));
 	const [eventCategories] = useQuery(zero.query.eventCategories);
 	const [participantCategories] = useQuery(zero.query.participantCategories);
 	const participantCategoryMap = keyBy(participantCategories, 'id');
@@ -71,9 +69,15 @@ export default function EventFormModal({
 		);
 	}
 
-	const coordinatorOptions: SelectOption[] = coordinators.map(coordinator => ({
-		value: coordinator.id,
-		label: `${coordinator.firstName} ${coordinator.lastName}`
+	const coordinatorOptions: Option[] = users
+		.filter(user => user.canLogin)
+		.map(user => ({
+			value: user.id,
+			label: `${user.firstName} ${user.lastName}`
+		}));
+	const volunteerOptions: Option[] = users.map(user => ({
+		value: user.id,
+		label: `${user.firstName} ${user.lastName}`
 	}));
 	const eventCategoryOptions: SelectOption[] = eventCategories.map(
 		category => ({
@@ -103,7 +107,10 @@ export default function EventFormModal({
 					}
 				)
 		),
-		coordinator: z.string({ error: 'Coordinator is required' }),
+		coordinators: z
+			.array(z.string(), { error: 'Coordinators are required' })
+			.min(1, { error: 'Coordinators are required' }),
+		volunteers: z.array(z.string()),
 		category: z.cuid2({ error: 'Category is required' })
 	});
 
@@ -113,6 +120,7 @@ export default function EventFormModal({
 	const defaultValues = useMemo(() => {
 		if (!event) {
 			return {
+				volunteers: [],
 				timings: participantCategories.reduce<
 					Record<
 						string,
@@ -180,7 +188,8 @@ export default function EventFormModal({
 					endTime: string | undefined;
 				}
 			>,
-			coordinator: event.coordinator?.id,
+			coordinators: event.coordinators.map(user => user.userId),
+			volunteers: event.volunteers.map(user => user.userId),
 			category: event.category?.id
 		};
 	}, [event, participantCategories]);
@@ -189,15 +198,16 @@ export default function EventFormModal({
 		resolver: zodResolver(eventSchema),
 		defaultValues
 	});
+	const errors = form.formState.errors;
 
 	const handleFormSubmit = async (data: EventFormData) => {
 		setIsSubmitting(true);
 
 		try {
 			const mutationData = {
-				id: event?.id ?? createId(),
 				name: data.name,
-				coordinatorId: data.coordinator,
+				coordinators: data.coordinators,
+				volunteers: data.volunteers,
 				eventCategoryId: data.category,
 				timings: Object.keys(data.timings).reduce((acc, timingKey) => {
 					const timing = data.timings[timingKey];
@@ -226,7 +236,8 @@ export default function EventFormModal({
 				await zero.mutate.events.create(mutationData).server;
 			} else {
 				// Update event
-				await zero.mutate.events.update(mutationData).server;
+				await zero.mutate.events.update({ id: event.id, ...mutationData })
+					.server;
 			}
 
 			// Close dialog on success
@@ -298,11 +309,66 @@ export default function EventFormModal({
 							label='Category'
 							options={eventCategoryOptions}
 						/>
-						<SelectField
-							name='coordinator'
-							label='Coordinator'
-							options={coordinatorOptions}
-						/>
+						<div className='space-y-2'>
+							<label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
+								Coordinators
+							</label>
+							<MultipleSelector
+								defaultOptions={coordinatorOptions}
+								placeholder='Select coordinators'
+								emptyIndicator={<p>no results found.</p>}
+								value={form.watch('coordinators')?.map(id => {
+									const option = coordinatorOptions.find(
+										opt => opt.value === id
+									);
+									return option ?? { value: id, label: id };
+								})}
+								onChange={options => {
+									form.setValue(
+										'coordinators',
+										options.map(opt => opt.value),
+										{ shouldValidate: true }
+									);
+								}}
+							/>
+							{errors.coordinators && (
+								<p
+									data-slot='form-message'
+									className='text-destructive text-sm'
+								>
+									{errors.coordinators.message}
+								</p>
+							)}
+						</div>
+						<div className='space-y-2'>
+							<label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
+								Volunteers
+							</label>
+							<MultipleSelector
+								defaultOptions={volunteerOptions}
+								placeholder='Select volunteers'
+								emptyIndicator={<p>no results found.</p>}
+								value={form.watch('volunteers')?.map(id => {
+									const option = volunteerOptions.find(opt => opt.value === id);
+									return option ?? { value: id, label: id };
+								})}
+								onChange={options => {
+									form.setValue(
+										'volunteers',
+										options.map(opt => opt.value),
+										{ shouldValidate: true }
+									);
+								}}
+							/>
+							{errors.volunteers && (
+								<p
+									data-slot='form-message'
+									className='text-destructive text-sm'
+								>
+									{errors.volunteers.message}
+								</p>
+							)}
+						</div>
 					</ModalBody>
 
 					<ModalFooter>

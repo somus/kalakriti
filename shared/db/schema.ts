@@ -24,9 +24,16 @@ export const users = pgTable('users', {
 });
 
 export const usersRelations = relations(users, ({ many, one }) => ({
-	coordinatingEvents: many(events),
+	coordinatingEvents: one(eventCoordinators, {
+		fields: [users.id],
+		references: [eventCoordinators.userId]
+	}),
+	volunteeringEvents: one(eventVolunteers, {
+		fields: [users.id],
+		references: [eventVolunteers.userId]
+	}),
 	coordinatingEventCategories: many(eventCategories),
-	liaisoningCenter: one(centerLiaisons, {
+	liaisoningCenters: one(centerLiaisons, {
 		fields: [users.id],
 		references: [centerLiaisons.userId]
 	}),
@@ -58,27 +65,74 @@ export const eventCategoriesRelations = relations(
 export const events = pgTable('events', {
 	id: varchar('id').primaryKey(),
 	name: varchar('name').notNull(),
-	coordinatorId: varchar('coordinator_id')
-		.references(() => users.id, {
-			onDelete: 'set null'
-		})
-		.notNull(),
 	eventCategoryId: varchar('event_category_id')
 		.references(() => eventCategories.id, { onDelete: 'set null' })
 		.notNull()
 });
 
 export const eventsRelations = relations(events, ({ one, many }) => ({
-	coordinator: one(users, {
-		fields: [events.coordinatorId],
-		references: [users.id]
-	}),
+	coordinators: many(eventCoordinators),
+	volunteers: many(eventVolunteers),
 	category: one(eventCategories, {
 		fields: [events.eventCategoryId],
 		references: [eventCategories.id]
 	}),
 	subEvents: many(subEvents)
 }));
+
+export const eventCoordinators = pgTable(
+	'event_coordinators',
+	{
+		userId: varchar('user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		eventId: varchar('event_id')
+			.notNull()
+			.references(() => events.id, { onDelete: 'cascade' })
+	},
+	t => [primaryKey({ columns: [t.userId, t.eventId] })]
+);
+
+export const eventCoordinatorsRelations = relations(
+	eventCoordinators,
+	({ one }) => ({
+		event: one(events, {
+			fields: [eventCoordinators.eventId],
+			references: [events.id]
+		}),
+		user: one(users, {
+			fields: [eventCoordinators.userId],
+			references: [users.id]
+		})
+	})
+);
+
+export const eventVolunteers = pgTable(
+	'event_volunteers',
+	{
+		userId: varchar('user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		eventId: varchar('event_id')
+			.notNull()
+			.references(() => events.id, { onDelete: 'cascade' })
+	},
+	t => [primaryKey({ columns: [t.userId, t.eventId] })]
+);
+
+export const eventVolunteersRelations = relations(
+	eventVolunteers,
+	({ one }) => ({
+		event: one(events, {
+			fields: [eventVolunteers.eventId],
+			references: [events.id]
+		}),
+		user: one(users, {
+			fields: [eventVolunteers.userId],
+			references: [users.id]
+		})
+	})
+);
 
 export const subEvents = pgTable('sub_events', {
 	id: varchar('id').primaryKey(),

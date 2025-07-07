@@ -197,7 +197,7 @@ export default function DataTableWrapper<TData extends { id: string }>({
 						</TableBody>
 					</Table>
 				</div>
-				<div className='flex flex-col gap-2.5'>
+				<div className='flex flex-col gap-2.5 py-3'>
 					<DataTablePagination
 						table={table}
 						enableRowSelection={enableRowSelection}

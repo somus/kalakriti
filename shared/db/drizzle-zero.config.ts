@@ -29,8 +29,15 @@ export default drizzleZeroConfig(drizzleSchema, {
 		events: {
 			id: true,
 			name: true,
-			coordinatorId: true,
 			eventCategoryId: true
+		},
+		eventCoordinators: {
+			userId: true,
+			eventId: true
+		},
+		eventVolunteers: {
+			userId: true,
+			eventId: true
 		},
 		centers: {
 			id: true,

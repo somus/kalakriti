@@ -127,6 +127,13 @@
       "when": 1751349975189,
       "tag": "0017_useful_firebrand",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1751885966505,
+      "tag": "0018_cool_charles_xavier",
+      "breakpoints": true
     }
   ]
 }

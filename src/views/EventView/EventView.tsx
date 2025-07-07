@@ -18,7 +18,7 @@ function eventQuery(z: Zero, eventId: string) {
 			q.related('participant', q => q.related('center'))
 		)
 		.related('participantCategory')
-		.related('event', q => q.related('coordinator').related('category'))
+		.related('event', q => q.related('coordinators').related('category'))
 		.one();
 }
 
@@ -42,7 +42,7 @@ export default function EventView() {
 	}
 
 	return (
-		<>
+		<div className='flex flex-col py-4'>
 			<div className='px-4'>
 				<div className='flex gap-2'>
 					<h3 className='text-2xl font-semibold tracking-tight'>
@@ -57,6 +57,6 @@ export default function EventView() {
 				columns={columns}
 				columnsConfig={columnsConfig}
 			/>
-		</>
+		</div>
 	);
 }

@@ -11,7 +11,8 @@ import { columnsConfig } from './filters';
 
 function eventsQuery(z: Zero) {
 	return z.query.events
-		.related('coordinator')
+		.related('coordinators', q => q.related('user'))
+		.related('volunteers', q => q.related('user'))
 		.related('category')
 		.related('subEvents', q =>
 			q.related('participants').related('participantCategory')

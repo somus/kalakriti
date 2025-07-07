@@ -78,15 +78,34 @@ export const columnsConfig = [
 		}))
 		.build(),
 	dtf
-		.option()
-		.id('coordinator')
-		.accessor(row => row.event.coordinator)
-		.displayName('Coordinator')
+		.multiOption()
+		.accessor(row => row.event.coordinators)
+		.id('coordinators')
+		.displayName('Coordinators')
 		.icon(ShieldUserIcon)
-		.transformOptionFn(c => ({
-			value: c.id,
-			label: c.firstName + ' ' + c.lastName
-		}))
+		.transformOptionFn(data => {
+			const coordinator =
+				data as unknown as EventRow['event']['coordinators'][number];
+			return {
+				value: coordinator.userId,
+				label: coordinator.user?.firstName + ' ' + coordinator.user?.lastName
+			};
+		})
+		.build(),
+	dtf
+		.multiOption()
+		.accessor(row => row.event.volunteers)
+		.id('volunteers')
+		.displayName('Volunteers')
+		.icon(ShieldUserIcon)
+		.transformOptionFn(data => {
+			const volunteer =
+				data as unknown as EventRow['event']['volunteers'][number];
+			return {
+				value: volunteer.userId,
+				label: volunteer.user?.firstName + ' ' + volunteer.user?.lastName
+			};
+		})
 		.build(),
 	dtf
 		.number()

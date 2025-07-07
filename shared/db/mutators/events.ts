@@ -6,9 +6,9 @@ import { assertIsAdmin } from '../permissions.ts';
 import { AuthData, Schema } from '../schema.zero.ts';
 
 export interface CreateEventArgs {
-	id: string;
 	name: string;
-	coordinatorId: string;
+	coordinators: string[];
+	volunteers: string[];
 	eventCategoryId: string;
 	timings: Record<
 		string,
@@ -22,15 +22,31 @@ export interface CreateEventArgs {
 
 export function createEventMutators(authData: AuthData | undefined) {
 	return {
-		create: async (tx, { timings, ...data }: CreateEventArgs) => {
+		create: async (
+			tx,
+			{ timings, coordinators, volunteers, ...data }: CreateEventArgs
+		) => {
 			assertIsAdmin(authData);
-			await tx.mutate.events.insert(data);
+			const eventId = createId();
+			await tx.mutate.events.insert({ id: eventId, ...data });
+			for (const coordinatorId of coordinators) {
+				await tx.mutate.eventCoordinators.insert({
+					eventId: eventId,
+					userId: coordinatorId
+				});
+			}
+			for (const volunteerId of volunteers) {
+				await tx.mutate.eventVolunteers.insert({
+					eventId: eventId,
+					userId: volunteerId
+				});
+			}
 			for (const subCategoryId of Object.keys(timings)) {
 				const subEvent = timings[subCategoryId];
 				if (subEvent.startTime && subEvent.endTime) {
 					await tx.mutate.subEvents.insert({
 						id: createId(),
-						eventId: data.id,
+						eventId: eventId,
 						participantCategoryId: subEvent.categoryId,
 						startTime: subEvent.startTime,
 						endTime: subEvent.endTime
@@ -42,16 +58,89 @@ export function createEventMutators(authData: AuthData | undefined) {
 			tx,
 			{
 				timings,
+				coordinators,
+				volunteers,
 				...change
 			}: UpdateValue<Schema['tables']['events']> &
-				Partial<Pick<CreateEventArgs, 'timings'>>
+				Partial<
+					Pick<CreateEventArgs, 'timings' | 'coordinators' | 'volunteers'>
+				>
 		) => {
 			assertIsAdmin(authData);
-			await tx.mutate.events.update(change);
+
 			const event = await tx.query.events
 				.where('id', change.id)
+				.related('coordinators')
+				.related('volunteers')
 				.related('subEvents')
 				.one();
+
+			if (!event) {
+				throw new Error('Event not found');
+			}
+
+			await tx.mutate.events.update(change);
+
+			if (coordinators) {
+				const currentCoordinatorIds = event.coordinators.map(
+					coordinator => coordinator.userId
+				);
+
+				// Determine which coordinators to remove and which to add
+				const coordinatorsToRemove = currentCoordinatorIds.filter(
+					id => !coordinators.includes(id)
+				);
+				const coordinatorsToAdd = coordinators?.filter(
+					id => !currentCoordinatorIds.includes(id)
+				);
+
+				// Remove deleted coordinators
+				for (const userId of coordinatorsToRemove) {
+					await tx.mutate.eventCoordinators.delete({
+						eventId: event.id,
+						userId
+					});
+				}
+
+				// Add new coordinators
+				for (const userId of coordinatorsToAdd) {
+					await tx.mutate.eventCoordinators.insert({
+						eventId: event.id,
+						userId
+					});
+				}
+			}
+
+			if (volunteers) {
+				const currentVolunteerIds = event.volunteers.map(
+					volunteer => volunteer.userId
+				);
+
+				// Determine which volunteers to remove and which to add
+				const volunteersToRemove = currentVolunteerIds.filter(
+					id => !volunteers.includes(id)
+				);
+				const volunteersToAdd = volunteers?.filter(
+					id => !currentVolunteerIds.includes(id)
+				);
+
+				// Remove deleted volunteers
+				for (const userId of volunteersToRemove) {
+					await tx.mutate.eventVolunteers.delete({
+						eventId: event.id,
+						userId
+					});
+				}
+
+				// Add new volunteers
+				for (const userId of volunteersToAdd) {
+					await tx.mutate.eventVolunteers.insert({
+						eventId: event.id,
+						userId
+					});
+				}
+			}
+
 			if (timings && event) {
 				const existingSubEventIds = event.subEvents.map(
 					subEvent => subEvent.id

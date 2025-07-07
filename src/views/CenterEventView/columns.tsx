@@ -75,7 +75,7 @@ export const columns = [
 
 // eslint-disable-next-line react-refresh/only-export-components
 const Actions = ({ participantId }: { participantId: string }) => {
-	const { center } = useOutletContext<CenterOutletContext>();
+	const context = useOutletContext<CenterOutletContext>();
 	const z = useZero();
 	const {
 		user: { role }
@@ -86,7 +86,7 @@ const Actions = ({ participantId }: { participantId: string }) => {
 			variant='ghost'
 			aria-label='Delete participant from event'
 			className='flex size-8 p-0 text-destructive hover:bg-destructive/10 hover:text-destructive *:[svg]:!text-destructive'
-			disabled={!!center.isLocked && role !== 'admin'}
+			disabled={!!context?.center?.isLocked && role !== 'admin'}
 			onClick={() => {
 				z.mutate.subEventParticipants
 					.delete({

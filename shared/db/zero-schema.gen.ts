@@ -166,6 +166,60 @@ export const schema = {
 			primaryKey: ['id'],
 			serverName: 'event_categories'
 		},
+		eventCoordinators: {
+			name: 'eventCoordinators',
+			columns: {
+				userId: {
+					type: 'string',
+					optional: false,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'eventCoordinators',
+						'userId'
+					>,
+					serverName: 'user_id'
+				},
+				eventId: {
+					type: 'string',
+					optional: false,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'eventCoordinators',
+						'eventId'
+					>,
+					serverName: 'event_id'
+				}
+			},
+			primaryKey: ['userId', 'eventId'],
+			serverName: 'event_coordinators'
+		},
+		eventVolunteers: {
+			name: 'eventVolunteers',
+			columns: {
+				userId: {
+					type: 'string',
+					optional: false,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'eventVolunteers',
+						'userId'
+					>,
+					serverName: 'user_id'
+				},
+				eventId: {
+					type: 'string',
+					optional: false,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'eventVolunteers',
+						'eventId'
+					>,
+					serverName: 'event_id'
+				}
+			},
+			primaryKey: ['userId', 'eventId'],
+			serverName: 'event_volunteers'
+		},
 		events: {
 			name: 'events',
 			columns: {
@@ -186,16 +240,6 @@ export const schema = {
 						'events',
 						'name'
 					>
-				},
-				coordinatorId: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'events',
-						'coordinatorId'
-					>,
-					serverName: 'coordinator_id'
 				},
 				eventCategoryId: {
 					type: 'string',
@@ -622,13 +666,57 @@ export const schema = {
 				}
 			]
 		},
-		events: {
-			coordinator: [
+		eventCoordinators: {
+			event: [
 				{
-					sourceField: ['coordinatorId'],
+					sourceField: ['eventId'],
+					destField: ['id'],
+					destSchema: 'events',
+					cardinality: 'one'
+				}
+			],
+			user: [
+				{
+					sourceField: ['userId'],
 					destField: ['id'],
 					destSchema: 'users',
 					cardinality: 'one'
+				}
+			]
+		},
+		eventVolunteers: {
+			event: [
+				{
+					sourceField: ['eventId'],
+					destField: ['id'],
+					destSchema: 'events',
+					cardinality: 'one'
+				}
+			],
+			user: [
+				{
+					sourceField: ['userId'],
+					destField: ['id'],
+					destSchema: 'users',
+					cardinality: 'one'
+				}
+			]
+		},
+		events: {
+			coordinators: [
+				{
+					sourceField: ['id'],
+					destField: ['eventId'],
+					destSchema: 'eventCoordinators',
+					cardinality: 'many'
+				}
+			],
+			volunteers: [
+				{
+					sourceField: ['id'],
+					destField: ['eventId'],
+					destSchema: 'eventVolunteers',
+					cardinality: 'many'
 				}
 			],
 			category: [
@@ -740,9 +828,17 @@ export const schema = {
 			coordinatingEvents: [
 				{
 					sourceField: ['id'],
-					destField: ['coordinatorId'],
-					destSchema: 'events',
-					cardinality: 'many'
+					destField: ['userId'],
+					destSchema: 'eventCoordinators',
+					cardinality: 'one'
+				}
+			],
+			volunteeringEvents: [
+				{
+					sourceField: ['id'],
+					destField: ['userId'],
+					destSchema: 'eventVolunteers',
+					cardinality: 'one'
 				}
 			],
 			coordinatingEventCategories: [
@@ -753,7 +849,7 @@ export const schema = {
 					cardinality: 'many'
 				}
 			],
-			liaisoningCenter: [
+			liaisoningCenters: [
 				{
 					sourceField: ['id'],
 					destField: ['userId'],

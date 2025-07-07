@@ -103,24 +103,54 @@ export const columns = [
 			displayName: 'Participant Category'
 		}
 	}),
-	columnHelper.accessor(row => row.event.coordinator, {
-		id: 'coordinator',
+	columnHelper.accessor(row => row.event.coordinators, {
+		id: 'coordinators',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Coordinator' />
+			<DataTableColumnHeader column={column} title='Coordinators' />
 		),
 		cell: ({ row }) => {
-			const coordinator = row.getValue<Event['coordinator'] | undefined>(
-				'coordinator'
+			const coordinators = row.getValue<Event['coordinators']>('coordinators');
+
+			if (coordinators?.length === 0) return null;
+
+			return (
+				<div className='flex gap-1'>
+					{coordinators.map(coordinator => (
+						<Badge variant='outline' key={coordinator.userId}>
+							{coordinator.user?.firstName} {coordinator.user?.lastName}
+						</Badge>
+					))}
+				</div>
 			);
-			return coordinator ? (
-				<Badge variant='outline'>
-					{coordinator.firstName} {coordinator.lastName}
-				</Badge>
-			) : null;
 		},
 		enableSorting: false,
 		meta: {
-			displayName: 'Coordinator'
+			displayName: 'Coordinators'
+		}
+	}),
+	columnHelper.accessor(row => row.event.volunteers, {
+		id: 'volunteers',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Volunteers' />
+		),
+		cell: ({ row }) => {
+			const volunteers = row.getValue<Event['volunteers']>('volunteers');
+
+			if (volunteers?.length === 0) return null;
+
+			return (
+				<div className='flex gap-1'>
+					{volunteers.map(volunteer => (
+						<Badge variant='outline' key={volunteer.userId}>
+							{volunteer.user?.firstName} {volunteer.user?.lastName}
+						</Badge>
+					))}
+				</div>
+			);
+		},
+		enableSorting: false,
+		meta: {
+			displayName: 'Volunteers'
 		}
 	}),
 	columnHelper.accessor(row => row.subEvent.participants.length, {
