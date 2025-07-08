@@ -28,7 +28,10 @@ export function createParticipantCategoryMutators(
 			change: UpdateValue<Schema['tables']['participantCategories']>
 		) => {
 			assertIsAdmin(authData);
-			await tx.mutate.participantCategories.update(change);
+			await tx.mutate.participantCategories.update({
+				...change,
+				updatedAt: new Date().getTime()
+			});
 		},
 		delete: async (tx, { id }: { id: string }) => {
 			assertIsAdmin(authData);

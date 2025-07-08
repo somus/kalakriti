@@ -9,7 +9,10 @@ import { columns } from './columns';
 import { columnsConfig } from './filters';
 
 function participantsQuery(z: Zero) {
-	return z.query.participants.related('center').related('participantCategory');
+	return z.query.participants
+		.related('center')
+		.related('participantCategory')
+		.orderBy('createdAt', 'desc');
 }
 
 export type Participant = Row<ReturnType<typeof participantsQuery>>;

@@ -20,7 +20,9 @@ export const users = pgTable('users', {
 	role: rolesEnum().default('volunteer').notNull(),
 	phoneNumber: varchar('phone_number'),
 	email: varchar('email').notNull(),
-	canLogin: boolean('can_login').default(false).notNull()
+	canLogin: boolean('can_login').default(false).notNull(),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
 
 export const usersRelations = relations(users, ({ many, one }) => ({
@@ -48,7 +50,9 @@ export const eventCategories = pgTable('event_categories', {
 	name: varchar('name').notNull(),
 	coordinatorId: varchar('coordinator_id').references(() => users.id, {
 		onDelete: 'set null'
-	})
+	}),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
 
 export const eventCategoriesRelations = relations(
@@ -67,7 +71,9 @@ export const events = pgTable('events', {
 	name: varchar('name').notNull(),
 	eventCategoryId: varchar('event_category_id')
 		.references(() => eventCategories.id, { onDelete: 'set null' })
-		.notNull()
+		.notNull(),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
 
 export const eventsRelations = relations(events, ({ one, many }) => ({
@@ -88,7 +94,9 @@ export const eventCoordinators = pgTable(
 			.references(() => users.id, { onDelete: 'cascade' }),
 		eventId: varchar('event_id')
 			.notNull()
-			.references(() => events.id, { onDelete: 'cascade' })
+			.references(() => events.id, { onDelete: 'cascade' }),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		updatedAt: timestamp('updated_at').defaultNow().notNull()
 	},
 	t => [primaryKey({ columns: [t.userId, t.eventId] })]
 );
@@ -115,7 +123,9 @@ export const eventVolunteers = pgTable(
 			.references(() => users.id, { onDelete: 'cascade' }),
 		eventId: varchar('event_id')
 			.notNull()
-			.references(() => events.id, { onDelete: 'cascade' })
+			.references(() => events.id, { onDelete: 'cascade' }),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		updatedAt: timestamp('updated_at').defaultNow().notNull()
 	},
 	t => [primaryKey({ columns: [t.userId, t.eventId] })]
 );
@@ -147,7 +157,9 @@ export const subEvents = pgTable('sub_events', {
 		.references(() => events.id, {
 			onDelete: 'cascade'
 		})
-		.notNull()
+		.notNull(),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
 
 export const subEventsRelations = relations(subEvents, ({ one, many }) => ({
@@ -167,7 +179,9 @@ export const centers = pgTable('centers', {
 	name: varchar('name').notNull(),
 	phoneNumber: varchar('phone_number').notNull(),
 	email: varchar('email').notNull(),
-	isLocked: boolean('is_locked').notNull().default(false)
+	isLocked: boolean('is_locked').notNull().default(false),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
 
 export const centersRelations = relations(centers, ({ many }) => ({
@@ -184,7 +198,9 @@ export const centerLiaisons = pgTable(
 			.references(() => users.id, { onDelete: 'cascade' }),
 		centerId: varchar('center_id')
 			.notNull()
-			.references(() => centers.id, { onDelete: 'cascade' })
+			.references(() => centers.id, { onDelete: 'cascade' }),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		updatedAt: timestamp('updated_at').defaultNow().notNull()
 	},
 	t => [primaryKey({ columns: [t.userId, t.centerId] })]
 );
@@ -208,7 +224,9 @@ export const centerGuardians = pgTable(
 			.references(() => users.id, { onDelete: 'cascade' }),
 		centerId: varchar('center_id')
 			.notNull()
-			.references(() => centers.id, { onDelete: 'cascade' })
+			.references(() => centers.id, { onDelete: 'cascade' }),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		updatedAt: timestamp('updated_at').defaultNow().notNull()
 	},
 	t => [primaryKey({ columns: [t.userId, t.centerId] })]
 );
@@ -235,7 +253,9 @@ export const participantCategories = pgTable('participant_categories', {
 	maxBoys: integer('max_boys').notNull(),
 	maxGirls: integer('max_girls').notNull(),
 	totalEventsAllowed: integer('total_events_allowed').notNull(),
-	maxEventsPerCategory: integer('max_events_per_category').notNull()
+	maxEventsPerCategory: integer('max_events_per_category').notNull(),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
 
 export const participantCategoryRelations = relations(
@@ -261,7 +281,9 @@ export const participants = pgTable('participants', {
 		.notNull()
 		.references(() => participantCategories.id, {
 			onDelete: 'cascade'
-		})
+		}),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
 
 export const participantsRelations = relations(
@@ -291,7 +313,9 @@ export const subEventParticipants = pgTable('sub_event_participants', {
 		.references(() => participants.id, {
 			onDelete: 'cascade'
 		}),
-	attended: boolean('attended').notNull().default(false)
+	attended: boolean('attended').notNull().default(false),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
 
 export const subEventParticipantsRelations = relations(

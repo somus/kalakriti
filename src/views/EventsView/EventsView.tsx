@@ -16,7 +16,8 @@ function eventsQuery(z: Zero) {
 		.related('category')
 		.related('subEvents', q =>
 			q.related('participants').related('participantCategory')
-		);
+		)
+		.orderBy('createdAt', 'desc');
 }
 
 export type Event = Row<ReturnType<typeof eventsQuery>>;

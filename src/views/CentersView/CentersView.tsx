@@ -16,6 +16,7 @@ export default function CentersView() {
 		z.query.centers
 			.related('guardians', q => q.related('user'))
 			.related('liaisons', q => q.related('user'))
+			.orderBy('createdAt', 'desc')
 	);
 
 	if (status.type !== 'complete') {

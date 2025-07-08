@@ -12,7 +12,8 @@ function centerEventsQuery(z: Zero) {
 		.related('category')
 		.related('subEvents', q =>
 			q.related('participants').related('participantCategory')
-		);
+		)
+		.orderBy('createdAt', 'desc');
 }
 
 export type CenterEvent = Row<ReturnType<typeof centerEventsQuery>>;

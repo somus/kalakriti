@@ -42,6 +42,7 @@ export default function AddEventParticipantsDialog({
 			)
 			.where('id', 'NOT IN', participantsToBeFiltered)
 			.related('subEvents', q => q.related('subEvent', q => q.related('event')))
+			.orderBy('createdAt', 'desc')
 	);
 
 	const totalEventsAllowed =

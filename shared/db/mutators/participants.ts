@@ -69,7 +69,10 @@ export function createParticipantMutators(authData: AuthData | undefined) {
 				authData,
 				participant?.centerId
 			);
-			await tx.mutate.participants.update(change);
+			await tx.mutate.participants.update({
+				...change,
+				updatedAt: new Date().getTime()
+			});
 		},
 		delete: async (tx, { id }: { id: string }) => {
 			const participant = await tx.query.participants.where('id', id).one();

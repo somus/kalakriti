@@ -12,7 +12,7 @@ export default function UsersView() {
 	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 	const z = useZero();
-	const [users, status] = useQuery(z.query.users);
+	const [users, status] = useQuery(z.query.users.orderBy('createdAt', 'desc'));
 
 	if (status.type !== 'complete') {
 		return null;

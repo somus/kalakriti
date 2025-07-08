@@ -13,7 +13,7 @@ export default function ParticipantCategoriesView() {
 	'use no memo';
 	const z = useZero();
 	const [participantCategories, status] = useQuery(
-		z.query.participantCategories
+		z.query.participantCategories.orderBy('createdAt', 'desc')
 	);
 
 	if (status.type !== 'complete') {

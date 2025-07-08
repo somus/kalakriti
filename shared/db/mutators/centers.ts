@@ -52,7 +52,10 @@ export function createCenterMutators(authData: AuthData | undefined) {
 				throw new Error('Center not found');
 			}
 
-			await tx.mutate.centers.update(change);
+			await tx.mutate.centers.update({
+				...change,
+				updatedAt: new Date().getTime()
+			});
 
 			if (liaisons) {
 				const currentLiasonIds = center.liaisons.map(liaison => liaison.userId);

@@ -9,9 +9,9 @@ import { columns } from './columns';
 import { columnsConfig } from './filters';
 
 function eventCategoriesQuery(z: Zero) {
-	return z.query.eventCategories.related('coordinator', q =>
-		q.related('coordinatingEventCategories')
-	);
+	return z.query.eventCategories
+		.related('coordinator', q => q.related('coordinatingEventCategories'))
+		.orderBy('createdAt', 'desc');
 }
 
 export type EventCategory = Row<ReturnType<typeof eventCategoriesQuery>>;

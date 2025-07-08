@@ -27,6 +27,7 @@ export default function CenterParticipantsView() {
 			.where('centerId', '=', center.id)
 			.related('center')
 			.related('participantCategory')
+			.orderBy('createdAt', 'desc')
 	);
 
 	if (status.type !== 'complete') {

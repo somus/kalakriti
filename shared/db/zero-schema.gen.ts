@@ -46,6 +46,26 @@ export const schema = {
 						'centerId'
 					>,
 					serverName: 'center_id'
+				},
+				createdAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'centerGuardians',
+						'createdAt'
+					>,
+					serverName: 'created_at'
+				},
+				updatedAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'centerGuardians',
+						'updatedAt'
+					>,
+					serverName: 'updated_at'
 				}
 			},
 			primaryKey: ['userId', 'centerId'],
@@ -73,6 +93,26 @@ export const schema = {
 						'centerId'
 					>,
 					serverName: 'center_id'
+				},
+				createdAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'centerLiaisons',
+						'createdAt'
+					>,
+					serverName: 'created_at'
+				},
+				updatedAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'centerLiaisons',
+						'updatedAt'
+					>,
+					serverName: 'updated_at'
 				}
 			},
 			primaryKey: ['userId', 'centerId'],
@@ -127,6 +167,26 @@ export const schema = {
 						'isLocked'
 					>,
 					serverName: 'is_locked'
+				},
+				createdAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'centers',
+						'createdAt'
+					>,
+					serverName: 'created_at'
+				},
+				updatedAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'centers',
+						'updatedAt'
+					>,
+					serverName: 'updated_at'
 				}
 			},
 			primaryKey: ['id']
@@ -161,6 +221,26 @@ export const schema = {
 						'coordinatorId'
 					>,
 					serverName: 'coordinator_id'
+				},
+				createdAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'eventCategories',
+						'createdAt'
+					>,
+					serverName: 'created_at'
+				},
+				updatedAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'eventCategories',
+						'updatedAt'
+					>,
+					serverName: 'updated_at'
 				}
 			},
 			primaryKey: ['id'],
@@ -188,6 +268,26 @@ export const schema = {
 						'eventId'
 					>,
 					serverName: 'event_id'
+				},
+				createdAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'eventCoordinators',
+						'createdAt'
+					>,
+					serverName: 'created_at'
+				},
+				updatedAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'eventCoordinators',
+						'updatedAt'
+					>,
+					serverName: 'updated_at'
 				}
 			},
 			primaryKey: ['userId', 'eventId'],
@@ -215,6 +315,26 @@ export const schema = {
 						'eventId'
 					>,
 					serverName: 'event_id'
+				},
+				createdAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'eventVolunteers',
+						'createdAt'
+					>,
+					serverName: 'created_at'
+				},
+				updatedAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'eventVolunteers',
+						'updatedAt'
+					>,
+					serverName: 'updated_at'
 				}
 			},
 			primaryKey: ['userId', 'eventId'],
@@ -250,6 +370,26 @@ export const schema = {
 						'eventCategoryId'
 					>,
 					serverName: 'event_category_id'
+				},
+				createdAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'events',
+						'createdAt'
+					>,
+					serverName: 'created_at'
+				},
+				updatedAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'events',
+						'updatedAt'
+					>,
+					serverName: 'updated_at'
 				}
 			},
 			primaryKey: ['id']
@@ -334,6 +474,26 @@ export const schema = {
 						'maxEventsPerCategory'
 					>,
 					serverName: 'max_events_per_category'
+				},
+				createdAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'participantCategories',
+						'createdAt'
+					>,
+					serverName: 'created_at'
+				},
+				updatedAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'participantCategories',
+						'updatedAt'
+					>,
+					serverName: 'updated_at'
 				}
 			},
 			primaryKey: ['id'],
@@ -406,6 +566,26 @@ export const schema = {
 						'participantCategoryId'
 					>,
 					serverName: 'participant_category_id'
+				},
+				createdAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'participants',
+						'createdAt'
+					>,
+					serverName: 'created_at'
+				},
+				updatedAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'participants',
+						'updatedAt'
+					>,
+					serverName: 'updated_at'
 				}
 			},
 			primaryKey: ['id']
@@ -450,6 +630,26 @@ export const schema = {
 						'subEventParticipants',
 						'attended'
 					>
+				},
+				createdAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'subEventParticipants',
+						'createdAt'
+					>,
+					serverName: 'created_at'
+				},
+				updatedAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'subEventParticipants',
+						'updatedAt'
+					>,
+					serverName: 'updated_at'
 				}
 			},
 			primaryKey: ['id'],
@@ -506,6 +706,26 @@ export const schema = {
 						'eventId'
 					>,
 					serverName: 'event_id'
+				},
+				createdAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'subEvents',
+						'createdAt'
+					>,
+					serverName: 'created_at'
+				},
+				updatedAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'subEvents',
+						'updatedAt'
+					>,
+					serverName: 'updated_at'
 				}
 			},
 			primaryKey: ['id'],
@@ -580,6 +800,26 @@ export const schema = {
 						'canLogin'
 					>,
 					serverName: 'can_login'
+				},
+				createdAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'users',
+						'createdAt'
+					>,
+					serverName: 'created_at'
+				},
+				updatedAt: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'users',
+						'updatedAt'
+					>,
+					serverName: 'updated_at'
 				}
 			},
 			primaryKey: ['id']

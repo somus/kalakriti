@@ -79,7 +79,10 @@ export function createEventMutators(authData: AuthData | undefined) {
 				throw new Error('Event not found');
 			}
 
-			await tx.mutate.events.update(change);
+			await tx.mutate.events.update({
+				...change,
+				updatedAt: new Date().getTime()
+			});
 
 			if (coordinators) {
 				const currentCoordinatorIds = event.coordinators.map(

@@ -19,40 +19,56 @@ export default drizzleZeroConfig(drizzleSchema, {
 			role: true,
 			phoneNumber: true,
 			email: true,
-			canLogin: true
+			canLogin: true,
+			createdAt: true,
+			updatedAt: true
 		},
 		eventCategories: {
 			id: true,
 			name: true,
-			coordinatorId: true
+			coordinatorId: true,
+			createdAt: true,
+			updatedAt: true
 		},
 		events: {
 			id: true,
 			name: true,
-			eventCategoryId: true
+			eventCategoryId: true,
+			createdAt: true,
+			updatedAt: true
 		},
 		eventCoordinators: {
 			userId: true,
-			eventId: true
+			eventId: true,
+			createdAt: true,
+			updatedAt: true
 		},
 		eventVolunteers: {
 			userId: true,
-			eventId: true
+			eventId: true,
+			createdAt: true,
+			updatedAt: true
 		},
 		centers: {
 			id: true,
 			name: true,
 			phoneNumber: true,
 			email: true,
-			isLocked: true
+			isLocked: true,
+			createdAt: true,
+			updatedAt: true
 		},
 		centerLiaisons: {
 			userId: true,
-			centerId: true
+			centerId: true,
+			createdAt: true,
+			updatedAt: true
 		},
 		centerGuardians: {
 			userId: true,
-			centerId: true
+			centerId: true,
+			createdAt: true,
+			updatedAt: true
 		},
 		participantCategories: {
 			id: true,
@@ -62,7 +78,9 @@ export default drizzleZeroConfig(drizzleSchema, {
 			maxBoys: true,
 			maxGirls: true,
 			totalEventsAllowed: true,
-			maxEventsPerCategory: true
+			maxEventsPerCategory: true,
+			createdAt: true,
+			updatedAt: true
 		},
 		participants: {
 			id: true,
@@ -71,20 +89,26 @@ export default drizzleZeroConfig(drizzleSchema, {
 			participantCategoryId: true,
 			dob: true,
 			age: true,
-			gender: true
+			gender: true,
+			createdAt: true,
+			updatedAt: true
 		},
 		subEvents: {
 			id: true,
 			eventId: true,
 			startTime: true,
 			endTime: true,
-			participantCategoryId: true
+			participantCategoryId: true,
+			createdAt: true,
+			updatedAt: true
 		},
 		subEventParticipants: {
 			id: true,
 			subEventId: true,
 			participantId: true,
-			attended: true
+			attended: true,
+			createdAt: true,
+			updatedAt: true
 		}
 	}
 });

@@ -79,7 +79,10 @@ export function createUserMutators(
 				});
 			}
 
-			await tx.mutate.users.update(change);
+			await tx.mutate.users.update({
+				...change,
+				updatedAt: new Date().getTime()
+			});
 		},
 		delete: async (tx, { id }: { id: string }) => {
 			assertIsAdmin(authData);

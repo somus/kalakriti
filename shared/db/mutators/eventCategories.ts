@@ -21,7 +21,10 @@ export function createEventCategoryMutators(authData: AuthData | undefined) {
 			change: UpdateValue<Schema['tables']['eventCategories']>
 		) => {
 			assertIsAdmin(authData);
-			await tx.mutate.eventCategories.update(change);
+			await tx.mutate.eventCategories.update({
+				...change,
+				updatedAt: new Date().getTime()
+			});
 		},
 		delete: async (tx, { id }: { id: string }) => {
 			assertIsAdmin(authData);
