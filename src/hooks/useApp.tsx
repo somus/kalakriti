@@ -20,7 +20,10 @@ const AppContext = createContext<AppContextProps>({
 		lastName: '',
 		email: '',
 		phoneNumber: '',
-		role: 'volunteer'
+		role: 'volunteer',
+		canLogin: false,
+		createdAt: 0,
+		updatedAt: 0
 	}
 });
 
