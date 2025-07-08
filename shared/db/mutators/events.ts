@@ -10,6 +10,7 @@ export interface CreateEventArgs {
 	coordinators: string[];
 	volunteers: string[];
 	eventCategoryId: string;
+	allowedGender: 'male' | 'female' | 'both';
 	timings: Record<
 		string,
 		{

@@ -1,6 +1,7 @@
 import { createColumnConfigHelper } from '@/components/data-table-filter/core/filters';
 import { format } from 'date-fns';
 import {
+	CircleSmallIcon,
 	ComponentIcon,
 	Heading1Icon,
 	ShieldUserIcon,
@@ -64,6 +65,18 @@ export const columnsConfig = [
 			value: c,
 			label: c
 		}))
+		.build(),
+	dtf
+		.option()
+		.accessor(row => row.event.allowedGender)
+		.id('gender')
+		.displayName('Gender')
+		.icon(CircleSmallIcon)
+		.options([
+			{ label: 'Male', value: 'male' },
+			{ label: 'Female', value: 'female' },
+			{ label: 'Both', value: 'both' }
+		])
 		.build(),
 	dtf
 		.option()

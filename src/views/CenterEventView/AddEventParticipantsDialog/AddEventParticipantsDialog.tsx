@@ -44,6 +44,11 @@ export default function AddEventParticipantsDialog({
 			.related('subEvents', q => q.related('subEvent', q => q.related('event')))
 			.orderBy('createdAt', 'desc')
 	);
+	const filteredParticipants = participants.filter(p =>
+		currentEvent.event?.allowedGender === 'both'
+			? true
+			: p.gender === currentEvent.event?.allowedGender
+	);
 
 	const totalEventsAllowed =
 		currentEvent.participantCategory?.totalEventsAllowed;
@@ -51,7 +56,7 @@ export default function AddEventParticipantsDialog({
 		currentEvent.participantCategory?.maxEventsPerCategory;
 	const participantsToDisable =
 		totalEventsAllowed && maxEventsPerCategory
-			? participants
+			? filteredParticipants
 					.filter(
 						participant =>
 							participant.subEvents.length >= totalEventsAllowed ||
@@ -106,7 +111,7 @@ export default function AddEventParticipantsDialog({
 					<DialogTitle>Add participants</DialogTitle>
 				</DialogHeader>
 				<DataTableWrapper
-					data={participants as Participant[]}
+					data={filteredParticipants as Participant[]}
 					columns={columns}
 					columnsConfig={columnsConfig}
 					disabledRows={participantsToDisable}

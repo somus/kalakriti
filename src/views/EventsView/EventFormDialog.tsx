@@ -24,6 +24,7 @@ import keyBy from 'lodash/keyBy';
 import { LoaderCircle } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { allowedEventGenderEnum } from 'shared/db/schema';
 import * as z from 'zod/v4';
 
 import { Event } from './EventsView';
@@ -85,6 +86,11 @@ export default function EventFormModal({
 			label: category.name
 		})
 	);
+	const allowedGenderOptions: SelectOption[] = [
+		{ value: 'male', label: 'Male' },
+		{ value: 'female', label: 'Female' },
+		{ value: 'both', label: 'Both' }
+	];
 
 	const eventSchema = z.object({
 		name: z.string({ error: 'Name is required' }),
@@ -111,7 +117,8 @@ export default function EventFormModal({
 			.array(z.string(), { error: 'Coordinators are required' })
 			.min(1, { error: 'Coordinators are required' }),
 		volunteers: z.array(z.string()),
-		category: z.cuid2({ error: 'Category is required' })
+		category: z.cuid2({ error: 'Category is required' }),
+		allowedGender: z.enum(allowedEventGenderEnum.enumValues)
 	});
 
 	type EventFormData = z.infer<typeof eventSchema>;
@@ -190,7 +197,8 @@ export default function EventFormModal({
 			>,
 			coordinators: event.coordinators.map(user => user.userId),
 			volunteers: event.volunteers.map(user => user.userId),
-			category: event.category?.id
+			category: event.category?.id,
+			allowedGender: event.allowedGender ?? 'both'
 		};
 	}, [event, participantCategories]);
 
@@ -209,6 +217,7 @@ export default function EventFormModal({
 				coordinators: data.coordinators,
 				volunteers: data.volunteers,
 				eventCategoryId: data.category,
+				allowedGender: data.allowedGender,
 				timings: Object.keys(data.timings).reduce((acc, timingKey) => {
 					const timing = data.timings[timingKey];
 					return {
@@ -308,6 +317,11 @@ export default function EventFormModal({
 							name='category'
 							label='Category'
 							options={eventCategoryOptions}
+						/>
+						<SelectField
+							name='allowedGender'
+							label='Allowed Gender'
+							options={allowedGenderOptions}
 						/>
 						<div className='space-y-2'>
 							<label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>

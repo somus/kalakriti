@@ -12,6 +12,11 @@ import {
 
 export const rolesEnum = pgEnum('roles', ['guardian', 'admin', 'volunteer']);
 export const genderEnum = pgEnum('gender', ['male', 'female']);
+export const allowedEventGenderEnum = pgEnum('allowed_event_gender', [
+	'male',
+	'female',
+	'both'
+]);
 
 export const users = pgTable('users', {
 	id: varchar('id').primaryKey(),
@@ -72,6 +77,9 @@ export const events = pgTable('events', {
 	eventCategoryId: varchar('event_category_id')
 		.references(() => eventCategories.id, { onDelete: 'set null' })
 		.notNull(),
+	allowedGender: allowedEventGenderEnum('allowed_gender')
+		.notNull()
+		.default('both'),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });

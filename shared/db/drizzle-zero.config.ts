@@ -35,7 +35,8 @@ export default drizzleZeroConfig(drizzleSchema, {
 			name: true,
 			eventCategoryId: true,
 			createdAt: true,
-			updatedAt: true
+			updatedAt: true,
+			allowedGender: true
 		},
 		eventCoordinators: {
 			userId: true,

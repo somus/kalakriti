@@ -371,6 +371,16 @@ export const schema = {
 					>,
 					serverName: 'event_category_id'
 				},
+				allowedGender: {
+					type: 'string',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'events',
+						'allowedGender'
+					>,
+					serverName: 'allowed_gender'
+				},
 				createdAt: {
 					type: 'number',
 					optional: true,

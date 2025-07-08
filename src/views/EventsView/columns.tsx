@@ -103,6 +103,20 @@ export const columns = [
 			displayName: 'Participant Category'
 		}
 	}),
+	columnHelper.accessor(row => row.event.allowedGender, {
+		id: 'allowedGender',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Allowed Gender' />
+		),
+		cell: ({ row }) => (
+			<Badge variant='outline' className='capitalize'>
+				{row.getValue('allowedGender')}
+			</Badge>
+		),
+		meta: {
+			displayName: 'Allowed Gender'
+		}
+	}),
 	columnHelper.accessor(row => row.event.coordinators, {
 		id: 'coordinators',
 		header: ({ column }) => (
