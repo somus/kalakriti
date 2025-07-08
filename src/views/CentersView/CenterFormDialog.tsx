@@ -67,11 +67,11 @@ export default function CenterFormModal({
 
 	const guardianOptions: Option[] = guardians.map(guardian => ({
 		value: guardian.id,
-		label: `${guardian.firstName} ${guardian.lastName}`
+		label: `${guardian.firstName} ${guardian.lastName ?? ''}`
 	}));
 	const liaisonOptions: Option[] = liaisons.map(liaison => ({
 		value: liaison.id,
-		label: `${liaison.firstName} ${liaison.lastName}`
+		label: `${liaison.firstName} ${liaison.lastName ?? ''}`
 	}));
 
 	// Get center default values

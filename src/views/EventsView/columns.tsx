@@ -117,7 +117,7 @@ export const columns = [
 				<div className='flex gap-1'>
 					{coordinators.map(coordinator => (
 						<Badge variant='outline' key={coordinator.userId}>
-							{coordinator.user?.firstName} {coordinator.user?.lastName}
+							{coordinator.user?.firstName} {coordinator.user?.lastName ?? ''}
 						</Badge>
 					))}
 				</div>
@@ -142,7 +142,7 @@ export const columns = [
 				<div className='flex gap-1'>
 					{volunteers.map(volunteer => (
 						<Badge variant='outline' key={volunteer.userId}>
-							{volunteer.user?.firstName} {volunteer.user?.lastName}
+							{volunteer.user?.firstName} {volunteer.user?.lastName ?? ''}
 						</Badge>
 					))}
 				</div>

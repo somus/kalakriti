@@ -42,7 +42,7 @@ export const QrScanDialog = ({ children }: PropsWithChildren) => {
 						{user && (
 							<>
 								<p>
-									<strong>Name:</strong> {user.firstName} {user.lastName}
+									<strong>Name:</strong> {user.firstName} {user.lastName ?? ''}
 								</p>
 								<p>
 									<strong>Email:</strong> {user.email}

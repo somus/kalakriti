@@ -73,11 +73,11 @@ export default function EventFormModal({
 		.filter(user => user.canLogin)
 		.map(user => ({
 			value: user.id,
-			label: `${user.firstName} ${user.lastName}`
+			label: `${user.firstName} ${user.lastName ?? ''}`
 		}));
 	const volunteerOptions: Option[] = users.map(user => ({
 		value: user.id,
-		label: `${user.firstName} ${user.lastName}`
+		label: `${user.firstName} ${user.lastName ?? ''}`
 	}));
 	const eventCategoryOptions: SelectOption[] = eventCategories.map(
 		category => ({

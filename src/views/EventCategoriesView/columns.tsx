@@ -37,7 +37,7 @@ export const columns = [
 			>('coordinator');
 			return coordinator ? (
 				<Badge variant='outline'>
-					{coordinator.firstName} {coordinator.lastName}
+					{coordinator.firstName} {coordinator.lastName ?? ''}
 				</Badge>
 			) : null;
 		},

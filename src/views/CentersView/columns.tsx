@@ -73,7 +73,7 @@ export const columns = [
 				<div className='flex gap-1'>
 					{liaisons.map(liaison => (
 						<Badge variant='outline' key={liaison.userId}>
-							{liaison.user?.firstName} {liaison.user?.lastName}
+							{liaison.user?.firstName} {liaison.user?.lastName ?? ''}
 						</Badge>
 					))}
 				</div>
@@ -95,7 +95,7 @@ export const columns = [
 				<div className='flex gap-1'>
 					{guardians.map(guardian => (
 						<Badge variant='outline' key={guardian.userId}>
-							{guardian.user?.firstName} {guardian.user?.lastName}
+							{guardian.user?.firstName} {guardian.user?.lastName ?? ''}
 						</Badge>
 					))}
 				</div>

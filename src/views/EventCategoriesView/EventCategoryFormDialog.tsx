@@ -57,7 +57,7 @@ export default function EventCategoryFormModal({
 
 	const coordinatorOptions: SelectOption[] = volunteers.map(volunteer => ({
 		value: volunteer.id,
-		label: `${volunteer.firstName} ${volunteer.lastName}`
+		label: `${volunteer.firstName} ${volunteer.lastName ?? ''}`
 	}));
 
 	// Get eventCategory default values
