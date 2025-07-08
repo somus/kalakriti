@@ -11,6 +11,8 @@ export interface CreateEventArgs {
 	volunteers: string[];
 	eventCategoryId: string;
 	allowedGender: 'male' | 'female' | 'both';
+	minParticipants?: number | null;
+	maxParticipants?: number | null;
 	timings: Record<
 		string,
 		{

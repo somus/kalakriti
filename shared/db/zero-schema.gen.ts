@@ -381,6 +381,26 @@ export const schema = {
 					>,
 					serverName: 'allowed_gender'
 				},
+				minParticipants: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'events',
+						'minParticipants'
+					>,
+					serverName: 'min_participants'
+				},
+				maxParticipants: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'events',
+						'maxParticipants'
+					>,
+					serverName: 'max_participants'
+				},
 				createdAt: {
 					type: 'number',
 					optional: true,

@@ -12,6 +12,7 @@ import {
 	TableRow
 } from '@/components/ui/table';
 import useTableState from '@/hooks/useTableState';
+import { cn } from '@/lib/utils';
 import {
 	type ColumnDef,
 	RowData,
@@ -44,8 +45,10 @@ export default function DataTableWrapper<TData extends { id: string }>({
 	columnsConfig,
 	columns,
 	disabledRows,
+	selectedRows,
 	additionalActions,
 	children,
+	className,
 	enableRowSelection = false
 }: {
 	data: TData[];
@@ -54,8 +57,10 @@ export default function DataTableWrapper<TData extends { id: string }>({
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	columns: ColumnDef<TData, any>[];
 	disabledRows?: string[];
+	selectedRows?: string[];
 	additionalActions?: React.ReactNode[];
 	children?: (table: TanstackTable<TData>) => React.ReactNode;
+	className?: string;
 	enableRowSelection?: boolean;
 }) {
 	'use no memo';
@@ -75,7 +80,12 @@ export default function DataTableWrapper<TData extends { id: string }>({
 			setRowSelection,
 			setColumnVisibility
 		}
-	} = useTableState();
+	} = useTableState({
+		rowSelection: selectedRows?.reduce(
+			(acc, id) => ({ ...acc, [id]: true }),
+			{}
+		)
+	});
 
 	const {
 		columns: filterColumns,
@@ -108,6 +118,7 @@ export default function DataTableWrapper<TData extends { id: string }>({
 	const table = useReactTable({
 		data: memoData,
 		columns: tstColumns,
+		getRowId: row => row.id,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 		getSortedRowModel: getSortedRowModel(),
@@ -133,7 +144,7 @@ export default function DataTableWrapper<TData extends { id: string }>({
 
 	return (
 		<>
-			<div className='w-full col-span-2 px-4'>
+			<div className={cn('w-full col-span-2 px-4', className)}>
 				<div className='flex items-center py-4 gap-2 flex-wrap'>
 					<DataTableFilter
 						filters={filters}

@@ -1,13 +1,13 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Button } from '@/components/ui/button';
 import {
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger
-} from '@/components/ui/dialog';
+	Modal,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+	ModalTitle,
+	ModalTrigger
+} from '@/components/ui/credenza';
 import useZero from '@/hooks/useZero';
 import LoadingScreen from '@/views/general/LoadingScreen';
 import { useQuery } from '@rocicorp/zero/react';
@@ -33,6 +33,9 @@ export default function AddEventParticipantsDialog({
 }) {
 	// 'use no memo';
 	const zero = useZero();
+	const isGroupEvent =
+		currentEvent.event?.minParticipants && currentEvent.event?.maxParticipants;
+
 	const [participants, status] = useQuery(
 		zero.query.participants
 			.where(
@@ -40,7 +43,7 @@ export default function AddEventParticipantsDialog({
 				'=',
 				currentEvent.participantCategory?.id ?? ''
 			)
-			.where('id', 'NOT IN', participantsToBeFiltered)
+			.where('id', 'NOT IN', isGroupEvent ? [] : participantsToBeFiltered)
 			.related('subEvents', q => q.related('subEvent', q => q.related('event')))
 			.orderBy('createdAt', 'desc')
 	);
@@ -72,14 +75,28 @@ export default function AddEventParticipantsDialog({
 							)
 					)
 					.map(participant => participant.id)
+					.filter(participantId =>
+						// Don't disable already selected participants when it is a group event
+						isGroupEvent
+							? !participantsToBeFiltered.includes(participantId)
+							: true
+					)
 			: [];
 
 	const [open, setOpen] = useState(false);
 	const handleAdd = useCallback(
-		(table: Table<Participant>) => {
+		async (table: Table<Participant>) => {
 			const selectedRows = table
 				.getFilteredSelectedRowModel()
 				.rows.map(row => row.original.id);
+
+			if (isGroupEvent && participantsToBeFiltered.length > 0) {
+				// Delete all participants from the current event while updating
+				await zero.mutate.subEventParticipants.deleteBatch({
+					ids: currentEvent.participants.map(participant => participant.id)
+				}).server;
+			}
+
 			zero.mutate.subEventParticipants
 				.createBatch({
 					participantIds: selectedRows,
@@ -93,7 +110,13 @@ export default function AddEventParticipantsDialog({
 
 			setOpen(false);
 		},
-		[zero, currentEvent.id]
+		[
+			zero,
+			currentEvent.id,
+			isGroupEvent,
+			currentEvent.participants,
+			participantsToBeFiltered
+		]
 	);
 
 	if (status.type !== 'complete') {
@@ -101,33 +124,55 @@ export default function AddEventParticipantsDialog({
 	}
 
 	return (
-		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild>{children}</DialogTrigger>
-			<DialogContent
-				className='overflow-auto sm:max-w-[425px] md:max-w-[600px] xl:max-w-[900px] 2xl:max-w-[1200px]'
+		<Modal open={open} onOpenChange={setOpen}>
+			<ModalTrigger asChild>{children}</ModalTrigger>
+			<ModalContent
+				className='overflow-auto sm:max-w-[425px] md:max-w-[600px] xl:max-w-[900px] 2xl:max-w-[1200px] gap-0'
 				aria-describedby={undefined}
 			>
-				<DialogHeader>
-					<DialogTitle>Add participants</DialogTitle>
-				</DialogHeader>
+				<ModalHeader>
+					<div className='flex flex-col gap-3'>
+						<ModalTitle>
+							Add participants for {currentEvent.event?.name} -{' '}
+							{currentEvent.participantCategory?.name}
+						</ModalTitle>
+						{isGroupEvent && (
+							<p className='text-sm'>
+								Min Participants: {currentEvent.event?.minParticipants}, Max
+								Participants: {currentEvent.event?.maxParticipants}
+							</p>
+						)}
+					</div>
+				</ModalHeader>
 				<DataTableWrapper
 					data={filteredParticipants as Participant[]}
 					columns={columns}
 					columnsConfig={columnsConfig}
 					disabledRows={participantsToDisable}
+					selectedRows={isGroupEvent ? participantsToBeFiltered : undefined}
+					className='px-0'
 				>
-					{table => (
-						<DialogFooter className='col-span-2'>
-							<Button
-								disabled={table.getSelectedRowModel().rows.length === 0}
-								onClick={() => handleAdd(table)}
-							>
-								Add
-							</Button>
-						</DialogFooter>
-					)}
+					{table => {
+						const noOfSelectedRows = table.getSelectedRowModel().rows.length;
+						const disableAdd = isGroupEvent
+							? noOfSelectedRows > currentEvent.event?.maxParticipants ||
+								noOfSelectedRows < currentEvent.event?.minParticipants
+							: noOfSelectedRows === 0;
+
+						return (
+							<ModalFooter className='col-span-2 pt-4'>
+								<Button
+									disabled={disableAdd}
+									// eslint-disable-next-line @typescript-eslint/no-misused-promises
+									onClick={() => handleAdd(table)}
+								>
+									Add
+								</Button>
+							</ModalFooter>
+						);
+					}}
 				</DataTableWrapper>
-			</DialogContent>
-		</Dialog>
+			</ModalContent>
+		</Modal>
 	);
 }

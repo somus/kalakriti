@@ -1,9 +1,9 @@
 import {
-	Dialog,
-	DialogContent,
-	DialogTitle,
-	DialogTrigger
-} from '@/components/ui/dialog';
+	Modal,
+	ModalContent,
+	ModalTitle,
+	ModalTrigger
+} from '@/components/ui/credenza';
 import useZero from '@/hooks/useZero';
 import { useQuery } from '@rocicorp/zero/react';
 import { Scanner } from '@yudiel/react-qr-scanner';
@@ -27,10 +27,10 @@ export const QrScanDialog = ({ children }: PropsWithChildren) => {
 	);
 
 	return (
-		<Dialog>
-			<DialogTrigger asChild>{children}</DialogTrigger>
-			<DialogContent aria-describedby={undefined}>
-				<DialogTitle>Scan QR Code</DialogTitle>
+		<Modal>
+			<ModalTrigger asChild>{children}</ModalTrigger>
+			<ModalContent aria-describedby={undefined}>
+				<ModalTitle>Scan QR Code</ModalTitle>
 				{scanResult ? (
 					<div className='flex flex-col gap-1'>
 						<p>
@@ -73,7 +73,7 @@ export const QrScanDialog = ({ children }: PropsWithChildren) => {
 						sound={false}
 					/>
 				)}
-			</DialogContent>
-		</Dialog>
+			</ModalContent>
+		</Modal>
 	);
 };

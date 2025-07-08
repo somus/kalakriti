@@ -1,4 +1,5 @@
 import {
+	CheckboxField,
 	FormLayout,
 	InputField,
 	SelectField,
@@ -118,7 +119,10 @@ export default function EventFormModal({
 			.min(1, { error: 'Coordinators are required' }),
 		volunteers: z.array(z.string()),
 		category: z.cuid2({ error: 'Category is required' }),
-		allowedGender: z.enum(allowedEventGenderEnum.enumValues)
+		allowedGender: z.enum(allowedEventGenderEnum.enumValues),
+		isGroupEvent: z.boolean().optional(),
+		minParticipants: z.number().nullable(),
+		maxParticipants: z.number().nullable()
 	});
 
 	type EventFormData = z.infer<typeof eventSchema>;
@@ -128,6 +132,7 @@ export default function EventFormModal({
 		if (!event) {
 			return {
 				volunteers: [],
+				isGroupEvent: false,
 				timings: participantCategories.reduce<
 					Record<
 						string,
@@ -198,7 +203,10 @@ export default function EventFormModal({
 			coordinators: event.coordinators.map(user => user.userId),
 			volunteers: event.volunteers.map(user => user.userId),
 			category: event.category?.id,
-			allowedGender: event.allowedGender ?? 'both'
+			allowedGender: event.allowedGender ?? 'both',
+			isGroupEvent: !!event.minParticipants || !!event.maxParticipants,
+			minParticipants: event.minParticipants,
+			maxParticipants: event.maxParticipants
 		};
 	}, [event, participantCategories]);
 
@@ -218,6 +226,8 @@ export default function EventFormModal({
 				volunteers: data.volunteers,
 				eventCategoryId: data.category,
 				allowedGender: data.allowedGender,
+				minParticipants: data.isGroupEvent ? data.minParticipants : null,
+				maxParticipants: data.isGroupEvent ? data.maxParticipants : null,
 				timings: Object.keys(data.timings).reduce((acc, timingKey) => {
 					const timing = data.timings[timingKey];
 					return {
@@ -323,6 +333,21 @@ export default function EventFormModal({
 							label='Allowed Gender'
 							options={allowedGenderOptions}
 						/>
+						<CheckboxField name='isGroupEvent' label='Is Group Event?' />
+						{form.watch('isGroupEvent') && (
+							<>
+								<InputField
+									name='minParticipants'
+									label='Minimum Participants'
+									type='number'
+								/>
+								<InputField
+									name='maxParticipants'
+									label='Maximum Participants'
+									type='number'
+								/>
+							</>
+						)}
 						<div className='space-y-2'>
 							<label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
 								Coordinators

@@ -2,7 +2,10 @@
 import { createId } from '@paralleldrive/cuid2';
 import { CustomMutatorDefs } from '@rocicorp/zero';
 
-import { assertIsAdminOrGuardianOrLiasonOfParticipant } from '../permissions.ts';
+import {
+	assertIsAdminOrGuardianOrLiasonOfParticipant,
+	assertIsAdminOrGuardianOrLiasonOfSubEventParticipant
+} from '../permissions.ts';
 import { AuthData, Schema } from '../schema.zero.ts';
 
 export interface CreateBatchSubEventParticipantArgs {
@@ -32,8 +35,22 @@ export function createSubEventParticipantMutators(
 			}
 		},
 		delete: async (tx, { id }: { id: string }) => {
-			await assertIsAdminOrGuardianOrLiasonOfParticipant(tx, authData, id);
+			await assertIsAdminOrGuardianOrLiasonOfSubEventParticipant(
+				tx,
+				authData,
+				id
+			);
 			await tx.mutate.subEventParticipants.delete({ id });
+		},
+		deleteBatch: async (tx, { ids }: { ids: string[] }) => {
+			await assertIsAdminOrGuardianOrLiasonOfSubEventParticipant(
+				tx,
+				authData,
+				ids[0]
+			);
+			await Promise.all(
+				ids.map(id => tx.mutate.subEventParticipants.delete({ id }))
+			);
 		}
 	} as const satisfies CustomMutatorDefs<Schema>;
 }

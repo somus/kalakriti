@@ -80,6 +80,8 @@ export const events = pgTable('events', {
 	allowedGender: allowedEventGenderEnum('allowed_gender')
 		.notNull()
 		.default('both'),
+	minParticipants: integer('min_participants'),
+	maxParticipants: integer('max_participants'),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
