@@ -30,7 +30,7 @@ const userSchema = z
 		email: z.email({ error: 'Please enter a valid email address' }),
 		password: z.string().optional(),
 		role: z.enum(rolesEnum.enumValues).default('volunteer').optional(),
-		canLogin: z.boolean().default(false).optional(),
+		canLogin: z.boolean().optional(),
 		phoneNumber: z
 			.string()
 			.refine(
@@ -76,7 +76,8 @@ export default function UserFormModal({
 	const defaultValues = useMemo(() => {
 		if (!user)
 			return {
-				role: rolesEnum.enumValues[2]
+				role: rolesEnum.enumValues[2],
+				canLogin: false
 			};
 
 		return {
