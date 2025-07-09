@@ -121,8 +121,8 @@ export default function EventFormModal({
 		category: z.cuid2({ error: 'Category is required' }),
 		allowedGender: z.enum(allowedEventGenderEnum.enumValues),
 		isGroupEvent: z.boolean().optional(),
-		minParticipants: z.number().nullable(),
-		maxParticipants: z.number().nullable()
+		minParticipants: z.number().nullable().optional(),
+		maxParticipants: z.number().nullable().optional()
 	});
 
 	type EventFormData = z.infer<typeof eventSchema>;
