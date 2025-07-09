@@ -1,4 +1,3 @@
-import PWABadge from '@/PWABadge';
 import { AppSidebar } from '@/components/app-sidebar';
 import Breadcrumbs from '@/components/breadcrumbs';
 import { Separator } from '@/components/ui/separator';
@@ -86,7 +85,7 @@ export default function MainLayout() {
 				</AppProvider>
 			</ZeroProvider>
 			<Toaster position='bottom-right' richColors />
-			<PWABadge />
+			{/* <PWABadge /> */}
 		</>
 	);
 }

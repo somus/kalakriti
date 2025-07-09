@@ -2,6 +2,7 @@ import { ClerkProvider } from '@clerk/clerk-react';
 import { NuqsAdapter } from 'nuqs/adapters/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { registerSW } from 'virtual:pwa-register';
 
 import App from './App';
 import { env } from './env.client';
@@ -13,6 +14,8 @@ const PUBLISHABLE_KEY = env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!PUBLISHABLE_KEY) {
 	throw new Error('Missing Publishable Key');
 }
+
+registerSW({ immediate: true });
 
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>
