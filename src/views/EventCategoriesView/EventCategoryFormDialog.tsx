@@ -113,6 +113,7 @@ export default function EventCategoryFormModal({
 		<Modal
 			open={open ?? isModalOpen}
 			onOpenChange={onOpenChange ?? setIsModalOpen}
+			modal={false}
 		>
 			<ModalTrigger asChild>{children}</ModalTrigger>
 			<ModalContent className='sm:max-w-[425px]' aria-describedby={undefined}>
