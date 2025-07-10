@@ -20,7 +20,7 @@ export default defineConfig({
 		eslintPlugin(),
 		VitePWA({
 			registerType: 'autoUpdate',
-			injectRegister: false,
+			injectRegister: 'auto',
 
 			pwaAssets: {
 				disabled: false,
