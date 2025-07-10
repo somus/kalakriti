@@ -81,8 +81,8 @@ export const columnsConfig = [
 	dtf
 		.option()
 		.accessor(row => row.event.allowedGender)
-		.id('gender')
-		.displayName('Gender')
+		.id('allowedGender')
+		.displayName('Allowed Gender')
 		.icon(CircleSmallIcon)
 		.options([
 			{ label: 'Male', value: 'male' },
@@ -92,31 +92,31 @@ export const columnsConfig = [
 		.build(),
 	dtf
 		.multiOption()
-		.accessor(row => row.event.coordinators)
+		.accessor(row => row.event.coordinators.map(c => c.user))
 		.id('coordinators')
 		.displayName('Coordinators')
 		.icon(ShieldUserIcon)
 		.transformOptionFn(data => {
-			const coordinator =
-				data as unknown as EventRow['event']['coordinators'][number];
+			const user =
+				data as unknown as EventRow['event']['coordinators'][number]['user'];
 			return {
-				value: coordinator.userId,
-				label: coordinator.user?.firstName + ' ' + coordinator.user?.lastName
+				value: user?.id ?? '',
+				label: user?.firstName + ' ' + user?.lastName
 			};
 		})
 		.build(),
 	dtf
 		.multiOption()
-		.accessor(row => row.event.volunteers)
+		.accessor(row => row.event.volunteers.map(c => c.user))
 		.id('volunteers')
 		.displayName('Volunteers')
 		.icon(ShieldUserIcon)
 		.transformOptionFn(data => {
-			const volunteer =
-				data as unknown as EventRow['event']['volunteers'][number];
+			const user =
+				data as unknown as EventRow['event']['volunteers'][number]['user'];
 			return {
-				value: volunteer.userId,
-				label: volunteer.user?.firstName + ' ' + volunteer.user?.lastName
+				value: user?.id ?? '',
+				label: user?.firstName + ' ' + user?.lastName
 			};
 		})
 		.build(),

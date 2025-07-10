@@ -59,21 +59,22 @@ export const columns = [
 		),
 		cell: ({ row }) => <div>{row.getValue('phoneNumber')}</div>
 	}),
-	columnHelper.accessor(row => row.liaisons, {
+	columnHelper.accessor(row => row.liaisons.map(liason => liason.user), {
 		id: 'liaisons',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Liaisons' />
 		),
 		cell: ({ row }) => {
-			const liaisons = row.getValue<Center['liaisons']>('liaisons');
+			const liaisons =
+				row.getValue<Center['liaisons'][number]['user'][]>('liaisons');
 
 			if (liaisons?.length === 0) return null;
 
 			return (
 				<div className='flex gap-1'>
 					{liaisons.map(liaison => (
-						<Badge variant='outline' key={liaison.userId}>
-							{liaison.user?.firstName} {liaison.user?.lastName ?? ''}
+						<Badge variant='outline' key={liaison?.id}>
+							{liaison?.firstName} {liaison?.lastName ?? ''}
 						</Badge>
 					))}
 				</div>
@@ -81,21 +82,22 @@ export const columns = [
 		},
 		enableSorting: false
 	}),
-	columnHelper.accessor(row => row.guardians, {
+	columnHelper.accessor(row => row.guardians.map(guardian => guardian.user), {
 		id: 'guardians',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Guardians' />
 		),
 		cell: ({ row }) => {
-			const guardians = row.getValue<Center['guardians']>('guardians');
+			const guardians =
+				row.getValue<Center['guardians'][number]['user'][]>('guardians');
 
 			if (guardians?.length === 0) return null;
 
 			return (
 				<div className='flex gap-1'>
 					{guardians.map(guardian => (
-						<Badge variant='outline' key={guardian.userId}>
-							{guardian.user?.firstName} {guardian.user?.lastName ?? ''}
+						<Badge variant='outline' key={guardian?.id}>
+							{guardian?.firstName} {guardian?.lastName ?? ''}
 						</Badge>
 					))}
 				</div>
