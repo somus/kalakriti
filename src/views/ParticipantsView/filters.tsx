@@ -58,5 +58,16 @@ export const columnsConfig = [
 			value: c.id,
 			label: c.name
 		}))
+		.build(),
+	dtf
+		.multiOption()
+		.id('events')
+		.accessor(row => row.subEvents.map(subEvent => subEvent.subEvent))
+		.displayName('Events')
+		.icon(SchoolIcon)
+		.transformOptionFn(subEvent => ({
+			value: subEvent?.id ?? '',
+			label: `${subEvent?.event?.name ?? 'Unknown Event'} - ${subEvent?.participantCategory?.name ?? 'Unknown Category'}`
+		}))
 		.build()
 ] as const;

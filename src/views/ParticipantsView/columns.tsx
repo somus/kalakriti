@@ -86,6 +86,36 @@ export const columns = [
 			displayName: 'Center'
 		}
 	}),
+	columnHelper.accessor(
+		row => row.subEvents.map(subEvent => subEvent.subEvent),
+		{
+			id: 'events',
+			header: ({ column }) => (
+				<DataTableColumnHeader column={column} title='Events' />
+			),
+			cell: ({ row }) => {
+				const subEvents = row.getValue<
+					Participant['subEvents'][number]['subEvent'][] | undefined
+				>('events');
+				return subEvents
+					? subEvents
+							.sort((a, b) =>
+								(a?.event?.name ?? '').localeCompare(b?.event?.name ?? '')
+							)
+							.map(subEvent => (
+								<Badge variant='outline' key={subEvent?.id}>
+									{subEvent?.event?.name} -{' '}
+									{subEvent?.participantCategory?.name}
+								</Badge>
+							))
+					: null;
+			},
+			enableSorting: false,
+			meta: {
+				displayName: 'Events'
+			}
+		}
+	),
 	{
 		id: 'actions',
 		cell: ({ row }: { row: Row<Participant> }) => {
