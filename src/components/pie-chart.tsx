@@ -91,6 +91,11 @@ export function ChartPieDonut({
 							align='right'
 							verticalAlign='middle'
 							className='flex-col'
+							wrapperStyle={{
+								padding: '0 2rem',
+								height: '80%',
+								overflow: 'auto'
+							}}
 						/>
 					</PieChart>
 				</ChartContainer>
