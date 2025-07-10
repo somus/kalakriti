@@ -27,6 +27,11 @@ export default function CenterParticipantsView() {
 			.where('centerId', '=', center.id)
 			.related('center')
 			.related('participantCategory')
+			.related('subEvents', q =>
+				q.related('subEvent', q =>
+					q.related('event').related('participantCategory')
+				)
+			)
 			.orderBy('createdAt', 'desc')
 	);
 

@@ -97,8 +97,9 @@ export const columns = [
 				const subEvents = row.getValue<
 					Participant['subEvents'][number]['subEvent'][] | undefined
 				>('events');
-				return subEvents
-					? subEvents
+				return subEvents ? (
+					<div className='flex gap-1'>
+						{subEvents
 							.sort((a, b) =>
 								(a?.event?.name ?? '').localeCompare(b?.event?.name ?? '')
 							)
@@ -107,8 +108,9 @@ export const columns = [
 									{subEvent?.event?.name} -{' '}
 									{subEvent?.participantCategory?.name}
 								</Badge>
-							))
-					: null;
+							))}
+					</div>
+				) : null;
 			},
 			enableSorting: false,
 			meta: {
