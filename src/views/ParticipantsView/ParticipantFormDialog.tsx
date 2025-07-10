@@ -4,6 +4,7 @@ import {
 	SelectField,
 	SelectOption
 } from '@/components/form';
+import { ComboBoxField } from '@/components/form/ComboBoxField';
 import { DateField } from '@/components/form/DateField';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -159,7 +160,7 @@ export default function ParticipantFormModal({
 			modal={false}
 		>
 			<ModalTrigger asChild>{children}</ModalTrigger>
-			<ModalContent className='sm:max-w-[425px]' aria-describedby={undefined}>
+			<ModalContent className='sm:max-w-[445px]' aria-describedby={undefined}>
 				<ModalHeader>
 					<ModalTitle>
 						{!participant ? 'Create Participant' : 'Update Participant'}
@@ -180,20 +181,22 @@ export default function ParticipantFormModal({
 							</Alert>
 						)}
 						<InputField name='name' label='Name' />
-						<DateField
-							name='dob'
-							label='Date of Birth'
-							disabled={!!participant}
-							disabledDates={{ before: minDate, after: maxDate }}
-							defaultMonth={participant ? undefined : maxDate}
-						/>
-						<SelectField
-							name='gender'
-							label='Gender'
-							options={genderOptions}
-							disabled={!!participant}
-						/>
-						<SelectField
+						<div className='flex gap-2'>
+							<DateField
+								name='dob'
+								label='Date of Birth'
+								disabled={!!participant}
+								disabledDates={{ before: minDate, after: maxDate }}
+								defaultMonth={participant ? undefined : maxDate}
+							/>
+							<SelectField
+								name='gender'
+								label='Gender'
+								options={genderOptions}
+								disabled={!!participant}
+							/>
+						</div>
+						<ComboBoxField
 							name='center'
 							label='Center'
 							options={centerOptions}

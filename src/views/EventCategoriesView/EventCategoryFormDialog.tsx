@@ -1,9 +1,5 @@
-import {
-	FormLayout,
-	InputField,
-	SelectField,
-	SelectOption
-} from '@/components/form';
+import { FormLayout, InputField, SelectOption } from '@/components/form';
+import { ComboBoxField } from '@/components/form/ComboBoxField';
 import { Button } from '@/components/ui/button';
 import {
 	Modal,
@@ -46,7 +42,9 @@ export default function EventCategoryFormModal({
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [volunteers] = useQuery(
-		zero.query.users.where('role', 'IN', ['volunteer', 'admin'])
+		zero.query.users
+			.where('role', 'IN', ['volunteer', 'admin'])
+			.orderBy('firstName', 'asc')
 	);
 
 	if (!children && !(open !== undefined && onOpenChange)) {
@@ -129,7 +127,7 @@ export default function EventCategoryFormModal({
 				>
 					<ModalBody className='space-y-4'>
 						<InputField name='name' label='Name' />
-						<SelectField
+						<ComboBoxField
 							name='coordinatorId'
 							label='Coordinator'
 							options={coordinatorOptions}

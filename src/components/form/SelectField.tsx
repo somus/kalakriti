@@ -55,7 +55,7 @@ export function SelectField<T extends FieldValues>({
 						defaultValue={field.value}
 						disabled={field.disabled}
 					>
-						<FormControl>
+						<FormControl className='w-full'>
 							<SelectTrigger>
 								<SelectValue placeholder={placeholder} />
 							</SelectTrigger>
