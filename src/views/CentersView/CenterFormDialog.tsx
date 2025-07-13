@@ -1,4 +1,5 @@
 import { FormLayout, InputField } from '@/components/form';
+import { MultiSelectField, Option } from '@/components/form/MultiSelectField';
 import { Button } from '@/components/ui/button';
 import {
 	Modal,
@@ -9,7 +10,6 @@ import {
 	ModalTitle,
 	ModalTrigger
 } from '@/components/ui/credenza';
-import MultipleSelector, { Option } from '@/components/ui/input-multiselect';
 import useZero from '@/hooks/useZero';
 import { Center } from '@/layout/CenterLayout';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -91,7 +91,6 @@ export default function CenterFormModal({
 		resolver: zodResolver(centerSchema),
 		defaultValues
 	});
-	const errors = form.formState.errors;
 
 	const handleFormSubmit = async (data: CenterFormData) => {
 		setIsSubmitting(true);
@@ -144,66 +143,18 @@ export default function CenterFormModal({
 						<InputField name='name' label='Name' />
 						<InputField name='phoneNumber' label='Phone Number' />
 						<InputField name='email' label='Email' type='email' />
-
-						<div className='space-y-2'>
-							<label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
-								Liaisons
-							</label>
-							<MultipleSelector
-								defaultOptions={liaisonOptions}
-								placeholder='Select liaisons'
-								emptyIndicator={<p>no results found.</p>}
-								value={form.watch('liaisons')?.map(id => {
-									const option = liaisonOptions.find(opt => opt.value === id);
-									return option ?? { value: id, label: id };
-								})}
-								onChange={options => {
-									form.setValue(
-										'liaisons',
-										options.map(opt => opt.value),
-										{ shouldValidate: true }
-									);
-								}}
-							/>
-							{errors.liaisons && (
-								<p
-									data-slot='form-message'
-									className='text-destructive text-sm'
-								>
-									{errors.liaisons.message}
-								</p>
-							)}
-						</div>
-
-						<div className='space-y-2'>
-							<label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
-								Guardians
-							</label>
-							<MultipleSelector
-								defaultOptions={guardianOptions}
-								placeholder='Select guardians'
-								emptyIndicator={<p>no results found.</p>}
-								value={form.watch('guardians')?.map(id => {
-									const option = guardianOptions.find(opt => opt.value === id);
-									return option ?? { value: id, label: id };
-								})}
-								onChange={options => {
-									form.setValue(
-										'guardians',
-										options.map(opt => opt.value),
-										{ shouldValidate: true }
-									);
-								}}
-							/>
-							{errors.guardians && (
-								<p
-									data-slot='form-message'
-									className='text-destructive text-sm'
-								>
-									{errors.guardians.message}
-								</p>
-							)}
-						</div>
+						<MultiSelectField
+							name='liaisons'
+							label='Liaisons'
+							options={liaisonOptions}
+							placeholder='Select liaisons'
+						/>
+						<MultiSelectField
+							name='guardians'
+							label='Guardians'
+							options={guardianOptions}
+							placeholder='Select guardians'
+						/>
 					</ModalBody>
 
 					<ModalFooter>

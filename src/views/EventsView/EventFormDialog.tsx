@@ -5,6 +5,7 @@ import {
 	SelectField,
 	SelectOption
 } from '@/components/form';
+import { MultiSelectField, Option } from '@/components/form/MultiSelectField';
 import { Button } from '@/components/ui/button';
 import {
 	Modal,
@@ -16,7 +17,6 @@ import {
 	ModalTrigger
 } from '@/components/ui/credenza';
 import { FormItem, FormLabel } from '@/components/ui/form';
-import MultipleSelector, { Option } from '@/components/ui/input-multiselect';
 import useZero from '@/hooks/useZero';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@rocicorp/zero/react';
@@ -214,7 +214,6 @@ export default function EventFormModal({
 		resolver: zodResolver(eventSchema),
 		defaultValues
 	});
-	const errors = form.formState.errors;
 
 	const handleFormSubmit = async (data: EventFormData) => {
 		setIsSubmitting(true);
@@ -348,66 +347,18 @@ export default function EventFormModal({
 								/>
 							</>
 						)}
-						<div className='space-y-2'>
-							<label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
-								Coordinators
-							</label>
-							<MultipleSelector
-								defaultOptions={coordinatorOptions}
-								placeholder='Select coordinators'
-								emptyIndicator={<p>no results found.</p>}
-								value={form.watch('coordinators')?.map(id => {
-									const option = coordinatorOptions.find(
-										opt => opt.value === id
-									);
-									return option ?? { value: id, label: id };
-								})}
-								onChange={options => {
-									form.setValue(
-										'coordinators',
-										options.map(opt => opt.value),
-										{ shouldValidate: true }
-									);
-								}}
-							/>
-							{errors.coordinators && (
-								<p
-									data-slot='form-message'
-									className='text-destructive text-sm'
-								>
-									{errors.coordinators.message}
-								</p>
-							)}
-						</div>
-						<div className='space-y-2'>
-							<label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
-								Volunteers
-							</label>
-							<MultipleSelector
-								defaultOptions={volunteerOptions}
-								placeholder='Select volunteers'
-								emptyIndicator={<p>no results found.</p>}
-								value={form.watch('volunteers')?.map(id => {
-									const option = volunteerOptions.find(opt => opt.value === id);
-									return option ?? { value: id, label: id };
-								})}
-								onChange={options => {
-									form.setValue(
-										'volunteers',
-										options.map(opt => opt.value),
-										{ shouldValidate: true }
-									);
-								}}
-							/>
-							{errors.volunteers && (
-								<p
-									data-slot='form-message'
-									className='text-destructive text-sm'
-								>
-									{errors.volunteers.message}
-								</p>
-							)}
-						</div>
+						<MultiSelectField
+							name='coordinators'
+							label='Coordinators'
+							options={coordinatorOptions}
+							placeholder='Select coordinators'
+						/>
+						<MultiSelectField
+							name='volunteers'
+							label='Volunteers'
+							options={volunteerOptions}
+							placeholder='Select volunteers'
+						/>
 					</ModalBody>
 
 					<ModalFooter>
