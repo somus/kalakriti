@@ -90,23 +90,23 @@ export default function AddEventParticipantsDialog({
 				.getFilteredSelectedRowModel()
 				.rows.map(row => row.original.id);
 
-			if (isGroupEvent && participantsToBeFiltered.length > 0) {
-				// Delete all participants from the current event while updating
-				await zero.mutate.subEventParticipants.deleteBatch({
-					ids: currentEvent.participants.map(participant => participant.id)
-				}).server;
-			}
+			try {
+				if (isGroupEvent && participantsToBeFiltered.length > 0) {
+					// Delete all participants from the current event while updating
+					await zero.mutate.subEventParticipants.deleteBatch({
+						ids: currentEvent.participants.map(participant => participant.id)
+					}).server;
+				}
 
-			zero.mutate.subEventParticipants
-				.createBatch({
+				await zero.mutate.subEventParticipants.createBatch({
 					participantIds: selectedRows,
 					subEventId: currentEvent.id
-				})
-				.server.catch((e: Error) => {
-					toast.error('Error adding participants', {
-						description: e.message || 'Something went wrong'
-					});
+				}).server;
+			} catch (e) {
+				toast.error('Error adding participants', {
+					description: e instanceof Error ? e.message : 'Something went wrong'
 				});
+			}
 
 			setOpen(false);
 		},

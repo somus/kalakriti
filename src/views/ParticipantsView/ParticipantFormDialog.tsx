@@ -6,7 +6,6 @@ import {
 } from '@/components/form';
 import { ComboBoxField } from '@/components/form/ComboBoxField';
 import { DateField } from '@/components/form/DateField';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
 	Modal,
@@ -23,7 +22,7 @@ import { CenterOutletContext } from '@/layout/CenterLayout';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@rocicorp/zero/react';
 import { subYears } from 'date-fns';
-import { AlertCircle, LoaderCircle } from 'lucide-react';
+import { LoaderCircle } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useOutletContext } from 'react-router';
@@ -133,6 +132,10 @@ export default function ParticipantFormModal({
 
 			// Close dialog on success
 			setIsSubmitting(false);
+			if (!participant) {
+				// Reset form values after creation
+				form.reset();
+			}
 			if (onOpenChange) {
 				onOpenChange(false);
 			} else {
@@ -141,15 +144,10 @@ export default function ParticipantFormModal({
 		} catch (e) {
 			console.error(e);
 			setIsSubmitting(false);
-			form.setError('root', {
+			form.setError('root.submissionError', {
 				type: e instanceof Error ? 'submitError' : 'unknownError',
 				message: e instanceof Error ? e.message : 'Something went wrong'
 			});
-		} finally {
-			if (!participant) {
-				// Reset form values after creation
-				form.reset();
-			}
 		}
 	};
 
@@ -171,15 +169,6 @@ export default function ParticipantFormModal({
 					onSubmit={form.handleSubmit(handleFormSubmit)}
 				>
 					<ModalBody className='space-y-4'>
-						{form.formState.errors.root?.type === 'submitError' && (
-							<Alert variant='destructive'>
-								<AlertCircle className='h-4 w-4' />
-								<AlertTitle>Submit Error</AlertTitle>
-								<AlertDescription>
-									{form.formState.errors.root?.message}
-								</AlertDescription>
-							</Alert>
-						)}
 						<InputField name='name' label='Name' />
 						<div className='flex gap-2'>
 							<DateField

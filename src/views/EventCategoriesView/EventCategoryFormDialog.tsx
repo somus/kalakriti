@@ -91,21 +91,22 @@ export default function EventCategoryFormModal({
 
 			// Close dialog on success
 			setIsSubmitting(false);
+			if (!eventCategory) {
+				// Reset form values after creation
+				form.reset();
+			}
 			if (onOpenChange) {
 				onOpenChange(false);
 			} else {
 				setIsModalOpen(false);
 			}
 		} catch (e) {
+			console.error(e);
 			setIsSubmitting(false);
-			form.setError('root.serverError', {
+			form.setError('root.submissionError', {
+				type: e instanceof Error ? 'submitError' : 'unknownError',
 				message: e instanceof Error ? e.message : 'Something went wrong'
 			});
-		} finally {
-			if (!eventCategory) {
-				// Reset form values after creation
-				form.reset();
-			}
 		}
 	};
 

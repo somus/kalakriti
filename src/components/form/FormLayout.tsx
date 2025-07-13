@@ -1,6 +1,7 @@
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Form } from '@/components/ui/form';
 import { cn } from '@/lib/utils';
+import { AlertCircle } from 'lucide-react';
 import { ReactNode } from 'react';
 import { FieldValues, FormProvider, UseFormReturn } from 'react-hook-form';
 
@@ -28,6 +29,9 @@ export function FormLayout<T extends FieldValues>({
 			<Form {...form}>
 				{form.formState.errors.root?.submissionError && (
 					<Alert variant='destructive'>
+						<AlertCircle className='h-4 w-4' />
+						{form.formState.errors.root.submissionError.type ===
+							'submitError' && <AlertTitle>Submission Error</AlertTitle>}
 						<AlertDescription>
 							{form.formState.errors.root.submissionError.message}
 						</AlertDescription>

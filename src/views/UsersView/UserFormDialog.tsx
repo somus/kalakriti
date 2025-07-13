@@ -18,7 +18,7 @@ import useZero from '@/hooks/useZero';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LoaderCircle } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { UseFormSetError, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { rolesEnum } from 'shared/db/schema';
 import { User } from 'shared/db/schema.zero';
 import * as z from 'zod/v4';
@@ -89,11 +89,13 @@ export default function UserFormModal({
 		};
 	}, [user]);
 
+	const form = useForm<UserFormData>({
+		resolver: zodResolver(userSchema),
+		defaultValues
+	});
+
 	// Form submission handler
-	const handleFormSubmit = async (
-		data: UserFormData,
-		setError: UseFormSetError<UserFormData>
-	) => {
+	const handleFormSubmit = async (data: UserFormData) => {
 		setIsSubmitting(true);
 
 		try {
@@ -112,28 +114,24 @@ export default function UserFormModal({
 
 			// Close dialog on success
 			setIsSubmitting(false);
+			if (!user) {
+				// Reset form values after creation
+				form.reset();
+			}
 			if (onOpenChange) {
 				onOpenChange(false);
 			} else {
 				setIsModalOpen(false);
 			}
 		} catch (e) {
+			console.error(e);
 			setIsSubmitting(false);
-			setError('root.submissionError', {
+			form.setError('root.submissionError', {
+				type: e instanceof Error ? 'submitError' : 'unknownError',
 				message: e instanceof Error ? e.message : 'Something went wrong'
 			});
-		} finally {
-			if (!user) {
-				// Reset form values after creation
-				form.reset();
-			}
 		}
 	};
-
-	const form = useForm<UserFormData>({
-		resolver: zodResolver(userSchema),
-		defaultValues
-	});
 
 	if (!children && !(open !== undefined && onOpenChange)) {
 		throw new Error(
@@ -159,9 +157,7 @@ export default function UserFormModal({
 				</ModalHeader>
 				<FormLayout<UserFormData>
 					form={form}
-					onSubmit={form.handleSubmit(data =>
-						handleFormSubmit(data, form.setError)
-					)}
+					onSubmit={form.handleSubmit(handleFormSubmit)}
 				>
 					<ModalBody className='space-y-4'>
 						<InputField name='firstName' label='First Name' />

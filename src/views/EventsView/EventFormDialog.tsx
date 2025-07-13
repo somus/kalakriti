@@ -261,22 +261,22 @@ export default function EventFormModal({
 
 			// Close dialog on success
 			setIsSubmitting(false);
+			if (!event) {
+				// Reset form values after creation
+				form.reset();
+			}
 			if (onOpenChange) {
 				onOpenChange(false);
 			} else {
 				setIsModalOpen(false);
 			}
 		} catch (e) {
-			console.log(e);
+			console.error(e);
 			setIsSubmitting(false);
-			form.setError('root.serverError', {
+			form.setError('root.submissionError', {
+				type: e instanceof Error ? 'submitError' : 'unknownError',
 				message: e instanceof Error ? e.message : 'Something went wrong'
 			});
-		} finally {
-			if (!event) {
-				// Reset form values after creation
-				form.reset();
-			}
 		}
 	};
 
