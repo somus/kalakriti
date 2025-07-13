@@ -125,8 +125,9 @@ export default function DataTableWrapper<TData extends { id: string }>({
 		getFilteredRowModel: getFilteredRowModel(),
 		getFacetedRowModel: getFacetedRowModel(),
 		getFacetedMinMaxValues: getFacetedMinMaxValues(),
+		// eslint-disable-next-line
 		onPaginationChange: setPagination,
-		autoResetPageIndex: true,
+		autoResetPageIndex: false,
 		onSortingChange: setSorting,
 		onColumnVisibilityChange: setColumnVisibility,
 		onRowSelectionChange: setRowSelection,

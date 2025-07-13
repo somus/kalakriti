@@ -1,6 +1,16 @@
 import { FiltersState } from '@/components/data-table-filter/core/types';
-import { SortingState, VisibilityState } from '@tanstack/react-table';
-import { parseAsJson, useQueryState } from 'nuqs';
+import {
+	PaginationState,
+	SortingState,
+	VisibilityState
+} from '@tanstack/react-table';
+import {
+	parseAsIndex,
+	parseAsInteger,
+	parseAsJson,
+	useQueryState,
+	useQueryStates
+} from 'nuqs';
 import { useState } from 'react';
 import * as z from 'zod/v4';
 
@@ -12,6 +22,7 @@ export default function useTableState(
 		rowSelection?: Record<string, boolean>;
 		sorting?: SortingState;
 		filters?: FiltersState;
+		pagination?: PaginationState;
 	} = {}
 ) {
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -20,10 +31,22 @@ export default function useTableState(
 	const [rowSelection, setRowSelection] = useState(
 		defaultState.rowSelection ?? {}
 	);
-	const [pagination, setPagination] = useState({
-		pageIndex: 0, //initial page index
-		pageSize: 10 //default page size
-	});
+	const [pagination, setPagination] = useQueryStates(
+		{
+			pageIndex: parseAsIndex.withDefault(
+				defaultState.pagination?.pageIndex ?? 0
+			),
+			pageSize: parseAsInteger.withDefault(
+				defaultState.pagination?.pageSize ?? 10
+			)
+		},
+		{
+			urlKeys: {
+				pageIndex: 'page',
+				pageSize: 'size'
+			}
+		}
+	);
 	const [sorting, setSorting] = useState<SortingState>(
 		defaultState.sorting ?? []
 	);
@@ -32,6 +55,14 @@ export default function useTableState(
 		// eslint-disable-next-line @typescript-eslint/unbound-method
 		parseAsJson(filtersSchema.parse).withDefault(defaultState.filters ?? [])
 	);
+
+	const updateFilters: typeof setQueryFilters = async filters => {
+		await setPagination(old => ({
+			...old,
+			pageIndex: 0
+		}));
+		return await setQueryFilters(filters);
+	};
 
 	return {
 		state: {
@@ -46,7 +77,7 @@ export default function useTableState(
 			setRowSelection,
 			setPagination,
 			setSorting,
-			setQueryFilters
+			setQueryFilters: updateFilters
 		}
 	};
 }
