@@ -16,7 +16,7 @@ import { useQuery } from '@rocicorp/zero/react';
 import { LoaderCircle } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod/v4';
+import * as z from 'zod';
 
 import { EventCategory } from './EventCategoriesView';
 

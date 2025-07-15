@@ -12,7 +12,7 @@ import {
 	useQueryStates
 } from 'nuqs';
 import { useState } from 'react';
-import * as z from 'zod/v4';
+import * as z from 'zod';
 
 const filtersSchema = z.custom<FiltersState>();
 

@@ -27,7 +27,7 @@ import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useOutletContext } from 'react-router';
 import { genderEnum } from 'shared/db/schema';
-import * as z from 'zod/v4';
+import * as z from 'zod';
 
 import { Participant } from './ParticipantsView';
 

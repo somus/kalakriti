@@ -15,7 +15,7 @@ import { LoaderCircle } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ParticipantCategory } from 'shared/db/schema.zero';
-import * as z from 'zod/v4';
+import * as z from 'zod';
 
 const participantCategorySchema = z.object({
 	name: z.string({ error: 'Name is required' }),

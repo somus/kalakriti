@@ -2,7 +2,7 @@ import useZero, { Zero } from '@/hooks/useZero';
 import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 import { Navigate, Outlet, useParams } from 'react-router';
-import * as z from 'zod/v4';
+import * as z from 'zod';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function centerQuery(z: Zero, centerId: string) {

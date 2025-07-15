@@ -14,7 +14,7 @@ import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 import { formatDate } from 'date-fns';
 import { Navigate, useOutletContext, useParams } from 'react-router';
-import * as z from 'zod/v4';
+import * as z from 'zod';
 
 import AddEventParticipantsDialog from './AddEventParticipantsDialog/AddEventParticipantsDialog';
 import { columns } from './columns';
