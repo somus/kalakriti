@@ -2,11 +2,11 @@ import { DataTableColumnHeader } from '@/components/data-table-column-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
+	DropDrawer,
+	DropDrawerContent,
+	DropDrawerItem,
+	DropDrawerTrigger
+} from '@/components/ui/dropdrawer';
 import useZero from '@/hooks/useZero';
 import { CenterOutletContext } from '@/layout/CenterLayout';
 import { Row, createColumnHelper } from '@tanstack/react-table';
@@ -134,8 +134,8 @@ const Actions = ({ participant }: { participant: Participant }) => {
 	const z = useZero();
 
 	return (
-		<DropdownMenu modal={false}>
-			<DropdownMenuTrigger asChild>
+		<DropDrawer modal={false}>
+			<DropDrawerTrigger asChild>
 				<Button
 					aria-label='Open menu'
 					variant='ghost'
@@ -143,15 +143,15 @@ const Actions = ({ participant }: { participant: Participant }) => {
 				>
 					<Ellipsis className='size-4' aria-hidden='true' />
 				</Button>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent align='end'>
-				<DropdownMenuItem
+			</DropDrawerTrigger>
+			<DropDrawerContent align='end'>
+				<DropDrawerItem
 					onSelect={() => setIsDialogOpen(true)}
 					disabled={context?.center.isLocked ?? false}
 				>
 					Edit
-				</DropdownMenuItem>
-				<DropdownMenuItem
+				</DropDrawerItem>
+				<DropDrawerItem
 					variant='destructive'
 					disabled={context?.center.isLocked ?? false}
 					onSelect={() => {
@@ -167,8 +167,8 @@ const Actions = ({ participant }: { participant: Participant }) => {
 					}}
 				>
 					Delete
-				</DropdownMenuItem>
-			</DropdownMenuContent>
+				</DropDrawerItem>
+			</DropDrawerContent>
 			{isDialogOpen && (
 				<ParticipantFormDialog
 					participant={participant}
@@ -176,6 +176,6 @@ const Actions = ({ participant }: { participant: Participant }) => {
 					onOpenChange={setIsDialogOpen}
 				/>
 			)}
-		</DropdownMenu>
+		</DropDrawer>
 	);
 };

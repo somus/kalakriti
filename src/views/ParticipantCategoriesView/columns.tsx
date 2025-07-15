@@ -1,11 +1,11 @@
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
 import { Button } from '@/components/ui/button';
 import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
+	DropDrawer,
+	DropDrawerContent,
+	DropDrawerItem,
+	DropDrawerTrigger
+} from '@/components/ui/dropdrawer';
 import useZero from '@/hooks/useZero';
 import { Row, createColumnHelper } from '@tanstack/react-table';
 import { Ellipsis } from 'lucide-react';
@@ -86,8 +86,8 @@ const Actions = ({
 	const z = useZero();
 
 	return (
-		<DropdownMenu modal={false}>
-			<DropdownMenuTrigger asChild>
+		<DropDrawer modal={false}>
+			<DropDrawerTrigger asChild>
 				<Button
 					aria-label='Open menu'
 					variant='ghost'
@@ -95,12 +95,12 @@ const Actions = ({
 				>
 					<Ellipsis className='size-4' aria-hidden='true' />
 				</Button>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent align='end'>
-				<DropdownMenuItem onSelect={() => setIsDialogOpen(true)}>
+			</DropDrawerTrigger>
+			<DropDrawerContent align='end'>
+				<DropDrawerItem onSelect={() => setIsDialogOpen(true)}>
 					Edit
-				</DropdownMenuItem>
-				<DropdownMenuItem
+				</DropDrawerItem>
+				<DropDrawerItem
 					variant='destructive'
 					onSelect={() => {
 						z.mutate.participantCategories
@@ -115,8 +115,8 @@ const Actions = ({
 					}}
 				>
 					Delete
-				</DropdownMenuItem>
-			</DropdownMenuContent>
+				</DropDrawerItem>
+			</DropDrawerContent>
 			{isDialogOpen && (
 				<ParticipantCategoryFormDialog
 					participantCategory={participantCategory}
@@ -124,6 +124,6 @@ const Actions = ({
 					onOpenChange={setIsDialogOpen}
 				/>
 			)}
-		</DropdownMenu>
+		</DropDrawer>
 	);
 };
