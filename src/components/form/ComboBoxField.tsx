@@ -68,6 +68,7 @@ export function ComboBoxField<T extends FieldValues>({
 										'min-w-[200px] justify-between',
 										!field.value && 'text-muted-foreground'
 									)}
+									disabled={disabled}
 								>
 									{field.value
 										? options.find(option => option.value === field.value)
