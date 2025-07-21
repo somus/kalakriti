@@ -37,7 +37,7 @@ export default function useTableState(
 				defaultState.pagination?.pageIndex ?? 0
 			),
 			pageSize: parseAsInteger.withDefault(
-				defaultState.pagination?.pageSize ?? 10
+				defaultState.pagination?.pageSize ?? 15
 			)
 		},
 		{

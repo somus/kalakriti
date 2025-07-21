@@ -8,6 +8,7 @@ import {
 	SidebarTrigger
 } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/sonner';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { AppProvider } from '@/hooks/useApp';
 import LoadingScreen from '@/views/general/LoadingScreen';
 import { RedirectToSignIn, useAuth, useUser } from '@clerk/clerk-react';
@@ -28,6 +29,7 @@ if (!PUBLIC_SERVER) {
 export default function MainLayout() {
 	const { isLoaded: isUserLoaded, user } = useUser();
 	const { getToken } = useAuth();
+	const isMobile = useIsMobile();
 
 	// If not loaded, show loading screen
 	if (!isUserLoaded) {
@@ -65,13 +67,13 @@ export default function MainLayout() {
 				<AppProvider context={{ clerkUser: user }}>
 					<SidebarProvider>
 						<AppSidebar />
-						<SidebarInset>
+						<SidebarInset className='overflow-x-auto'>
 							<header className='flex h-16 shrink-0 items-center gap-2 border-b'>
 								<div className='flex justify-between gap-2 flex-1'>
 									<div className='flex items-center gap-2 px-4'>
 										<SidebarTrigger className='-ml-1' />
 										<Separator orientation='vertical' className='mr-2 h-4' />
-										<Breadcrumbs />
+										{isMobile ? null : <Breadcrumbs />}
 									</div>
 									<img
 										src='/proud-indian-logo.png'

@@ -381,15 +381,35 @@ export const schema = {
 					>,
 					serverName: 'allowed_gender'
 				},
-				minParticipants: {
+				isGroupEvent: {
+					type: 'boolean',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'events',
+						'isGroupEvent'
+					>,
+					serverName: 'is_group_event'
+				},
+				minGroupSize: {
 					type: 'number',
 					optional: true,
 					customType: null as unknown as ZeroCustomType<
 						typeof zeroSchema,
 						'events',
-						'minParticipants'
+						'minGroupSize'
 					>,
-					serverName: 'min_participants'
+					serverName: 'min_group_size'
+				},
+				maxGroupSize: {
+					type: 'number',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'events',
+						'maxGroupSize'
+					>,
+					serverName: 'max_group_size'
 				},
 				maxParticipants: {
 					type: 'number',
@@ -651,6 +671,16 @@ export const schema = {
 						'participantId'
 					>,
 					serverName: 'participant_id'
+				},
+				groupId: {
+					type: 'string',
+					optional: true,
+					customType: null as unknown as ZeroCustomType<
+						typeof zeroSchema,
+						'subEventParticipants',
+						'groupId'
+					>,
+					serverName: 'group_id'
 				},
 				attended: {
 					type: 'boolean',

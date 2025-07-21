@@ -80,8 +80,10 @@ export const events = pgTable('events', {
 	allowedGender: allowedEventGenderEnum('allowed_gender')
 		.notNull()
 		.default('both'),
-	minParticipants: integer('min_participants'),
-	maxParticipants: integer('max_participants'),
+	isGroupEvent: boolean('is_group_event').notNull().default(false),
+	minGroupSize: integer('min_group_size'),
+	maxGroupSize: integer('max_group_size'),
+	maxParticipants: integer('max_participants').notNull(),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
@@ -323,6 +325,7 @@ export const subEventParticipants = pgTable('sub_event_participants', {
 		.references(() => participants.id, {
 			onDelete: 'cascade'
 		}),
+	groupId: varchar('group_id'),
 	attended: boolean('attended').notNull().default(false),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at').defaultNow().notNull()

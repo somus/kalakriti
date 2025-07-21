@@ -11,6 +11,7 @@ import {
 	TableHeader,
 	TableRow
 } from '@/components/ui/table';
+import { useIsMobile } from '@/hooks/use-mobile';
 import useTableState from '@/hooks/useTableState';
 import { cn } from '@/lib/utils';
 import {
@@ -19,6 +20,7 @@ import {
 	type Table as TanstackTable,
 	flexRender,
 	getCoreRowModel,
+	getExpandedRowModel,
 	getFacetedMinMaxValues,
 	getFacetedRowModel,
 	getFilteredRowModel,
@@ -26,6 +28,7 @@ import {
 	getSortedRowModel,
 	useReactTable
 } from '@tanstack/react-table';
+import { CornerDownRightIcon } from 'lucide-react';
 import { useMemo } from 'react';
 
 import { ColumnConfig } from './data-table-filter/core/types';
@@ -40,7 +43,9 @@ declare module '@tanstack/react-table' {
 	}
 }
 
-export default function DataTableWrapper<TData extends { id: string }>({
+export default function DataTableWrapper<
+	TData extends { id: string; subRows?: TData[] }
+>({
 	data,
 	columnsConfig,
 	columns,
@@ -49,7 +54,9 @@ export default function DataTableWrapper<TData extends { id: string }>({
 	additionalActions,
 	children,
 	className,
-	enableRowSelection = false
+	tableContainerClassName,
+	enableRowSelection = false,
+	columnsToHide = []
 }: {
 	data: TData[];
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -61,7 +68,9 @@ export default function DataTableWrapper<TData extends { id: string }>({
 	additionalActions?: React.ReactNode[];
 	children?: (table: TanstackTable<TData>) => React.ReactNode;
 	className?: string;
+	tableContainerClassName?: string;
 	enableRowSelection?: boolean;
+	columnsToHide?: string[];
 }) {
 	'use no memo';
 
@@ -83,6 +92,10 @@ export default function DataTableWrapper<TData extends { id: string }>({
 	} = useTableState({
 		rowSelection: selectedRows?.reduce(
 			(acc, id) => ({ ...acc, [id]: true }),
+			{}
+		),
+		columnVisibility: columnsToHide.reduce(
+			(acc, id) => ({ ...acc, [id]: false }),
 			{}
 		)
 	});
@@ -115,16 +128,20 @@ export default function DataTableWrapper<TData extends { id: string }>({
 
 	const tstFilters = useMemo(() => createTSTFilters(filters), [filters]);
 
+	const isMobile = useIsMobile();
+
 	const table = useReactTable({
 		data: memoData,
 		columns: tstColumns,
 		getRowId: row => row.id,
+		getSubRows: row => row.subRows,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		getFacetedRowModel: getFacetedRowModel(),
 		getFacetedMinMaxValues: getFacetedMinMaxValues(),
+		getExpandedRowModel: getExpandedRowModel(),
 		// eslint-disable-next-line
 		onPaginationChange: setPagination,
 		autoResetPageIndex: false,
@@ -134,12 +151,15 @@ export default function DataTableWrapper<TData extends { id: string }>({
 		enableRowSelection: disabledRows
 			? row => !disabledRows.includes(row.original?.id)
 			: enableRowSelection,
+		filterFromLeafRows: true,
+		maxLeafRowFilterDepth: 1,
 		state: {
 			sorting,
 			columnFilters: tstFilters,
 			columnVisibility,
 			rowSelection,
-			pagination
+			pagination,
+			expanded: true
 		}
 	});
 
@@ -157,8 +177,13 @@ export default function DataTableWrapper<TData extends { id: string }>({
 					{additionalActions}
 				</div>
 				<div className='rounded-md border bg-white dark:bg-inherit'>
-					<Table>
-						<TableHeader>
+					<Table
+						containerClassName={cn(
+							!isMobile ? 'overflow-auto h-[calc(100dvh-206px)]' : '',
+							tableContainerClassName
+						)}
+					>
+						<TableHeader className='sticky top-0 bg-muted shadow'>
 							{table.getHeaderGroups().map(headerGroup => (
 								<TableRow key={headerGroup.id}>
 									{headerGroup.headers.map(header => {
@@ -186,12 +211,23 @@ export default function DataTableWrapper<TData extends { id: string }>({
 										key={row.id}
 										data-state={row.getIsSelected() && 'selected'}
 									>
-										{row.getVisibleCells().map(cell => (
+										{row.getVisibleCells().map((cell, key) => (
 											<TableCell key={cell.id}>
-												{flexRender(
-													cell.column.columnDef.cell,
-													cell.getContext()
-												)}
+												<div
+													className={
+														key === 0 && row.depth > 0
+															? `flex pl-${row.depth * 4} gap-1`
+															: ''
+													}
+												>
+													{key === 0 && row.depth > 0 && (
+														<CornerDownRightIcon className='size-4' />
+													)}
+													{flexRender(
+														cell.column.columnDef.cell,
+														cell.getContext()
+													)}
+												</div>
 											</TableCell>
 										))}
 									</TableRow>

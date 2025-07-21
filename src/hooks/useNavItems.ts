@@ -28,11 +28,13 @@ const getAdminNavItems = (centers: Center[], events: Event[]): NavItem[] => [
 				title: 'Categories',
 				url: '/events/categories'
 			},
-			...events.map(event => ({
-				title: event.name,
-				url: `/events/${event.id}`,
-				isHidden: true
-			}))
+			...events.flatMap(event =>
+				event.subEvents.map(subEvent => ({
+					title: `${event.name} - ${subEvent.participantCategory?.name}`,
+					url: `/events/${subEvent.id}`,
+					isHidden: true
+				}))
+			)
 		]
 	},
 	{

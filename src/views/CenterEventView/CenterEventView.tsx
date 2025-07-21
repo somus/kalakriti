@@ -13,6 +13,7 @@ import { CenterOutletContext } from '@/layout/CenterLayout';
 import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 import { formatDate } from 'date-fns';
+import groupBy from 'lodash/groupBy';
 import { Navigate, useOutletContext, useParams } from 'react-router';
 import * as z from 'zod';
 
@@ -23,7 +24,9 @@ import { columnsConfig } from './filters';
 function subEventQuery(z: Zero, eventId: string) {
 	return z.query.subEvents
 		.where('id', eventId)
-		.related('participants', q => q.related('participant'))
+		.related('participants', q =>
+			q.related('participant', q => q.related('center'))
+		)
 		.related('participantCategory')
 		.related('event', q => q.related('category').related('subEvents'))
 		.one();
@@ -31,7 +34,9 @@ function subEventQuery(z: Zero, eventId: string) {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function subEventParticipantQuery(z: Zero) {
-	return z.query.subEventParticipants.related('participant');
+	return z.query.subEventParticipants.related('participant', q =>
+		q.related('center')
+	);
 }
 
 export type SubEvent = NonNullable<Row<ReturnType<typeof subEventQuery>>>;
@@ -56,28 +61,70 @@ export default function CenterEventsView() {
 		return <Navigate to='/' />;
 	}
 
-	if (status.type !== 'complete' || !subEvent) {
+	if (status.type !== 'complete' || !subEvent || !subEvent.event) {
 		return null;
 	}
+	const {
+		isGroupEvent,
+		maxParticipants,
+		minGroupSize,
+		maxGroupSize,
+		category
+	} = subEvent.event;
+	const participants = isGroupEvent
+		? Object.values(groupBy(subEvent.participants, 'groupId')).map(
+				(group, key) => ({
+					groupId: group[0].groupId,
+					participant: {
+						name: `Group ${key + 1}`
+					},
+					subRows: group
+				})
+			)
+		: subEvent.participants;
 
 	return (
 		<div className='flex flex-col py-4'>
-			<div className='flex gap-4 items-end px-4'>
-				<H3>
-					{subEvent.event?.name} - {subEvent.participantCategory?.name}
-				</H3>
-				<p className='italic'>
-					{formatDate(subEvent.startTime, 'p')} -{' '}
-					{formatDate(subEvent.endTime, 'p')}
-				</p>
-				<Badge variant='outline'>{subEvent.event?.category?.name}</Badge>
+			<div className='flex px-4 justify-between items-center'>
+				<div className='flex gap-4 items-end flex-wrap'>
+					<H3>
+						{subEvent.event.name} - {subEvent.participantCategory?.name}
+					</H3>
+					<p className='italic'>
+						{formatDate(subEvent.startTime, 'p')} -{' '}
+						{formatDate(subEvent.endTime, 'p')}
+					</p>
+					<div className='flex gap-1 flex-wrap'>
+						<Badge variant='outline'>{category?.name}</Badge>
+						{isGroupEvent && <Badge variant='outline'>Group Event</Badge>}
+						{isGroupEvent ? (
+							<>
+								<Badge variant='outline'>
+									Group Size:{' '}
+									{minGroupSize === maxGroupSize
+										? `${minGroupSize}`
+										: `${minGroupSize} - ${maxGroupSize}`}
+								</Badge>
+								<Badge variant='outline'>Max Groups: {maxParticipants}</Badge>
+							</>
+						) : (
+							<Badge variant='outline'>
+								Max Participants: {maxParticipants}
+							</Badge>
+						)}
+					</div>
+				</div>
 			</div>
+
 			<DataTableWrapper
-				data={subEvent.participants as SubEventParticipant[]}
+				data={participants as SubEventParticipant[]}
 				columns={columns}
 				columnsConfig={columnsConfig}
+				tableContainerClassName='h-[calc(100dvh-270px)]'
+				columnsToHide={['center']}
 				additionalActions={[
-					center?.isLocked && role !== 'admin' ? (
+					(center?.isLocked && role !== 'admin') ||
+					maxParticipants === participants.length ? (
 						<Tooltip key='create-participant'>
 							<TooltipTrigger asChild>
 								<span>
@@ -87,7 +134,11 @@ export default function CenterEventsView() {
 								</span>
 							</TooltipTrigger>
 							<TooltipContent>
-								<p>Editing is locked. Please contact your liason.</p>
+								{maxParticipants === participants.length ? (
+									<p>Max participants reached.</p>
+								) : (
+									<p>Editing is locked. Please contact your liason.</p>
+								)}
 							</TooltipContent>
 						</Tooltip>
 					) : (

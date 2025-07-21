@@ -11,8 +11,10 @@ export interface CreateEventArgs {
 	volunteers: string[];
 	eventCategoryId: string;
 	allowedGender: 'male' | 'female' | 'both';
-	minParticipants?: number | null;
-	maxParticipants?: number | null;
+	isGroupEvent: boolean;
+	minGroupSize?: number | null;
+	maxGroupSize?: number | null;
+	maxParticipants: number;
 	timings: Record<
 		string,
 		{
@@ -27,11 +29,28 @@ export function createEventMutators(authData: AuthData | undefined) {
 	return {
 		create: async (
 			tx,
-			{ timings, coordinators, volunteers, ...data }: CreateEventArgs
+			{
+				timings,
+				coordinators,
+				volunteers,
+				minGroupSize,
+				maxGroupSize,
+				...data
+			}: CreateEventArgs
 		) => {
 			assertIsAdmin(authData);
+
+			if (data.isGroupEvent && (!minGroupSize || !maxGroupSize)) {
+				throw new Error('Min and max group size is required');
+			}
+
 			const eventId = createId();
-			await tx.mutate.events.insert({ id: eventId, ...data });
+			await tx.mutate.events.insert({
+				id: eventId,
+				minGroupSize: data.isGroupEvent ? minGroupSize : undefined,
+				maxGroupSize: data.isGroupEvent ? maxGroupSize : undefined,
+				...data
+			});
 			for (const coordinatorId of coordinators) {
 				await tx.mutate.eventCoordinators.insert({
 					eventId: eventId,
@@ -63,6 +82,8 @@ export function createEventMutators(authData: AuthData | undefined) {
 				timings,
 				coordinators,
 				volunteers,
+				minGroupSize,
+				maxGroupSize,
 				...change
 			}: UpdateValue<Schema['tables']['events']> &
 				Partial<
@@ -70,6 +91,10 @@ export function createEventMutators(authData: AuthData | undefined) {
 				>
 		) => {
 			assertIsAdmin(authData);
+
+			if (change.isGroupEvent === true && (!minGroupSize || !maxGroupSize)) {
+				throw new Error('Min and max group size is required');
+			}
 
 			const event = await tx.query.events
 				.where('id', change.id)
@@ -84,6 +109,8 @@ export function createEventMutators(authData: AuthData | undefined) {
 
 			await tx.mutate.events.update({
 				...change,
+				minGroupSize: !change.isGroupEvent ? null : minGroupSize,
+				maxGroupSize: !change.isGroupEvent ? null : maxGroupSize,
 				updatedAt: new Date().getTime()
 			});
 

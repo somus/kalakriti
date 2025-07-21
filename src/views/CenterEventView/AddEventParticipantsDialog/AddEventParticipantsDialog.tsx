@@ -1,4 +1,5 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
 	Modal,
@@ -8,8 +9,11 @@ import {
 	ModalTitle,
 	ModalTrigger
 } from '@/components/ui/credenza';
+import { H3 } from '@/components/ui/typography';
+import { useIsMobile } from '@/hooks/use-mobile';
 import useZero from '@/hooks/useZero';
 import LoadingScreen from '@/views/general/LoadingScreen';
+import { createId } from '@paralleldrive/cuid2';
 import { useQuery } from '@rocicorp/zero/react';
 import { Table } from '@tanstack/react-table';
 import { useCallback, useState } from 'react';
@@ -33,8 +37,7 @@ export default function AddEventParticipantsDialog({
 }) {
 	// 'use no memo';
 	const zero = useZero();
-	const isGroupEvent =
-		currentEvent.event?.minParticipants && currentEvent.event?.maxParticipants;
+	const isGroupEvent = currentEvent.event?.isGroupEvent ?? false;
 
 	const [participants, status] = useQuery(
 		zero.query.participants
@@ -43,7 +46,7 @@ export default function AddEventParticipantsDialog({
 				'=',
 				currentEvent.participantCategory?.id ?? ''
 			)
-			.where('id', 'NOT IN', isGroupEvent ? [] : participantsToBeFiltered)
+			.where('id', 'NOT IN', participantsToBeFiltered)
 			.related('subEvents', q => q.related('subEvent', q => q.related('event')))
 			.orderBy('createdAt', 'desc')
 	);
@@ -75,12 +78,6 @@ export default function AddEventParticipantsDialog({
 							)
 					)
 					.map(participant => participant.id)
-					.filter(participantId =>
-						// Don't disable already selected participants when it is a group event
-						isGroupEvent
-							? !participantsToBeFiltered.includes(participantId)
-							: true
-					)
 			: [];
 
 	const [open, setOpen] = useState(false);
@@ -91,16 +88,10 @@ export default function AddEventParticipantsDialog({
 				.rows.map(row => row.original.id);
 
 			try {
-				if (isGroupEvent && participantsToBeFiltered.length > 0) {
-					// Delete all participants from the current event while updating
-					await zero.mutate.subEventParticipants.deleteBatch({
-						ids: currentEvent.participants.map(participant => participant.id)
-					}).server;
-				}
-
 				await zero.mutate.subEventParticipants.createBatch({
 					participantIds: selectedRows,
-					subEventId: currentEvent.id
+					subEventId: currentEvent.id,
+					groupId: isGroupEvent ? createId() : undefined
 				}).server;
 			} catch (e) {
 				toast.error('Error adding participants', {
@@ -110,14 +101,10 @@ export default function AddEventParticipantsDialog({
 
 			setOpen(false);
 		},
-		[
-			zero,
-			currentEvent.id,
-			isGroupEvent,
-			currentEvent.participants,
-			participantsToBeFiltered
-		]
+		[zero, currentEvent.id, isGroupEvent]
 	);
+
+	const isMobile = useIsMobile();
 
 	if (status.type !== 'complete') {
 		return <LoadingScreen />;
@@ -130,19 +117,33 @@ export default function AddEventParticipantsDialog({
 				className='overflow-auto sm:max-w-[425px] md:max-w-[600px] xl:max-w-[900px] 2xl:max-w-[1200px] gap-0'
 				aria-describedby={undefined}
 			>
-				<ModalHeader>
-					<div className='flex flex-col gap-3'>
-						<ModalTitle>
-							Add participants for {currentEvent.event?.name} -{' '}
-							{currentEvent.participantCategory?.name}
-						</ModalTitle>
-						{isGroupEvent && (
-							<p className='text-sm'>
-								Min Participants: {currentEvent.event?.minParticipants}, Max
-								Participants: {currentEvent.event?.maxParticipants}
-							</p>
-						)}
-					</div>
+				<ModalHeader className='pb-0'>
+					<ModalTitle>
+						<div className='flex gap-2 items-end flex-wrap'>
+							<H3>
+								Add participants for {currentEvent.event?.name} -{' '}
+								{currentEvent.participantCategory?.name}
+							</H3>
+							{isGroupEvent ? (
+								<>
+									<Badge variant='outline'>
+										Group Size:{' '}
+										{currentEvent.event?.minGroupSize ===
+										currentEvent.event?.maxGroupSize
+											? `${currentEvent.event?.minGroupSize}`
+											: `${currentEvent.event?.minGroupSize} - ${currentEvent.event?.maxGroupSize}`}
+									</Badge>
+									<Badge variant='outline'>
+										Max Groups: {currentEvent.event?.maxParticipants}
+									</Badge>
+								</>
+							) : (
+								<Badge variant='outline'>
+									Max Participants: {currentEvent.event?.maxParticipants}
+								</Badge>
+							)}
+						</div>
+					</ModalTitle>
 				</ModalHeader>
 				<DataTableWrapper
 					data={filteredParticipants as Participant[]}
@@ -150,14 +151,19 @@ export default function AddEventParticipantsDialog({
 					columnsConfig={columnsConfig}
 					disabledRows={participantsToDisable}
 					selectedRows={isGroupEvent ? participantsToBeFiltered : undefined}
-					className='px-0'
+					tableContainerClassName={
+						isMobile ? undefined : 'h-[calc(100dvh-242px)]'
+					}
 				>
 					{table => {
 						const noOfSelectedRows = table.getSelectedRowModel().rows.length;
-						const disableAdd = isGroupEvent
-							? noOfSelectedRows > currentEvent.event?.maxParticipants ||
-								noOfSelectedRows < currentEvent.event?.minParticipants
-							: noOfSelectedRows === 0;
+						const disableAdd =
+							isGroupEvent &&
+							currentEvent.event?.maxGroupSize &&
+							currentEvent.event?.minGroupSize
+								? noOfSelectedRows > currentEvent.event?.maxGroupSize ||
+									noOfSelectedRows < currentEvent.event?.minGroupSize
+								: noOfSelectedRows === 0;
 
 						return (
 							<ModalFooter className='col-span-2 pt-4'>

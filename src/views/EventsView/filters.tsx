@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import {
 	CircleSmallIcon,
 	ComponentIcon,
+	GroupIcon,
 	HashIcon,
 	Heading1Icon,
 	ShieldUserIcon,
@@ -125,6 +126,41 @@ export const columnsConfig = [
 		.id('participants')
 		.accessor(row => row.subEvent.participants)
 		.displayName('Participants')
+		.icon(HashIcon)
+		.build(),
+	dtf
+		.option()
+		.accessor(row => (row.event.isGroupEvent ? 'true' : 'false'))
+		.id('isGroupEvent')
+		.displayName('Is Group Event')
+		.icon(GroupIcon)
+		.options([
+			{ label: 'Yes', value: 'true' },
+			{ label: 'No', value: 'false' }
+		])
+		.build(),
+	dtf
+		.number()
+		.id('minGroupSize')
+		.accessor(row => row.event.minGroupSize)
+		.displayName('Min Group Size')
+		.icon(HashIcon)
+		.build(),
+	dtf
+		.number()
+		.id('maxGroupSize')
+		.accessor(row => {
+			console.log(row.event.maxGroupSize);
+			return row.event.maxGroupSize;
+		})
+		.displayName('Max Group Size')
+		.icon(HashIcon)
+		.build(),
+	dtf
+		.number()
+		.id('maxParticipants')
+		.accessor(row => row.event.maxParticipants)
+		.displayName('Max Participants')
 		.icon(HashIcon)
 		.build()
 ] as const;

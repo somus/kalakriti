@@ -51,6 +51,12 @@ export default function EventsView() {
 			data={eventRows as EventRow[]}
 			columns={columns}
 			columnsConfig={columnsConfig}
+			columnsToHide={[
+				'isGroupEvent',
+				'maxParticipants',
+				'minGroupSize',
+				'maxGroupSize'
+			]}
 			additionalActions={[
 				<EventFormDialog key='create-event'>
 					<Button className='h-7'>Create Event</Button>

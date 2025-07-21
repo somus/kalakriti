@@ -93,37 +93,71 @@ export default function EventFormModal({
 		{ value: 'both', label: 'Both' }
 	];
 
-	const eventSchema = z.object({
-		name: z.string({ error: 'Name is required' }),
-		timings: z.record(
-			z.string(),
-			z
-				.object({
-					categoryId: z.cuid2(),
-					startTime: z.iso.time().optional(),
-					endTime: z.iso.time().optional()
-				})
-				.refine(
-					data =>
-						data.startTime && data.endTime
-							? data.startTime < data.endTime
-							: true,
-					{
-						message: 'End time cannot be earlier than start time.',
-						path: ['endTime']
-					}
-				)
-		),
-		coordinators: z
-			.array(z.string(), { error: 'Coordinators are required' })
-			.min(1, { error: 'Coordinators are required' }),
-		volunteers: z.array(z.string()),
-		category: z.cuid2({ error: 'Category is required' }),
-		allowedGender: z.enum(allowedEventGenderEnum.enumValues),
-		isGroupEvent: z.boolean().optional(),
-		minParticipants: z.number().nullable().optional(),
-		maxParticipants: z.number().nullable().optional()
-	});
+	const eventSchema = z
+		.object({
+			name: z.string({ error: 'Name is required' }),
+			timings: z.record(
+				z.string(),
+				z
+					.object({
+						categoryId: z.cuid2(),
+						startTime: z.iso.time().optional(),
+						endTime: z.iso.time().optional()
+					})
+					.refine(
+						data =>
+							data.startTime && data.endTime
+								? data.startTime < data.endTime
+								: true,
+						{
+							message: 'End time cannot be earlier than start time.',
+							path: ['endTime']
+						}
+					)
+			),
+			coordinators: z
+				.array(z.string(), { error: 'Coordinators are required' })
+				.min(1, { error: 'Coordinators are required' }),
+			volunteers: z.array(z.string()),
+			category: z.cuid2({ error: 'Category is required' }),
+			allowedGender: z.enum(allowedEventGenderEnum.enumValues),
+			isGroupEvent: z.boolean(),
+			minGroupSize: z.number().nullable().optional(),
+			maxGroupSize: z.number().nullable().optional(),
+			maxParticipants: z.number()
+		})
+		.check(ctx => {
+			if (ctx.value.isGroupEvent === true) {
+				if (!ctx.value.minGroupSize) {
+					ctx.issues.push({
+						code: 'custom',
+						message: 'Min group size is required',
+						path: ['minGroupSize'],
+						input: ctx.value.minGroupSize
+					});
+				}
+				if (!ctx.value.maxGroupSize) {
+					ctx.issues.push({
+						code: 'custom',
+						message: 'Max group size is required',
+						path: ['maxGroupSize'],
+						input: ctx.value.maxGroupSize
+					});
+				}
+				if (
+					ctx.value.minGroupSize &&
+					ctx.value.maxGroupSize &&
+					ctx.value.minGroupSize > ctx.value.maxGroupSize
+				) {
+					ctx.issues.push({
+						code: 'custom',
+						message: 'Min group size cannot be greater than max group size',
+						path: ['minGroupSize', 'maxGroupSize'],
+						input: [ctx.value.minGroupSize, ctx.value.maxGroupSize]
+					});
+				}
+			}
+		});
 
 	type EventFormData = z.infer<typeof eventSchema>;
 
@@ -204,9 +238,10 @@ export default function EventFormModal({
 			volunteers: event.volunteers.map(user => user.userId),
 			category: event.category?.id,
 			allowedGender: event.allowedGender ?? 'both',
-			isGroupEvent: !!event.minParticipants || !!event.maxParticipants,
-			minParticipants: event.minParticipants,
-			maxParticipants: event.maxParticipants
+			isGroupEvent: event.isGroupEvent ?? false,
+			minGroupSize: event.minGroupSize,
+			maxGroupSize: event.maxGroupSize,
+			maxParticipants: event.maxParticipants ?? 4
 		};
 	}, [event, participantCategories]);
 
@@ -225,8 +260,10 @@ export default function EventFormModal({
 				volunteers: data.volunteers,
 				eventCategoryId: data.category,
 				allowedGender: data.allowedGender,
-				minParticipants: data.isGroupEvent ? data.minParticipants : null,
-				maxParticipants: data.isGroupEvent ? data.maxParticipants : null,
+				isGroupEvent: data.isGroupEvent ?? false,
+				minGroupSize: data.isGroupEvent ? data.minGroupSize : null,
+				maxGroupSize: data.isGroupEvent ? data.maxGroupSize : null,
+				maxParticipants: data.maxParticipants,
 				timings: Object.keys(data.timings).reduce((acc, timingKey) => {
 					const timing = data.timings[timingKey];
 					return {
@@ -332,17 +369,22 @@ export default function EventFormModal({
 							label='Allowed Gender'
 							options={allowedGenderOptions}
 						/>
+						<InputField
+							name='maxParticipants'
+							label='Maximum Participants'
+							type='number'
+						/>
 						<CheckboxField name='isGroupEvent' label='Is Group Event?' />
 						{form.watch('isGroupEvent') && (
 							<>
 								<InputField
-									name='minParticipants'
-									label='Minimum Participants'
+									name='minGroupSize'
+									label='Minimum Group Size'
 									type='number'
 								/>
 								<InputField
-									name='maxParticipants'
-									label='Maximum Participants'
+									name='maxGroupSize'
+									label='Maximum Group Size'
 									type='number'
 								/>
 							</>

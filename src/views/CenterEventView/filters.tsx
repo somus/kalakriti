@@ -5,6 +5,7 @@ import {
 	CircleSmallIcon,
 	Heading1Icon,
 	ListCheckIcon,
+	SchoolIcon,
 	XIcon
 } from 'lucide-react';
 
@@ -37,6 +38,20 @@ export const columnsConfig = [
 			{ label: 'Male', value: 'male' },
 			{ label: 'Female', value: 'female' }
 		])
+		.build(),
+	dtf
+		.option()
+		.id('center')
+		.accessor(row => row.participant?.center)
+		.displayName('Center')
+		.icon(SchoolIcon)
+		.transformOptionFn(c => {
+			console.log(c);
+			return {
+				value: c.id,
+				label: c.name
+			};
+		})
 		.build(),
 	dtf
 		.option()

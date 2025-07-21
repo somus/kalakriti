@@ -1,4 +1,5 @@
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useApp } from '@/hooks/useApp';
 import useZero from '@/hooks/useZero';
@@ -8,9 +9,12 @@ import { CheckIcon, TrashIcon, XIcon } from 'lucide-react';
 import { useOutletContext } from 'react-router';
 import { toast } from 'sonner';
 
+import { Participant } from '../ParticipantsView/ParticipantsView';
 import { SubEventParticipant } from './CenterEventView';
 
-const columnHelper = createColumnHelper<SubEventParticipant>();
+const columnHelper = createColumnHelper<
+	SubEventParticipant & { subRows?: SubEventParticipant[] }
+>();
 
 export const columns = [
 	columnHelper.accessor(row => row.participant?.name, {
@@ -18,7 +22,11 @@ export const columns = [
 		header: ({ column }) => (
 			<DataTableColumnHeader className='ml-2' column={column} title='Name' />
 		),
-		cell: ({ row }) => <div className='pl-4'>{row.getValue('name')}</div>,
+		cell: ({ row }) => (
+			<div className={row.depth === 0 ? 'pl-4' : ''}>
+				{row.getValue('name')}
+			</div>
+		),
 		sortingFn: 'alphanumeric',
 		meta: {
 			displayName: 'Name'
@@ -46,6 +54,20 @@ export const columns = [
 			displayName: 'Gender'
 		}
 	}),
+	columnHelper.accessor(row => row.participant?.center, {
+		id: 'center',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Center' />
+		),
+		cell: ({ row }) => {
+			const center = row.getValue<Participant['center'] | undefined>('center');
+			return center ? <Badge variant='outline'>{center.name}</Badge> : null;
+		},
+		enableSorting: false,
+		meta: {
+			displayName: 'Center'
+		}
+	}),
 	columnHelper.accessor(row => (row.attended ?? false).toString(), {
 		id: 'attended',
 		header: ({ column }) => (
@@ -53,7 +75,11 @@ export const columns = [
 		),
 		cell: ({ row }) => (
 			<div className='capitalize'>
-				{row.getValue('attended') === 'true' ? (
+				{(
+					row.original.subRows
+						? row.original.subRows.every(row => row.attended === true)
+						: row.getValue('attended') === 'true'
+				) ? (
 					<CheckIcon className='size-5 text-green-500' />
 				) : (
 					<XIcon className='size-5 text-destructive' />
@@ -67,19 +93,37 @@ export const columns = [
 	{
 		id: 'actions',
 		cell: ({ row }: { row: Row<SubEventParticipant> }) => {
-			return <Actions participantId={row.original.id} />;
+			return (
+				<Actions
+					participantId={row.original.id}
+					isSubGroupItem={row.depth > 0}
+					groupId={row.original.groupId}
+				/>
+			);
 		},
 		size: 32
 	}
 ];
 
 // eslint-disable-next-line react-refresh/only-export-components
-const Actions = ({ participantId }: { participantId: string }) => {
+const Actions = ({
+	participantId,
+	isSubGroupItem,
+	groupId
+}: {
+	participantId: string;
+	isSubGroupItem: boolean;
+	groupId?: string | null;
+}) => {
 	const context = useOutletContext<CenterOutletContext>();
 	const z = useZero();
 	const {
 		user: { role }
 	} = useApp();
+
+	if (isSubGroupItem) {
+		return null;
+	}
 
 	return (
 		<Button
@@ -88,15 +132,25 @@ const Actions = ({ participantId }: { participantId: string }) => {
 			className='flex size-8 p-0 text-destructive hover:bg-destructive/10 hover:text-destructive *:[svg]:!text-destructive'
 			disabled={!!context?.center?.isLocked && role !== 'admin'}
 			onClick={() => {
-				z.mutate.subEventParticipants
-					.delete({
-						id: participantId
-					})
-					.server.catch((e: Error) => {
-						toast.error('Error deleting participant from event', {
-							description: e.message || 'Something went wrong'
+				if (groupId) {
+					z.mutate.subEventParticipants
+						.deleteByGroupId({ groupId })
+						.server.catch((e: Error) => {
+							toast.error('Error deleting participant group from event', {
+								description: e.message || 'Something went wrong'
+							});
 						});
-					});
+				} else {
+					z.mutate.subEventParticipants
+						.delete({
+							id: participantId
+						})
+						.server.catch((e: Error) => {
+							toast.error('Error deleting participant from event', {
+								description: e.message || 'Something went wrong'
+							});
+						});
+				}
 			}}
 		>
 			<TrashIcon />

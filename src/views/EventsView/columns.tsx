@@ -185,6 +185,49 @@ export const columns = [
 			displayName: 'Participants'
 		}
 	}),
+	columnHelper.accessor(row => (row.event.isGroupEvent ?? false).toString(), {
+		id: 'isGroupEvent',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Is Group Event?' />
+		),
+		cell: ({ row }) => (row.getValue('isGroupEvent') === 'true' ? 'Yes' : 'No'),
+		meta: {
+			displayName: 'Is Group Event?'
+		}
+	}),
+	columnHelper.accessor(row => row.event.minGroupSize, {
+		id: 'minGroupSize',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Min Group Size' />
+		),
+		cell: ({ row }) =>
+			row.getValue<Event['minGroupSize']>('minGroupSize') ?? '-',
+		meta: {
+			displayName: 'Min Group Size'
+		}
+	}),
+	columnHelper.accessor(row => row.event.maxGroupSize, {
+		id: 'maxGroupSize',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Max Group Size' />
+		),
+		cell: ({ row }) =>
+			row.getValue<Event['maxGroupSize']>('maxGroupSize') ?? '-',
+		meta: {
+			displayName: 'Max Group Size'
+		}
+	}),
+	columnHelper.accessor(row => row.event.maxParticipants, {
+		id: 'maxParticipants',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Max Participants' />
+		),
+		cell: ({ row }) =>
+			row.getValue<Event['maxParticipants']>('maxParticipants') ?? '-',
+		meta: {
+			displayName: 'Max Participants'
+		}
+	}),
 	{
 		id: 'actions',
 		cell: ({ row }: { row: Row<EventRow> }) => {

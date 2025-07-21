@@ -37,7 +37,9 @@ export default drizzleZeroConfig(drizzleSchema, {
 			createdAt: true,
 			updatedAt: true,
 			allowedGender: true,
-			minParticipants: true,
+			isGroupEvent: true,
+			minGroupSize: true,
+			maxGroupSize: true,
 			maxParticipants: true
 		},
 		eventCoordinators: {
@@ -109,6 +111,7 @@ export default drizzleZeroConfig(drizzleSchema, {
 			id: true,
 			subEventId: true,
 			participantId: true,
+			groupId: true,
 			attended: true,
 			createdAt: true,
 			updatedAt: true

@@ -79,3 +79,27 @@ export async function assertIsAdminOrGuardianOrLiasonOfSubEventParticipant(
 		throw new Error('Unauthorized');
 	}
 }
+
+export async function assertIsAdminOrGuardianOrLiasonOfSubEventParticipantGroup(
+	tx: Transaction<Schema>,
+	authData: AuthData | undefined,
+	groupId: string
+) {
+	assertIsLoggedIn(authData);
+	const isAdmin = authData?.meta.role === 'admin';
+	const participant = await tx.query.subEventParticipants
+		.related('participant', q =>
+			q.related('center', q => q.related('guardians').related('liaisons'))
+		)
+		.where('groupId', groupId)
+		.one();
+	const isGuardian = participant?.participant?.center?.guardians.some(
+		g => g.userId === authData?.sub
+	);
+	const isLiason = participant?.participant?.center?.liaisons.some(
+		l => l.userId === authData?.sub
+	);
+	if (!isAdmin && !isGuardian && !isLiason) {
+		throw new Error('Unauthorized');
+	}
+}

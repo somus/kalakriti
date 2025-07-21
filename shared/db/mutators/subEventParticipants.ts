@@ -4,13 +4,15 @@ import { CustomMutatorDefs } from '@rocicorp/zero';
 
 import {
 	assertIsAdminOrGuardianOrLiasonOfParticipant,
-	assertIsAdminOrGuardianOrLiasonOfSubEventParticipant
+	assertIsAdminOrGuardianOrLiasonOfSubEventParticipant,
+	assertIsAdminOrGuardianOrLiasonOfSubEventParticipantGroup
 } from '../permissions.ts';
 import { AuthData, Schema } from '../schema.zero.ts';
 
 export interface CreateBatchSubEventParticipantArgs {
 	participantIds: string[];
 	subEventId: string;
+	groupId?: string;
 }
 
 export function createSubEventParticipantMutators(
@@ -30,7 +32,8 @@ export function createSubEventParticipantMutators(
 				await tx.mutate.subEventParticipants.insert({
 					id: createId(),
 					participantId,
-					subEventId: data.subEventId
+					subEventId: data.subEventId,
+					groupId: data.groupId
 				});
 			}
 		},
@@ -50,6 +53,27 @@ export function createSubEventParticipantMutators(
 			);
 			await Promise.all(
 				ids.map(id => tx.mutate.subEventParticipants.delete({ id }))
+			);
+		},
+		deleteByGroupId: async (tx, { groupId }: { groupId: string }) => {
+			await assertIsAdminOrGuardianOrLiasonOfSubEventParticipantGroup(
+				tx,
+				authData,
+				groupId
+			);
+			const subEventParticipants = await tx.query.subEventParticipants.where(
+				'groupId',
+				groupId
+			);
+
+			if (subEventParticipants.length === 0) {
+				throw new Error('No participants found for group');
+			}
+
+			await Promise.all(
+				subEventParticipants.map(participant =>
+					tx.mutate.subEventParticipants.delete({ id: participant.id })
+				)
 			);
 		}
 	} as const satisfies CustomMutatorDefs<Schema>;

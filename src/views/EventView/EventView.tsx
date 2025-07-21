@@ -1,9 +1,11 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import { H3 } from '@/components/ui/typography';
 import useZero, { Zero } from '@/hooks/useZero';
 import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
+import { formatDate } from 'date-fns';
+import groupBy from 'lodash/groupBy';
 import { Navigate, useParams } from 'react-router';
 import * as z from 'zod';
 
@@ -37,23 +39,66 @@ export default function EventView() {
 		return <Navigate to='/' />;
 	}
 
-	if (status.type !== 'complete' || !subEvent) {
+	if (status.type !== 'complete' || !subEvent || !subEvent.event) {
 		return null;
 	}
+	const {
+		isGroupEvent,
+		maxParticipants,
+		minGroupSize,
+		maxGroupSize,
+		category
+	} = subEvent.event;
+	const participants = isGroupEvent
+		? Object.values(groupBy(subEvent.participants, 'groupId')).map(
+				(group, key) => ({
+					groupId: group[0].groupId,
+					participant: {
+						name: `Group ${key + 1}`,
+						center: {
+							id: group[0].participant?.center?.id,
+							name: group[0].participant?.center?.name
+						}
+					},
+					subRows: group
+				})
+			)
+		: subEvent.participants;
 
 	return (
 		<div className='flex flex-col py-4'>
-			<div className='px-4'>
-				<div className='flex gap-2'>
-					<h3 className='text-2xl font-semibold tracking-tight'>
-						{subEvent.event?.name} - {subEvent.participantCategory?.name}
-					</h3>
-					<Badge variant='outline'>{subEvent.event?.category?.name}</Badge>
+			<div className='flex px-4 justify-between items-center'>
+				<div className='flex gap-4 items-end flex-wrap'>
+					<H3>
+						{subEvent.event.name} - {subEvent.participantCategory?.name}
+					</H3>
+					<p className='italic'>
+						{formatDate(subEvent.startTime, 'p')} -{' '}
+						{formatDate(subEvent.endTime, 'p')}
+					</p>
+					<div className='flex gap-1 flex-wrap'>
+						<Badge variant='outline'>{category?.name}</Badge>
+						{isGroupEvent && <Badge variant='outline'>Group Event</Badge>}
+						{isGroupEvent ? (
+							<>
+								<Badge variant='outline'>
+									Group Size:{' '}
+									{minGroupSize === maxGroupSize
+										? `${minGroupSize}`
+										: `${minGroupSize} - ${maxGroupSize}`}
+								</Badge>
+								<Badge variant='outline'>Max Groups: {maxParticipants}</Badge>
+							</>
+						) : (
+							<Badge variant='outline'>
+								Max Participants: {maxParticipants}
+							</Badge>
+						)}
+					</div>
 				</div>
-				<Separator className='my-4' />
 			</div>
 			<DataTableWrapper
-				data={subEvent.participants as SubEventParticipant[]}
+				data={participants as SubEventParticipant[]}
 				columns={columns}
 				columnsConfig={columnsConfig}
 			/>
