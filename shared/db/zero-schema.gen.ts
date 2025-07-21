@@ -14,1159 +14,1159 @@
  * ## SOURCE: https://github.com/0xcadams/drizzle-zero        ##
  * ------------------------------------------------------------
  */
-import type { ZeroCustomType } from 'drizzle-zero';
 
-import type { default as zeroSchema } from './drizzle-zero.config';
+import type { ZeroCustomType } from "drizzle-zero";
+import type { default as zeroSchema } from "./drizzle-zero.config";
 
 /**
  * The Zero schema object.
  * This type is auto-generated from your Drizzle schema definition.
  */
 export const schema = {
-	tables: {
-		centerGuardians: {
-			name: 'centerGuardians',
-			columns: {
-				userId: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'centerGuardians',
-						'userId'
-					>,
-					serverName: 'user_id'
-				},
-				centerId: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'centerGuardians',
-						'centerId'
-					>,
-					serverName: 'center_id'
-				},
-				createdAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'centerGuardians',
-						'createdAt'
-					>,
-					serverName: 'created_at'
-				},
-				updatedAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'centerGuardians',
-						'updatedAt'
-					>,
-					serverName: 'updated_at'
-				}
-			},
-			primaryKey: ['userId', 'centerId'],
-			serverName: 'center_guardians'
-		},
-		centerLiaisons: {
-			name: 'centerLiaisons',
-			columns: {
-				userId: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'centerLiaisons',
-						'userId'
-					>,
-					serverName: 'user_id'
-				},
-				centerId: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'centerLiaisons',
-						'centerId'
-					>,
-					serverName: 'center_id'
-				},
-				createdAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'centerLiaisons',
-						'createdAt'
-					>,
-					serverName: 'created_at'
-				},
-				updatedAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'centerLiaisons',
-						'updatedAt'
-					>,
-					serverName: 'updated_at'
-				}
-			},
-			primaryKey: ['userId', 'centerId'],
-			serverName: 'center_liaisons'
-		},
-		centers: {
-			name: 'centers',
-			columns: {
-				id: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'centers',
-						'id'
-					>
-				},
-				name: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'centers',
-						'name'
-					>
-				},
-				phoneNumber: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'centers',
-						'phoneNumber'
-					>,
-					serverName: 'phone_number'
-				},
-				email: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'centers',
-						'email'
-					>
-				},
-				isLocked: {
-					type: 'boolean',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'centers',
-						'isLocked'
-					>,
-					serverName: 'is_locked'
-				},
-				createdAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'centers',
-						'createdAt'
-					>,
-					serverName: 'created_at'
-				},
-				updatedAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'centers',
-						'updatedAt'
-					>,
-					serverName: 'updated_at'
-				}
-			},
-			primaryKey: ['id']
-		},
-		eventCategories: {
-			name: 'eventCategories',
-			columns: {
-				id: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'eventCategories',
-						'id'
-					>
-				},
-				name: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'eventCategories',
-						'name'
-					>
-				},
-				coordinatorId: {
-					type: 'string',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'eventCategories',
-						'coordinatorId'
-					>,
-					serverName: 'coordinator_id'
-				},
-				createdAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'eventCategories',
-						'createdAt'
-					>,
-					serverName: 'created_at'
-				},
-				updatedAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'eventCategories',
-						'updatedAt'
-					>,
-					serverName: 'updated_at'
-				}
-			},
-			primaryKey: ['id'],
-			serverName: 'event_categories'
-		},
-		eventCoordinators: {
-			name: 'eventCoordinators',
-			columns: {
-				userId: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'eventCoordinators',
-						'userId'
-					>,
-					serverName: 'user_id'
-				},
-				eventId: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'eventCoordinators',
-						'eventId'
-					>,
-					serverName: 'event_id'
-				},
-				createdAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'eventCoordinators',
-						'createdAt'
-					>,
-					serverName: 'created_at'
-				},
-				updatedAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'eventCoordinators',
-						'updatedAt'
-					>,
-					serverName: 'updated_at'
-				}
-			},
-			primaryKey: ['userId', 'eventId'],
-			serverName: 'event_coordinators'
-		},
-		eventVolunteers: {
-			name: 'eventVolunteers',
-			columns: {
-				userId: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'eventVolunteers',
-						'userId'
-					>,
-					serverName: 'user_id'
-				},
-				eventId: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'eventVolunteers',
-						'eventId'
-					>,
-					serverName: 'event_id'
-				},
-				createdAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'eventVolunteers',
-						'createdAt'
-					>,
-					serverName: 'created_at'
-				},
-				updatedAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'eventVolunteers',
-						'updatedAt'
-					>,
-					serverName: 'updated_at'
-				}
-			},
-			primaryKey: ['userId', 'eventId'],
-			serverName: 'event_volunteers'
-		},
-		events: {
-			name: 'events',
-			columns: {
-				id: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'events',
-						'id'
-					>
-				},
-				name: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'events',
-						'name'
-					>
-				},
-				eventCategoryId: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'events',
-						'eventCategoryId'
-					>,
-					serverName: 'event_category_id'
-				},
-				allowedGender: {
-					type: 'string',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'events',
-						'allowedGender'
-					>,
-					serverName: 'allowed_gender'
-				},
-				isGroupEvent: {
-					type: 'boolean',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'events',
-						'isGroupEvent'
-					>,
-					serverName: 'is_group_event'
-				},
-				minGroupSize: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'events',
-						'minGroupSize'
-					>,
-					serverName: 'min_group_size'
-				},
-				maxGroupSize: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'events',
-						'maxGroupSize'
-					>,
-					serverName: 'max_group_size'
-				},
-				maxParticipants: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'events',
-						'maxParticipants'
-					>,
-					serverName: 'max_participants'
-				},
-				createdAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'events',
-						'createdAt'
-					>,
-					serverName: 'created_at'
-				},
-				updatedAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'events',
-						'updatedAt'
-					>,
-					serverName: 'updated_at'
-				}
-			},
-			primaryKey: ['id']
-		},
-		participantCategories: {
-			name: 'participantCategories',
-			columns: {
-				id: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'participantCategories',
-						'id'
-					>
-				},
-				name: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'participantCategories',
-						'name'
-					>
-				},
-				minAge: {
-					type: 'number',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'participantCategories',
-						'minAge'
-					>,
-					serverName: 'min_age'
-				},
-				maxAge: {
-					type: 'number',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'participantCategories',
-						'maxAge'
-					>,
-					serverName: 'max_age'
-				},
-				maxBoys: {
-					type: 'number',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'participantCategories',
-						'maxBoys'
-					>,
-					serverName: 'max_boys'
-				},
-				maxGirls: {
-					type: 'number',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'participantCategories',
-						'maxGirls'
-					>,
-					serverName: 'max_girls'
-				},
-				totalEventsAllowed: {
-					type: 'number',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'participantCategories',
-						'totalEventsAllowed'
-					>,
-					serverName: 'total_events_allowed'
-				},
-				maxEventsPerCategory: {
-					type: 'number',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'participantCategories',
-						'maxEventsPerCategory'
-					>,
-					serverName: 'max_events_per_category'
-				},
-				createdAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'participantCategories',
-						'createdAt'
-					>,
-					serverName: 'created_at'
-				},
-				updatedAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'participantCategories',
-						'updatedAt'
-					>,
-					serverName: 'updated_at'
-				}
-			},
-			primaryKey: ['id'],
-			serverName: 'participant_categories'
-		},
-		participants: {
-			name: 'participants',
-			columns: {
-				id: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'participants',
-						'id'
-					>
-				},
-				name: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'participants',
-						'name'
-					>
-				},
-				dob: {
-					type: 'number',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'participants',
-						'dob'
-					>
-				},
-				age: {
-					type: 'number',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'participants',
-						'age'
-					>
-				},
-				gender: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'participants',
-						'gender'
-					>
-				},
-				centerId: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'participants',
-						'centerId'
-					>,
-					serverName: 'center_id'
-				},
-				participantCategoryId: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'participants',
-						'participantCategoryId'
-					>,
-					serverName: 'participant_category_id'
-				},
-				createdAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'participants',
-						'createdAt'
-					>,
-					serverName: 'created_at'
-				},
-				updatedAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'participants',
-						'updatedAt'
-					>,
-					serverName: 'updated_at'
-				}
-			},
-			primaryKey: ['id']
-		},
-		subEventParticipants: {
-			name: 'subEventParticipants',
-			columns: {
-				id: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'subEventParticipants',
-						'id'
-					>
-				},
-				subEventId: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'subEventParticipants',
-						'subEventId'
-					>,
-					serverName: 'sub_event_id'
-				},
-				participantId: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'subEventParticipants',
-						'participantId'
-					>,
-					serverName: 'participant_id'
-				},
-				groupId: {
-					type: 'string',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'subEventParticipants',
-						'groupId'
-					>,
-					serverName: 'group_id'
-				},
-				attended: {
-					type: 'boolean',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'subEventParticipants',
-						'attended'
-					>
-				},
-				createdAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'subEventParticipants',
-						'createdAt'
-					>,
-					serverName: 'created_at'
-				},
-				updatedAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'subEventParticipants',
-						'updatedAt'
-					>,
-					serverName: 'updated_at'
-				}
-			},
-			primaryKey: ['id'],
-			serverName: 'sub_event_participants'
-		},
-		subEvents: {
-			name: 'subEvents',
-			columns: {
-				id: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'subEvents',
-						'id'
-					>
-				},
-				participantCategoryId: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'subEvents',
-						'participantCategoryId'
-					>,
-					serverName: 'participant_category_id'
-				},
-				startTime: {
-					type: 'number',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'subEvents',
-						'startTime'
-					>,
-					serverName: 'start_time'
-				},
-				endTime: {
-					type: 'number',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'subEvents',
-						'endTime'
-					>,
-					serverName: 'end_time'
-				},
-				eventId: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'subEvents',
-						'eventId'
-					>,
-					serverName: 'event_id'
-				},
-				createdAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'subEvents',
-						'createdAt'
-					>,
-					serverName: 'created_at'
-				},
-				updatedAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'subEvents',
-						'updatedAt'
-					>,
-					serverName: 'updated_at'
-				}
-			},
-			primaryKey: ['id'],
-			serverName: 'sub_events'
-		},
-		users: {
-			name: 'users',
-			columns: {
-				id: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'users',
-						'id'
-					>
-				},
-				firstName: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'users',
-						'firstName'
-					>,
-					serverName: 'first_name'
-				},
-				lastName: {
-					type: 'string',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'users',
-						'lastName'
-					>,
-					serverName: 'last_name'
-				},
-				role: {
-					type: 'string',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'users',
-						'role'
-					>
-				},
-				phoneNumber: {
-					type: 'string',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'users',
-						'phoneNumber'
-					>,
-					serverName: 'phone_number'
-				},
-				email: {
-					type: 'string',
-					optional: false,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'users',
-						'email'
-					>
-				},
-				canLogin: {
-					type: 'boolean',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'users',
-						'canLogin'
-					>,
-					serverName: 'can_login'
-				},
-				createdAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'users',
-						'createdAt'
-					>,
-					serverName: 'created_at'
-				},
-				updatedAt: {
-					type: 'number',
-					optional: true,
-					customType: null as unknown as ZeroCustomType<
-						typeof zeroSchema,
-						'users',
-						'updatedAt'
-					>,
-					serverName: 'updated_at'
-				}
-			},
-			primaryKey: ['id']
-		}
-	},
-	relationships: {
-		centerGuardians: {
-			center: [
-				{
-					sourceField: ['centerId'],
-					destField: ['id'],
-					destSchema: 'centers',
-					cardinality: 'one'
-				}
-			],
-			user: [
-				{
-					sourceField: ['userId'],
-					destField: ['id'],
-					destSchema: 'users',
-					cardinality: 'one'
-				}
-			]
-		},
-		centerLiaisons: {
-			center: [
-				{
-					sourceField: ['centerId'],
-					destField: ['id'],
-					destSchema: 'centers',
-					cardinality: 'one'
-				}
-			],
-			user: [
-				{
-					sourceField: ['userId'],
-					destField: ['id'],
-					destSchema: 'users',
-					cardinality: 'one'
-				}
-			]
-		},
-		centers: {
-			liaisons: [
-				{
-					sourceField: ['id'],
-					destField: ['centerId'],
-					destSchema: 'centerLiaisons',
-					cardinality: 'many'
-				}
-			],
-			guardians: [
-				{
-					sourceField: ['id'],
-					destField: ['centerId'],
-					destSchema: 'centerGuardians',
-					cardinality: 'many'
-				}
-			],
-			participants: [
-				{
-					sourceField: ['id'],
-					destField: ['centerId'],
-					destSchema: 'participants',
-					cardinality: 'many'
-				}
-			]
-		},
-		eventCategories: {
-			coordinator: [
-				{
-					sourceField: ['coordinatorId'],
-					destField: ['id'],
-					destSchema: 'users',
-					cardinality: 'one'
-				}
-			],
-			events: [
-				{
-					sourceField: ['id'],
-					destField: ['eventCategoryId'],
-					destSchema: 'events',
-					cardinality: 'many'
-				}
-			]
-		},
-		eventCoordinators: {
-			event: [
-				{
-					sourceField: ['eventId'],
-					destField: ['id'],
-					destSchema: 'events',
-					cardinality: 'one'
-				}
-			],
-			user: [
-				{
-					sourceField: ['userId'],
-					destField: ['id'],
-					destSchema: 'users',
-					cardinality: 'one'
-				}
-			]
-		},
-		eventVolunteers: {
-			event: [
-				{
-					sourceField: ['eventId'],
-					destField: ['id'],
-					destSchema: 'events',
-					cardinality: 'one'
-				}
-			],
-			user: [
-				{
-					sourceField: ['userId'],
-					destField: ['id'],
-					destSchema: 'users',
-					cardinality: 'one'
-				}
-			]
-		},
-		events: {
-			coordinators: [
-				{
-					sourceField: ['id'],
-					destField: ['eventId'],
-					destSchema: 'eventCoordinators',
-					cardinality: 'many'
-				}
-			],
-			volunteers: [
-				{
-					sourceField: ['id'],
-					destField: ['eventId'],
-					destSchema: 'eventVolunteers',
-					cardinality: 'many'
-				}
-			],
-			category: [
-				{
-					sourceField: ['eventCategoryId'],
-					destField: ['id'],
-					destSchema: 'eventCategories',
-					cardinality: 'one'
-				}
-			],
-			subEvents: [
-				{
-					sourceField: ['id'],
-					destField: ['eventId'],
-					destSchema: 'subEvents',
-					cardinality: 'many'
-				}
-			]
-		},
-		participantCategories: {
-			participants: [
-				{
-					sourceField: ['id'],
-					destField: ['participantCategoryId'],
-					destSchema: 'participants',
-					cardinality: 'many'
-				}
-			],
-			subEvents: [
-				{
-					sourceField: ['id'],
-					destField: ['participantCategoryId'],
-					destSchema: 'subEvents',
-					cardinality: 'many'
-				}
-			]
-		},
-		participants: {
-			center: [
-				{
-					sourceField: ['centerId'],
-					destField: ['id'],
-					destSchema: 'centers',
-					cardinality: 'one'
-				}
-			],
-			participantCategory: [
-				{
-					sourceField: ['participantCategoryId'],
-					destField: ['id'],
-					destSchema: 'participantCategories',
-					cardinality: 'one'
-				}
-			],
-			subEvents: [
-				{
-					sourceField: ['id'],
-					destField: ['participantId'],
-					destSchema: 'subEventParticipants',
-					cardinality: 'many'
-				}
-			]
-		},
-		subEventParticipants: {
-			subEvent: [
-				{
-					sourceField: ['subEventId'],
-					destField: ['id'],
-					destSchema: 'subEvents',
-					cardinality: 'one'
-				}
-			],
-			participant: [
-				{
-					sourceField: ['participantId'],
-					destField: ['id'],
-					destSchema: 'participants',
-					cardinality: 'one'
-				}
-			]
-		},
-		subEvents: {
-			participantCategory: [
-				{
-					sourceField: ['participantCategoryId'],
-					destField: ['id'],
-					destSchema: 'participantCategories',
-					cardinality: 'one'
-				}
-			],
-			event: [
-				{
-					sourceField: ['eventId'],
-					destField: ['id'],
-					destSchema: 'events',
-					cardinality: 'one'
-				}
-			],
-			participants: [
-				{
-					sourceField: ['id'],
-					destField: ['subEventId'],
-					destSchema: 'subEventParticipants',
-					cardinality: 'many'
-				}
-			]
-		},
-		users: {
-			coordinatingEvents: [
-				{
-					sourceField: ['id'],
-					destField: ['userId'],
-					destSchema: 'eventCoordinators',
-					cardinality: 'one'
-				}
-			],
-			volunteeringEvents: [
-				{
-					sourceField: ['id'],
-					destField: ['userId'],
-					destSchema: 'eventVolunteers',
-					cardinality: 'one'
-				}
-			],
-			coordinatingEventCategories: [
-				{
-					sourceField: ['id'],
-					destField: ['coordinatorId'],
-					destSchema: 'eventCategories',
-					cardinality: 'many'
-				}
-			],
-			liaisoningCenters: [
-				{
-					sourceField: ['id'],
-					destField: ['userId'],
-					destSchema: 'centerLiaisons',
-					cardinality: 'one'
-				}
-			],
-			guardianCenters: [
-				{
-					sourceField: ['id'],
-					destField: ['userId'],
-					destSchema: 'centerGuardians',
-					cardinality: 'one'
-				}
-			]
-		}
-	}
+  tables: {
+    centerGuardians: {
+      name: "centerGuardians",
+      columns: {
+        userId: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "centerGuardians",
+            "userId"
+          >,
+          serverName: "user_id",
+        },
+        centerId: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "centerGuardians",
+            "centerId"
+          >,
+          serverName: "center_id",
+        },
+        createdAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "centerGuardians",
+            "createdAt"
+          >,
+          serverName: "created_at",
+        },
+        updatedAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "centerGuardians",
+            "updatedAt"
+          >,
+          serverName: "updated_at",
+        },
+      },
+      primaryKey: ["userId", "centerId"],
+      serverName: "center_guardians",
+    },
+    centerLiaisons: {
+      name: "centerLiaisons",
+      columns: {
+        userId: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "centerLiaisons",
+            "userId"
+          >,
+          serverName: "user_id",
+        },
+        centerId: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "centerLiaisons",
+            "centerId"
+          >,
+          serverName: "center_id",
+        },
+        createdAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "centerLiaisons",
+            "createdAt"
+          >,
+          serverName: "created_at",
+        },
+        updatedAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "centerLiaisons",
+            "updatedAt"
+          >,
+          serverName: "updated_at",
+        },
+      },
+      primaryKey: ["userId", "centerId"],
+      serverName: "center_liaisons",
+    },
+    centers: {
+      name: "centers",
+      columns: {
+        id: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "centers",
+            "id"
+          >,
+        },
+        name: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "centers",
+            "name"
+          >,
+        },
+        phoneNumber: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "centers",
+            "phoneNumber"
+          >,
+          serverName: "phone_number",
+        },
+        email: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "centers",
+            "email"
+          >,
+        },
+        isLocked: {
+          type: "boolean",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "centers",
+            "isLocked"
+          >,
+          serverName: "is_locked",
+        },
+        createdAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "centers",
+            "createdAt"
+          >,
+          serverName: "created_at",
+        },
+        updatedAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "centers",
+            "updatedAt"
+          >,
+          serverName: "updated_at",
+        },
+      },
+      primaryKey: ["id"],
+    },
+    eventCategories: {
+      name: "eventCategories",
+      columns: {
+        id: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "eventCategories",
+            "id"
+          >,
+        },
+        name: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "eventCategories",
+            "name"
+          >,
+        },
+        coordinatorId: {
+          type: "string",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "eventCategories",
+            "coordinatorId"
+          >,
+          serverName: "coordinator_id",
+        },
+        createdAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "eventCategories",
+            "createdAt"
+          >,
+          serverName: "created_at",
+        },
+        updatedAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "eventCategories",
+            "updatedAt"
+          >,
+          serverName: "updated_at",
+        },
+      },
+      primaryKey: ["id"],
+      serverName: "event_categories",
+    },
+    eventCoordinators: {
+      name: "eventCoordinators",
+      columns: {
+        userId: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "eventCoordinators",
+            "userId"
+          >,
+          serverName: "user_id",
+        },
+        eventId: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "eventCoordinators",
+            "eventId"
+          >,
+          serverName: "event_id",
+        },
+        createdAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "eventCoordinators",
+            "createdAt"
+          >,
+          serverName: "created_at",
+        },
+        updatedAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "eventCoordinators",
+            "updatedAt"
+          >,
+          serverName: "updated_at",
+        },
+      },
+      primaryKey: ["userId", "eventId"],
+      serverName: "event_coordinators",
+    },
+    eventVolunteers: {
+      name: "eventVolunteers",
+      columns: {
+        userId: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "eventVolunteers",
+            "userId"
+          >,
+          serverName: "user_id",
+        },
+        eventId: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "eventVolunteers",
+            "eventId"
+          >,
+          serverName: "event_id",
+        },
+        createdAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "eventVolunteers",
+            "createdAt"
+          >,
+          serverName: "created_at",
+        },
+        updatedAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "eventVolunteers",
+            "updatedAt"
+          >,
+          serverName: "updated_at",
+        },
+      },
+      primaryKey: ["userId", "eventId"],
+      serverName: "event_volunteers",
+    },
+    events: {
+      name: "events",
+      columns: {
+        id: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "events",
+            "id"
+          >,
+        },
+        name: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "events",
+            "name"
+          >,
+        },
+        eventCategoryId: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "events",
+            "eventCategoryId"
+          >,
+          serverName: "event_category_id",
+        },
+        allowedGender: {
+          type: "string",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "events",
+            "allowedGender"
+          >,
+          serverName: "allowed_gender",
+        },
+        isGroupEvent: {
+          type: "boolean",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "events",
+            "isGroupEvent"
+          >,
+          serverName: "is_group_event",
+        },
+        minGroupSize: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "events",
+            "minGroupSize"
+          >,
+          serverName: "min_group_size",
+        },
+        maxGroupSize: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "events",
+            "maxGroupSize"
+          >,
+          serverName: "max_group_size",
+        },
+        maxParticipants: {
+          type: "number",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "events",
+            "maxParticipants"
+          >,
+          serverName: "max_participants",
+        },
+        createdAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "events",
+            "createdAt"
+          >,
+          serverName: "created_at",
+        },
+        updatedAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "events",
+            "updatedAt"
+          >,
+          serverName: "updated_at",
+        },
+      },
+      primaryKey: ["id"],
+    },
+    participantCategories: {
+      name: "participantCategories",
+      columns: {
+        id: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participantCategories",
+            "id"
+          >,
+        },
+        name: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participantCategories",
+            "name"
+          >,
+        },
+        minAge: {
+          type: "number",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participantCategories",
+            "minAge"
+          >,
+          serverName: "min_age",
+        },
+        maxAge: {
+          type: "number",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participantCategories",
+            "maxAge"
+          >,
+          serverName: "max_age",
+        },
+        maxBoys: {
+          type: "number",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participantCategories",
+            "maxBoys"
+          >,
+          serverName: "max_boys",
+        },
+        maxGirls: {
+          type: "number",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participantCategories",
+            "maxGirls"
+          >,
+          serverName: "max_girls",
+        },
+        totalEventsAllowed: {
+          type: "number",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participantCategories",
+            "totalEventsAllowed"
+          >,
+          serverName: "total_events_allowed",
+        },
+        maxEventsPerCategory: {
+          type: "number",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participantCategories",
+            "maxEventsPerCategory"
+          >,
+          serverName: "max_events_per_category",
+        },
+        createdAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participantCategories",
+            "createdAt"
+          >,
+          serverName: "created_at",
+        },
+        updatedAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participantCategories",
+            "updatedAt"
+          >,
+          serverName: "updated_at",
+        },
+      },
+      primaryKey: ["id"],
+      serverName: "participant_categories",
+    },
+    participants: {
+      name: "participants",
+      columns: {
+        id: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participants",
+            "id"
+          >,
+        },
+        name: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participants",
+            "name"
+          >,
+        },
+        dob: {
+          type: "number",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participants",
+            "dob"
+          >,
+        },
+        age: {
+          type: "number",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participants",
+            "age"
+          >,
+        },
+        gender: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participants",
+            "gender"
+          >,
+        },
+        centerId: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participants",
+            "centerId"
+          >,
+          serverName: "center_id",
+        },
+        participantCategoryId: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participants",
+            "participantCategoryId"
+          >,
+          serverName: "participant_category_id",
+        },
+        createdAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participants",
+            "createdAt"
+          >,
+          serverName: "created_at",
+        },
+        updatedAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participants",
+            "updatedAt"
+          >,
+          serverName: "updated_at",
+        },
+      },
+      primaryKey: ["id"],
+    },
+    subEventParticipants: {
+      name: "subEventParticipants",
+      columns: {
+        id: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "subEventParticipants",
+            "id"
+          >,
+        },
+        subEventId: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "subEventParticipants",
+            "subEventId"
+          >,
+          serverName: "sub_event_id",
+        },
+        participantId: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "subEventParticipants",
+            "participantId"
+          >,
+          serverName: "participant_id",
+        },
+        groupId: {
+          type: "string",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "subEventParticipants",
+            "groupId"
+          >,
+          serverName: "group_id",
+        },
+        attended: {
+          type: "boolean",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "subEventParticipants",
+            "attended"
+          >,
+        },
+        createdAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "subEventParticipants",
+            "createdAt"
+          >,
+          serverName: "created_at",
+        },
+        updatedAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "subEventParticipants",
+            "updatedAt"
+          >,
+          serverName: "updated_at",
+        },
+      },
+      primaryKey: ["id"],
+      serverName: "sub_event_participants",
+    },
+    subEvents: {
+      name: "subEvents",
+      columns: {
+        id: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "subEvents",
+            "id"
+          >,
+        },
+        participantCategoryId: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "subEvents",
+            "participantCategoryId"
+          >,
+          serverName: "participant_category_id",
+        },
+        startTime: {
+          type: "number",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "subEvents",
+            "startTime"
+          >,
+          serverName: "start_time",
+        },
+        endTime: {
+          type: "number",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "subEvents",
+            "endTime"
+          >,
+          serverName: "end_time",
+        },
+        eventId: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "subEvents",
+            "eventId"
+          >,
+          serverName: "event_id",
+        },
+        createdAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "subEvents",
+            "createdAt"
+          >,
+          serverName: "created_at",
+        },
+        updatedAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "subEvents",
+            "updatedAt"
+          >,
+          serverName: "updated_at",
+        },
+      },
+      primaryKey: ["id"],
+      serverName: "sub_events",
+    },
+    users: {
+      name: "users",
+      columns: {
+        id: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "users",
+            "id"
+          >,
+        },
+        firstName: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "users",
+            "firstName"
+          >,
+          serverName: "first_name",
+        },
+        lastName: {
+          type: "string",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "users",
+            "lastName"
+          >,
+          serverName: "last_name",
+        },
+        role: {
+          type: "string",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "users",
+            "role"
+          >,
+        },
+        phoneNumber: {
+          type: "string",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "users",
+            "phoneNumber"
+          >,
+          serverName: "phone_number",
+        },
+        email: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "users",
+            "email"
+          >,
+        },
+        canLogin: {
+          type: "boolean",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "users",
+            "canLogin"
+          >,
+          serverName: "can_login",
+        },
+        createdAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "users",
+            "createdAt"
+          >,
+          serverName: "created_at",
+        },
+        updatedAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "users",
+            "updatedAt"
+          >,
+          serverName: "updated_at",
+        },
+      },
+      primaryKey: ["id"],
+    },
+  },
+  relationships: {
+    centerGuardians: {
+      center: [
+        {
+          sourceField: ["centerId"],
+          destField: ["id"],
+          destSchema: "centers",
+          cardinality: "one",
+        },
+      ],
+      user: [
+        {
+          sourceField: ["userId"],
+          destField: ["id"],
+          destSchema: "users",
+          cardinality: "one",
+        },
+      ],
+    },
+    centerLiaisons: {
+      center: [
+        {
+          sourceField: ["centerId"],
+          destField: ["id"],
+          destSchema: "centers",
+          cardinality: "one",
+        },
+      ],
+      user: [
+        {
+          sourceField: ["userId"],
+          destField: ["id"],
+          destSchema: "users",
+          cardinality: "one",
+        },
+      ],
+    },
+    centers: {
+      liaisons: [
+        {
+          sourceField: ["id"],
+          destField: ["centerId"],
+          destSchema: "centerLiaisons",
+          cardinality: "many",
+        },
+      ],
+      guardians: [
+        {
+          sourceField: ["id"],
+          destField: ["centerId"],
+          destSchema: "centerGuardians",
+          cardinality: "many",
+        },
+      ],
+      participants: [
+        {
+          sourceField: ["id"],
+          destField: ["centerId"],
+          destSchema: "participants",
+          cardinality: "many",
+        },
+      ],
+    },
+    eventCategories: {
+      coordinator: [
+        {
+          sourceField: ["coordinatorId"],
+          destField: ["id"],
+          destSchema: "users",
+          cardinality: "one",
+        },
+      ],
+      events: [
+        {
+          sourceField: ["id"],
+          destField: ["eventCategoryId"],
+          destSchema: "events",
+          cardinality: "many",
+        },
+      ],
+    },
+    eventCoordinators: {
+      event: [
+        {
+          sourceField: ["eventId"],
+          destField: ["id"],
+          destSchema: "events",
+          cardinality: "one",
+        },
+      ],
+      user: [
+        {
+          sourceField: ["userId"],
+          destField: ["id"],
+          destSchema: "users",
+          cardinality: "one",
+        },
+      ],
+    },
+    eventVolunteers: {
+      event: [
+        {
+          sourceField: ["eventId"],
+          destField: ["id"],
+          destSchema: "events",
+          cardinality: "one",
+        },
+      ],
+      user: [
+        {
+          sourceField: ["userId"],
+          destField: ["id"],
+          destSchema: "users",
+          cardinality: "one",
+        },
+      ],
+    },
+    events: {
+      coordinators: [
+        {
+          sourceField: ["id"],
+          destField: ["eventId"],
+          destSchema: "eventCoordinators",
+          cardinality: "many",
+        },
+      ],
+      volunteers: [
+        {
+          sourceField: ["id"],
+          destField: ["eventId"],
+          destSchema: "eventVolunteers",
+          cardinality: "many",
+        },
+      ],
+      category: [
+        {
+          sourceField: ["eventCategoryId"],
+          destField: ["id"],
+          destSchema: "eventCategories",
+          cardinality: "one",
+        },
+      ],
+      subEvents: [
+        {
+          sourceField: ["id"],
+          destField: ["eventId"],
+          destSchema: "subEvents",
+          cardinality: "many",
+        },
+      ],
+    },
+    participantCategories: {
+      participants: [
+        {
+          sourceField: ["id"],
+          destField: ["participantCategoryId"],
+          destSchema: "participants",
+          cardinality: "many",
+        },
+      ],
+      subEvents: [
+        {
+          sourceField: ["id"],
+          destField: ["participantCategoryId"],
+          destSchema: "subEvents",
+          cardinality: "many",
+        },
+      ],
+    },
+    participants: {
+      center: [
+        {
+          sourceField: ["centerId"],
+          destField: ["id"],
+          destSchema: "centers",
+          cardinality: "one",
+        },
+      ],
+      participantCategory: [
+        {
+          sourceField: ["participantCategoryId"],
+          destField: ["id"],
+          destSchema: "participantCategories",
+          cardinality: "one",
+        },
+      ],
+      subEvents: [
+        {
+          sourceField: ["id"],
+          destField: ["participantId"],
+          destSchema: "subEventParticipants",
+          cardinality: "many",
+        },
+      ],
+    },
+    subEventParticipants: {
+      subEvent: [
+        {
+          sourceField: ["subEventId"],
+          destField: ["id"],
+          destSchema: "subEvents",
+          cardinality: "one",
+        },
+      ],
+      participant: [
+        {
+          sourceField: ["participantId"],
+          destField: ["id"],
+          destSchema: "participants",
+          cardinality: "one",
+        },
+      ],
+    },
+    subEvents: {
+      participantCategory: [
+        {
+          sourceField: ["participantCategoryId"],
+          destField: ["id"],
+          destSchema: "participantCategories",
+          cardinality: "one",
+        },
+      ],
+      event: [
+        {
+          sourceField: ["eventId"],
+          destField: ["id"],
+          destSchema: "events",
+          cardinality: "one",
+        },
+      ],
+      participants: [
+        {
+          sourceField: ["id"],
+          destField: ["subEventId"],
+          destSchema: "subEventParticipants",
+          cardinality: "many",
+        },
+      ],
+    },
+    users: {
+      coordinatingEvents: [
+        {
+          sourceField: ["id"],
+          destField: ["userId"],
+          destSchema: "eventCoordinators",
+          cardinality: "one",
+        },
+      ],
+      volunteeringEvents: [
+        {
+          sourceField: ["id"],
+          destField: ["userId"],
+          destSchema: "eventVolunteers",
+          cardinality: "one",
+        },
+      ],
+      coordinatingEventCategories: [
+        {
+          sourceField: ["id"],
+          destField: ["coordinatorId"],
+          destSchema: "eventCategories",
+          cardinality: "many",
+        },
+      ],
+      liaisoningCenters: [
+        {
+          sourceField: ["id"],
+          destField: ["userId"],
+          destSchema: "centerLiaisons",
+          cardinality: "one",
+        },
+      ],
+      guardianCenters: [
+        {
+          sourceField: ["id"],
+          destField: ["userId"],
+          destSchema: "centerGuardians",
+          cardinality: "one",
+        },
+      ],
+    },
+  },
 } as const;
 
 /**
