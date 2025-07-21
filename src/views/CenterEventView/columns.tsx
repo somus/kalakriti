@@ -15,7 +15,6 @@ import { Calendar1Icon, CheckIcon, TrashIcon, XIcon } from 'lucide-react';
 import { useOutletContext } from 'react-router';
 import { toast } from 'sonner';
 
-import { Participant } from '../ParticipantsView/ParticipantsView';
 import { SubEventParticipant } from './CenterEventView';
 
 const columnHelper = createColumnHelper<
@@ -77,16 +76,15 @@ export const columns = [
 			displayName: 'Gender'
 		}
 	}),
-	columnHelper.accessor(row => row.participant?.center, {
+	columnHelper.accessor(row => row.participant?.center?.name, {
 		id: 'center',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Center' />
 		),
 		cell: ({ row }) => {
-			const center = row.getValue<Participant['center'] | undefined>('center');
-			return center ? <Badge variant='outline'>{center.name}</Badge> : null;
+			const center = row.getValue<string | undefined>('center');
+			return center ? <Badge variant='outline'>{center}</Badge> : null;
 		},
-		enableSorting: false,
 		meta: {
 			displayName: 'Center'
 		}

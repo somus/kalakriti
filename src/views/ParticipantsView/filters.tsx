@@ -40,23 +40,23 @@ export const columnsConfig = [
 	dtf
 		.option()
 		.id('participantCategory')
-		.accessor(row => row.participantCategory)
+		.accessor(row => row.participantCategory?.name)
 		.displayName('Participant Category')
 		.icon(ComponentIcon)
 		.transformOptionFn(c => ({
-			value: c.id,
-			label: c.name
+			value: c,
+			label: c
 		}))
 		.build(),
 	dtf
 		.option()
 		.id('center')
-		.accessor(row => row.center)
+		.accessor(row => row.center?.name)
 		.displayName('Center')
 		.icon(SchoolIcon)
 		.transformOptionFn(c => ({
-			value: c.id,
-			label: c.name
+			value: c,
+			label: c
 		}))
 		.build(),
 	dtf

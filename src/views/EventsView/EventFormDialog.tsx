@@ -73,14 +73,17 @@ export default function EventFormModal({
 
 	const coordinatorOptions: Option[] = users
 		.filter(user => user.canLogin)
+		.sort((a, b) => a.firstName.localeCompare(b.firstName))
 		.map(user => ({
 			value: user.id,
 			label: `${user.firstName} ${user.lastName ?? ''}`
 		}));
-	const volunteerOptions: Option[] = users.map(user => ({
-		value: user.id,
-		label: `${user.firstName} ${user.lastName ?? ''}`
-	}));
+	const volunteerOptions: Option[] = users
+		.sort((a, b) => a.firstName.localeCompare(b.firstName))
+		.map(user => ({
+			value: user.id,
+			label: `${user.firstName} ${user.lastName ?? ''}`
+		}));
 	const eventCategoryOptions: SelectOption[] = eventCategories.map(
 		category => ({
 			value: category.id,

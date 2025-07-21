@@ -65,14 +65,18 @@ export default function CenterFormModal({
 		);
 	}
 
-	const guardianOptions: Option[] = guardians.map(guardian => ({
-		value: guardian.id,
-		label: `${guardian.firstName} ${guardian.lastName ?? ''}`
-	}));
-	const liaisonOptions: Option[] = liaisons.map(liaison => ({
-		value: liaison.id,
-		label: `${liaison.firstName} ${liaison.lastName ?? ''}`
-	}));
+	const guardianOptions: Option[] = guardians
+		.sort((a, b) => a.firstName.localeCompare(b.firstName))
+		.map(guardian => ({
+			value: guardian.id,
+			label: `${guardian.firstName} ${guardian.lastName ?? ''}`
+		}));
+	const liaisonOptions: Option[] = liaisons
+		.sort((a, b) => a.firstName.localeCompare(b.firstName))
+		.map(liaison => ({
+			value: liaison.id,
+			label: `${liaison.firstName} ${liaison.lastName ?? ''}`
+		}));
 
 	// Get center default values
 	const defaultValues = useMemo(() => {

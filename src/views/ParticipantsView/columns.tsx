@@ -72,34 +72,32 @@ export const columns = [
 			displayName: 'Gender'
 		}
 	}),
-	columnHelper.accessor(row => row.participantCategory, {
+	columnHelper.accessor(row => row.participantCategory?.name, {
 		id: 'participantCategory',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Participant Category' />
 		),
 		cell: ({ row }) => {
-			const participantCategory = row.getValue<
-				Participant['participantCategory'] | undefined
-			>('participantCategory');
+			const participantCategory = row.getValue<string | undefined>(
+				'participantCategory'
+			);
 			return participantCategory ? (
-				<Badge variant='outline'>{participantCategory.name}</Badge>
+				<Badge variant='outline'>{participantCategory}</Badge>
 			) : null;
 		},
-		enableSorting: false,
 		meta: {
 			displayName: 'Participant Category'
 		}
 	}),
-	columnHelper.accessor(row => row.center, {
+	columnHelper.accessor(row => row.center?.name, {
 		id: 'center',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Center' />
 		),
 		cell: ({ row }) => {
-			const center = row.getValue<Participant['center'] | undefined>('center');
-			return center ? <Badge variant='outline'>{center.name}</Badge> : null;
+			const center = row.getValue<string | undefined>('center');
+			return center ? <Badge variant='outline'>{center}</Badge> : null;
 		},
-		enableSorting: false,
 		meta: {
 			displayName: 'Center'
 		}

@@ -28,24 +28,28 @@ const getAdminNavItems = (centers: Center[], events: Event[]): NavItem[] => [
 				title: 'Categories',
 				url: '/events/categories'
 			},
-			...events.flatMap(event =>
-				event.subEvents.map(subEvent => ({
-					title: `${event.name} - ${subEvent.participantCategory?.name}`,
-					url: `/events/${subEvent.id}`,
-					isHidden: true
-				}))
-			)
+			...events
+				.flatMap(event =>
+					event.subEvents.map(subEvent => ({
+						title: `${event.name} - ${subEvent.participantCategory?.name}`,
+						url: `/events/${subEvent.id}`,
+						isHidden: true
+					}))
+				)
+				.sort((a, b) => a.title.localeCompare(b.title))
 		]
 	},
 	{
 		title: 'Centers',
 		url: '/centers',
 		icon: SchoolIcon,
-		items: centers.map(center => ({
-			title: center.name,
-			url: `/centers/${center.id}`,
-			icon: SchoolIcon
-		}))
+		items: centers
+			.map(center => ({
+				title: center.name,
+				url: `/centers/${center.id}`,
+				icon: SchoolIcon
+			}))
+			.sort((a, b) => a.title.localeCompare(b.title))
 	},
 	{
 		title: 'Participants',
@@ -82,33 +86,37 @@ const getGuardianAndLiasonNavItems = (
 					title: 'Events',
 					url: `/centers/${centers[0].id}/events`,
 					icon: TicketsIcon,
-					items: events.flatMap(event =>
-						event.subEvents.map(subEvent => ({
-							title: `${event.name} - ${subEvent.participantCategory?.name}`,
-							url: `/centers/${centers[0].id}/events/${subEvent.id}`
-						}))
-					)
+					items: events
+						.flatMap(event =>
+							event.subEvents.map(subEvent => ({
+								title: `${event.name} - ${subEvent.participantCategory?.name}`,
+								url: `/centers/${centers[0].id}/events/${subEvent.id}`
+							}))
+						)
+						.sort((a, b) => a.title.localeCompare(b.title))
 				}
 			]
 		: [
 				homeNavItem,
-				...centers.flatMap(center => [
-					{
-						title: center.name,
-						url: `/centers/${center.id}`,
-						icon: UsersIcon,
-						items: [
-							{
-								title: 'Participants',
-								url: `/centers/${center.id}/participants`
-							},
-							{
-								title: 'Events',
-								url: `/centers/${center.id}/events`
-							}
-						]
-					}
-				])
+				...centers
+					.flatMap(center => [
+						{
+							title: center.name,
+							url: `/centers/${center.id}`,
+							icon: UsersIcon,
+							items: [
+								{
+									title: 'Participants',
+									url: `/centers/${center.id}/participants`
+								},
+								{
+									title: 'Events',
+									url: `/centers/${center.id}/events`
+								}
+							]
+						}
+					])
+					.sort((a, b) => a.title.localeCompare(b.title))
 			];
 
 function eventsQuery(z: Zero) {

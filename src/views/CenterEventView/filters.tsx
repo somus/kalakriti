@@ -42,14 +42,14 @@ export const columnsConfig = [
 	dtf
 		.option()
 		.id('center')
-		.accessor(row => row.participant?.center)
+		.accessor(row => row.participant?.center?.name)
 		.displayName('Center')
 		.icon(SchoolIcon)
 		.transformOptionFn(c => {
 			console.log(c);
 			return {
-				value: c.id,
-				label: c.name
+				value: c,
+				label: c
 			};
 		})
 		.build(),

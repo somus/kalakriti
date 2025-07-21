@@ -44,6 +44,7 @@ export default function CenterParticipantsView() {
 			data={participants as Participant[]}
 			columns={columns}
 			columnsConfig={columnsConfig}
+			columnsToHide={['center']}
 			additionalActions={[
 				center?.isLocked && role !== 'admin' ? (
 					<Tooltip key='create-participant'>
