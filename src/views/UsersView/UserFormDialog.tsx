@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/credenza';
 import useZero from '@/hooks/useZero';
 import { zodResolver } from '@hookform/resolvers/zod';
+import get from 'lodash/get';
 import { LoaderCircle } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -128,7 +129,10 @@ export default function UserFormModal({
 			setIsSubmitting(false);
 			form.setError('root.submissionError', {
 				type: e instanceof Error ? 'submitError' : 'unknownError',
-				message: e instanceof Error ? e.message : 'Something went wrong'
+				message:
+					e instanceof Error
+						? e.message
+						: (get(e, 'details') ?? 'Something went wrong')
 			});
 		}
 	};
@@ -158,6 +162,7 @@ export default function UserFormModal({
 				<FormLayout<UserFormData>
 					form={form}
 					onSubmit={form.handleSubmit(handleFormSubmit)}
+					className='flex flex-col flex-1'
 				>
 					<ModalBody className='space-y-4'>
 						<InputField name='firstName' label='First Name' />

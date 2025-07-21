@@ -1,7 +1,9 @@
 // mutators.ts
 import { ClerkClient, User } from '@clerk/backend';
+import { ClerkAPIResponseError } from '@clerk/types';
 import { createId } from '@paralleldrive/cuid2';
 import { CustomMutatorDefs, UpdateValue } from '@rocicorp/zero';
+import isObject from 'lodash/isObject';
 
 import { assertIsAdmin } from '../permissions.ts';
 import { AuthData, Schema } from '../schema.zero.ts';
@@ -48,6 +50,13 @@ export function createUserMutators(
 					await tx.mutate.users.insert({ id: clerkUser.id, ...data });
 				} catch (error) {
 					console.error('Error creating user:', error);
+
+					if (isClerkError(error)) {
+						throw new Error(
+							`Error creating user: ${error.errors[0].longMessage}`
+						);
+					}
+
 					if (clerkUser?.id) {
 						// Delete the user from Clerk if the transaction fails
 						await clerkClient.users.deleteUser(clerkUser.id);
@@ -102,3 +111,10 @@ export function createUserMutators(
 		}
 	} as const satisfies CustomMutatorDefs<Schema>;
 }
+
+const isClerkError = (error: unknown): error is ClerkAPIResponseError => {
+	if (isObject(error) && 'clerkError' in error && error.clerkError) {
+		return true;
+	}
+	return false;
+};
