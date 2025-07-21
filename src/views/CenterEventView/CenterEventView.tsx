@@ -124,7 +124,7 @@ export default function CenterEventsView() {
 				columnsToHide={['center']}
 				additionalActions={[
 					(center?.isLocked && role !== 'admin') ||
-					maxParticipants === participants.length ? (
+					participants.length >= maxParticipants ? (
 						<Tooltip key='create-participant'>
 							<TooltipTrigger asChild>
 								<span>
@@ -134,7 +134,7 @@ export default function CenterEventsView() {
 								</span>
 							</TooltipTrigger>
 							<TooltipContent>
-								{maxParticipants === participants.length ? (
+								{participants.length >= maxParticipants ? (
 									<p>Max participants reached.</p>
 								) : (
 									<p>Editing is locked. Please contact your liason.</p>

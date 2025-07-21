@@ -150,7 +150,6 @@ export default function AddEventParticipantsDialog({
 					columns={columns}
 					columnsConfig={columnsConfig}
 					disabledRows={participantsToDisable}
-					selectedRows={isGroupEvent ? participantsToBeFiltered : undefined}
 					tableContainerClassName={
 						isMobile ? undefined : 'h-[calc(100dvh-242px)]'
 					}
@@ -164,7 +163,9 @@ export default function AddEventParticipantsDialog({
 								? noOfSelectedRows > currentEvent.event?.maxGroupSize ||
 									noOfSelectedRows < currentEvent.event?.minGroupSize
 								: noOfSelectedRows === 0 ||
-									noOfSelectedRows === currentEvent.event?.maxParticipants;
+									(!!currentEvent.event?.maxParticipants &&
+										noOfSelectedRows + participantsToBeFiltered.length >
+											currentEvent.event?.maxParticipants);
 
 						return (
 							<ModalFooter className='col-span-2 pt-4'>
