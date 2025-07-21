@@ -169,7 +169,7 @@ export default function UserFormModal({
 							<CheckboxField name='canLogin' label='Should allow login?' />
 						)}
 						{!user &&
-							(form.watch('canLogin') ?? form.watch('role') === 'admin') && (
+							(form.watch('role') === 'admin' || form.watch('canLogin')) && (
 								<InputField name='password' label='Password' type='password' />
 							)}
 					</ModalBody>
