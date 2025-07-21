@@ -66,7 +66,7 @@ export default function EventView() {
 		: subEvent.participants;
 
 	return (
-		<div className='flex flex-col py-4'>
+		<div className='flex flex-col py-4 flex-1'>
 			<div className='flex px-4 justify-between items-center'>
 				<div className='flex gap-4 items-end flex-wrap'>
 					<H3>

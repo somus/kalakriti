@@ -11,7 +11,6 @@ import {
 	TableHeader,
 	TableRow
 } from '@/components/ui/table';
-import { useIsMobile } from '@/hooks/use-mobile';
 import useTableState from '@/hooks/useTableState';
 import { cn } from '@/lib/utils';
 import {
@@ -54,7 +53,6 @@ export default function DataTableWrapper<
 	additionalActions,
 	children,
 	className,
-	tableContainerClassName,
 	enableRowSelection = false,
 	columnsToHide = []
 }: {
@@ -68,7 +66,6 @@ export default function DataTableWrapper<
 	additionalActions?: React.ReactNode[];
 	children?: (table: TanstackTable<TData>) => React.ReactNode;
 	className?: string;
-	tableContainerClassName?: string;
 	enableRowSelection?: boolean;
 	columnsToHide?: string[];
 }) {
@@ -128,8 +125,6 @@ export default function DataTableWrapper<
 
 	const tstFilters = useMemo(() => createTSTFilters(filters), [filters]);
 
-	const isMobile = useIsMobile();
-
 	const table = useReactTable({
 		data: memoData,
 		columns: tstColumns,
@@ -165,7 +160,9 @@ export default function DataTableWrapper<
 
 	return (
 		<>
-			<div className={cn('w-full col-span-2 px-4', className)}>
+			<div
+				className={cn('w-full col-span-2 px-4 flex flex-col flex-1', className)}
+			>
 				<div className='flex items-center py-4 gap-2 flex-wrap'>
 					<DataTableFilter
 						filters={filters}
@@ -176,13 +173,8 @@ export default function DataTableWrapper<
 					<DataTableViewOptions table={table} />
 					{additionalActions}
 				</div>
-				<div className='rounded-md border bg-white dark:bg-inherit'>
-					<Table
-						containerClassName={cn(
-							!isMobile ? 'overflow-auto h-[calc(100dvh-206px)]' : '',
-							tableContainerClassName
-						)}
-					>
+				<div className='rounded-md border bg-white dark:bg-inherit flex-[1_1_0] overflow-auto'>
+					<Table containerClassName='overflow-x-visible'>
 						<TableHeader className='sticky top-0 bg-muted shadow'>
 							{table.getHeaderGroups().map(headerGroup => (
 								<TableRow key={headerGroup.id}>

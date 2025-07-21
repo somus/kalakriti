@@ -126,6 +126,7 @@ export default function EventCategoryFormModal({
 				<FormLayout<EventCategoryFormData>
 					form={form}
 					onSubmit={form.handleSubmit(handleFormSubmit)}
+					className='flex flex-col flex-1'
 				>
 					<ModalBody className='space-y-4'>
 						<InputField name='name' label='Name' />

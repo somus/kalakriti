@@ -10,7 +10,6 @@ import {
 	ModalTrigger
 } from '@/components/ui/credenza';
 import { H3 } from '@/components/ui/typography';
-import { useIsMobile } from '@/hooks/use-mobile';
 import useZero from '@/hooks/useZero';
 import LoadingScreen from '@/views/general/LoadingScreen';
 import { createId } from '@paralleldrive/cuid2';
@@ -104,8 +103,6 @@ export default function AddEventParticipantsDialog({
 		[zero, currentEvent.id, isGroupEvent]
 	);
 
-	const isMobile = useIsMobile();
-
 	if (status.type !== 'complete') {
 		return <LoadingScreen />;
 	}
@@ -150,9 +147,6 @@ export default function AddEventParticipantsDialog({
 					columns={columns}
 					columnsConfig={columnsConfig}
 					disabledRows={participantsToDisable}
-					tableContainerClassName={
-						isMobile ? undefined : 'h-[calc(100dvh-242px)]'
-					}
 				>
 					{table => {
 						const noOfSelectedRows = table.getSelectedRowModel().rows.length;

@@ -1,5 +1,6 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Form } from '@/components/ui/form';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { AlertCircle } from 'lucide-react';
 import { ReactNode } from 'react';
@@ -23,19 +24,22 @@ export function FormLayout<T extends FieldValues>({
 		// Call the provided onSubmit but don't return its result
 		void onSubmit(e);
 	};
+	const isMobile = useIsMobile();
 
 	return (
 		<FormProvider {...form}>
 			<Form {...form}>
 				{form.formState.errors.root?.submissionError && (
-					<Alert variant='destructive'>
-						<AlertCircle className='h-4 w-4' />
-						{form.formState.errors.root.submissionError.type ===
-							'submitError' && <AlertTitle>Submission Error</AlertTitle>}
-						<AlertDescription>
-							{form.formState.errors.root.submissionError.message}
-						</AlertDescription>
-					</Alert>
+					<div className={`px-4 ${isMobile ? 'pb-4' : ''}`}>
+						<Alert variant='destructive'>
+							<AlertCircle className='h-4 w-4' />
+							{form.formState.errors.root.submissionError.type ===
+								'submitError' && <AlertTitle>Submission Error</AlertTitle>}
+							<AlertDescription>
+								{form.formState.errors.root.submissionError.message}
+							</AlertDescription>
+						</Alert>
+					</div>
 				)}
 				<form
 					onSubmit={handleSubmit}

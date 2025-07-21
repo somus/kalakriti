@@ -119,7 +119,10 @@ const CredenzaHeader = ({ className, children, ...props }: CredenzaProps) => {
 	const CredenzaHeader = isDesktop ? SheetHeader : DrawerHeader;
 
 	return (
-		<CredenzaHeader className={className} {...props}>
+		<CredenzaHeader
+			className={cn(isDesktop ? 'border-b' : '', className)}
+			{...props}
+		>
 			{children}
 		</CredenzaHeader>
 	);
@@ -142,10 +145,7 @@ const CredenzaBody = ({ className, children, ...props }: CredenzaProps) => {
 	if (isDesktop) {
 		return (
 			<div
-				className={cn(
-					'px-4 mb-4 h-[calc(100dvh-150px)] overflow-y-auto',
-					className
-				)}
+				className={cn('px-4 mb-4 flex-[1_1_0] overflow-y-auto', className)}
 				{...props}
 			>
 				{children}
