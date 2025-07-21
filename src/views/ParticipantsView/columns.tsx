@@ -7,10 +7,16 @@ import {
 	DropDrawerItem,
 	DropDrawerTrigger
 } from '@/components/ui/dropdrawer';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger
+} from '@/components/ui/tooltip';
 import useZero from '@/hooks/useZero';
 import { CenterOutletContext } from '@/layout/CenterLayout';
 import { Row, createColumnHelper } from '@tanstack/react-table';
-import { Ellipsis } from 'lucide-react';
+import { formatDate } from 'date-fns';
+import { Calendar1Icon, Ellipsis } from 'lucide-react';
 import { useState } from 'react';
 import { useOutletContext } from 'react-router';
 import { toast } from 'sonner';
@@ -37,7 +43,19 @@ export const columns = [
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Age' />
 		),
-		cell: ({ row }) => <div>{row.getValue('age')}</div>,
+		cell: ({ row }) => (
+			<div className='flex gap-2 items-center'>
+				{row.getValue('age')}
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Calendar1Icon className='size-4' />
+					</TooltipTrigger>
+					<TooltipContent>
+						({formatDate(row.original.dob, 'dd LLL yyyy')})
+					</TooltipContent>
+				</Tooltip>
+			</div>
+		),
 		meta: {
 			displayName: 'Age'
 		}

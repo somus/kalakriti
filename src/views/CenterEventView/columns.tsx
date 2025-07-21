@@ -1,11 +1,17 @@
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger
+} from '@/components/ui/tooltip';
 import { useApp } from '@/hooks/useApp';
 import useZero from '@/hooks/useZero';
 import { CenterOutletContext } from '@/layout/CenterLayout';
 import { Row, createColumnHelper } from '@tanstack/react-table';
-import { CheckIcon, TrashIcon, XIcon } from 'lucide-react';
+import { formatDate } from 'date-fns';
+import { Calendar1Icon, CheckIcon, TrashIcon, XIcon } from 'lucide-react';
 import { useOutletContext } from 'react-router';
 import { toast } from 'sonner';
 
@@ -37,7 +43,24 @@ export const columns = [
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Age' />
 		),
-		cell: ({ row }) => <div>{row.getValue('age')}</div>,
+		cell: ({ row }) => (
+			<div className='flex gap-2 items-center'>
+				{row.getValue('age')}
+				{!!row.getValue('age') && (
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<Calendar1Icon className='size-4' />
+						</TooltipTrigger>
+						<TooltipContent>
+							(
+							{row.original.participant?.dob &&
+								formatDate(row.original.participant?.dob, 'dd LLL yyyy')}
+							)
+						</TooltipContent>
+					</Tooltip>
+				)}
+			</div>
+		),
 		meta: {
 			displayName: 'Age'
 		}

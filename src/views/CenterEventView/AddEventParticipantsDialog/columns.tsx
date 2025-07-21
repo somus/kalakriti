@@ -6,6 +6,8 @@ import {
 	TooltipTrigger
 } from '@/components/ui/tooltip';
 import { createColumnHelper } from '@tanstack/react-table';
+import { formatDate } from 'date-fns';
+import { Calendar1Icon } from 'lucide-react';
 import { Participant } from 'shared/db/schema.zero';
 
 const columnHelper = createColumnHelper<Participant>();
@@ -75,7 +77,19 @@ export const columns = [
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title='Age' />
 		),
-		cell: ({ row }) => <div>{row.getValue('age')}</div>,
+		cell: ({ row }) => (
+			<div className='flex gap-2 items-center'>
+				{row.getValue('age')}
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Calendar1Icon className='size-4' />
+					</TooltipTrigger>
+					<TooltipContent>
+						({formatDate(row.original.dob, 'dd LLL yyyy')})
+					</TooltipContent>
+				</Tooltip>
+			</div>
+		),
 		meta: {
 			displayName: 'Age'
 		}
