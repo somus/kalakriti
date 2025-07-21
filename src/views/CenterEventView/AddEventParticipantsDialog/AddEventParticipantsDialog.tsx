@@ -163,7 +163,8 @@ export default function AddEventParticipantsDialog({
 							currentEvent.event?.minGroupSize
 								? noOfSelectedRows > currentEvent.event?.maxGroupSize ||
 									noOfSelectedRows < currentEvent.event?.minGroupSize
-								: noOfSelectedRows === 0;
+								: noOfSelectedRows === 0 ||
+									noOfSelectedRows === currentEvent.event?.maxParticipants;
 
 						return (
 							<ModalFooter className='col-span-2 pt-4'>
