@@ -203,7 +203,7 @@ export function getColumnOptions<TData, TType extends ColumnDataType, TVal>(
 
 	const filtered = data
 		// @ts-expect-error
-		.flatMap(d => ('subRows' in d ? (d.subRows as TData[]) : []))
+		.flatMap(d => ('subRows' in d ? (d.subRows as TData[]) : d))
 		.flatMap(column.accessor)
 		.filter((v): v is NonNullable<TVal> => v !== undefined && v !== null);
 
@@ -248,7 +248,7 @@ export function getColumnValues<TData, TType extends ColumnDataType, TVal>(
 		deps =>
 			deps[0]
 				// @ts-expect-error
-				.flatMap(d => ('subRows' in d ? (d.subRows as TData[]) : []))
+				.flatMap(d => ('subRows' in d ? (d.subRows as TData[]) : d))
 				.flatMap(column.accessor)
 				.filter(
 					(v): v is NonNullable<TVal> => v !== undefined && v !== null
@@ -347,7 +347,7 @@ export function getFacetedMinMaxValues<
 
 	const values = data
 		// @ts-expect-error
-		.flatMap(d => ('subRows' in d ? (d.subRows as TData[]) : []))
+		.flatMap(d => ('subRows' in d ? (d.subRows as TData[]) : d))
 		.flatMap(row => column.accessor(row) as Nullable<number>)
 		.filter((v): v is number => typeof v === 'number' && !Number.isNaN(v));
 
