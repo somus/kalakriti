@@ -29,7 +29,10 @@ export function createParticipantMutators(authData: AuthData | undefined) {
 			if (!participantCategory) {
 				throw new Error('Participant category not found');
 			}
-			const participants = await tx.query.participants;
+			const participants = await tx.query.participants.where(
+				'centerId',
+				data.centerId
+			);
 			const exisitngParticipantsInCategory = participants.filter(
 				p =>
 					p.gender === data.gender &&
