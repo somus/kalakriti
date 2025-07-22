@@ -28,6 +28,7 @@ export default function CentersView() {
 			data={centers as Center[]}
 			columns={columns}
 			columnsConfig={columnsConfig}
+			getRowLink={row => `/centers/${row.original.id}`}
 			additionalActions={[
 				<CenterFormDialog key='create-center'>
 					<Button className='h-7'>Create Center</Button>

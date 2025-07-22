@@ -1,34 +1,13 @@
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { createColumnHelper } from '@tanstack/react-table';
 import { format } from 'date-fns';
-import { LinkIcon } from 'lucide-react';
-import { Link } from 'react-router';
 
 import { CenterEventRow } from './CenterEventsView';
 
 const columnHelper = createColumnHelper<CenterEventRow>();
 
 export const columns = [
-	columnHelper.display({
-		id: 'select',
-		header: () => null,
-		cell: ({ row }) => (
-			<Button
-				aria-label='View event'
-				variant='ghost'
-				className='flex size-8 p-0 data-[state=open]:bg-muted'
-				asChild
-			>
-				<Link to={row.original.id}>
-					<LinkIcon className='size-4' />
-				</Link>
-			</Button>
-		),
-		enableSorting: false,
-		enableHiding: false
-	}),
 	columnHelper.accessor(
 		row => `${row.event.name} - ${row.subEvent.participantCategory?.name}`,
 		{

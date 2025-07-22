@@ -10,9 +10,8 @@ import {
 import useZero from '@/hooks/useZero';
 import { Center } from '@/layout/CenterLayout';
 import { Row, createColumnHelper } from '@tanstack/react-table';
-import { Ellipsis, LinkIcon, LockIcon, LockOpenIcon } from 'lucide-react';
+import { Ellipsis, LockIcon, LockOpenIcon } from 'lucide-react';
 import { useState } from 'react';
-import { Link } from 'react-router';
 import { toast } from 'sonner';
 
 import CenterFormDialog from './CenterFormDialog';
@@ -20,24 +19,6 @@ import CenterFormDialog from './CenterFormDialog';
 const columnHelper = createColumnHelper<Center>();
 
 export const columns = [
-	columnHelper.display({
-		id: 'select',
-		header: () => null,
-		cell: ({ row }) => (
-			<Button
-				aria-label='View center'
-				variant='ghost'
-				className='flex size-8 p-0 data-[state=open]:bg-muted'
-				asChild
-			>
-				<Link to={`/centers/${row.original.id}`}>
-					<LinkIcon className='size-4' />
-				</Link>
-			</Button>
-		),
-		enableSorting: false,
-		enableHiding: false
-	}),
 	columnHelper.accessor(row => row.name, {
 		id: 'name',
 		header: ({ column }) => (
@@ -143,7 +124,8 @@ const Actions = ({ center }: { center: Center }) => {
 				<Button
 					aria-label='Open menu'
 					variant='ghost'
-					className='flex size-8 p-0 data-[state=open]:bg-muted'
+					className='flex p-0 data-[state=open]:bg-muted size-6'
+					onClick={e => e.stopPropagation()}
 				>
 					<Ellipsis className='size-4' aria-hidden='true' />
 				</Button>

@@ -15,6 +15,7 @@ import useTableState from '@/hooks/useTableState';
 import { cn } from '@/lib/utils';
 import {
 	type ColumnDef,
+	Row,
 	RowData,
 	type Table as TanstackTable,
 	flexRender,
@@ -29,6 +30,7 @@ import {
 } from '@tanstack/react-table';
 import { CornerDownRightIcon } from 'lucide-react';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router';
 
 import { ColumnConfig } from './data-table-filter/core/types';
 import { DataTableFilter } from './data-table-filter/index';
@@ -54,7 +56,8 @@ export default function DataTableWrapper<
 	children,
 	className,
 	enableRowSelection = false,
-	columnsToHide = []
+	columnsToHide = [],
+	getRowLink
 }: {
 	data: TData[];
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,6 +71,7 @@ export default function DataTableWrapper<
 	className?: string;
 	enableRowSelection?: boolean;
 	columnsToHide?: string[];
+	getRowLink?: (row: Row<TData>) => string;
 }) {
 	'use no memo';
 
@@ -157,6 +161,7 @@ export default function DataTableWrapper<
 			expanded: true
 		}
 	});
+	const navigate = useNavigate();
 
 	return (
 		<>
@@ -202,6 +207,20 @@ export default function DataTableWrapper<
 									<TableRow
 										key={row.id}
 										data-state={row.getIsSelected() && 'selected'}
+										className={`h-[41px] ${getRowLink ? 'cursor-pointer' : ''}`}
+										onClick={event => {
+											if (getRowLink) {
+												const link = getRowLink(row);
+												if (event.metaKey || event.ctrlKey) {
+													const win = window.open(link, '_blank');
+													win?.focus();
+												} else {
+													navigate(link)?.catch(() => {
+														console.error('Failed to navigate');
+													});
+												}
+											}
+										}}
 									>
 										{row.getVisibleCells().map((cell, key) => (
 											<TableCell key={cell.id}>

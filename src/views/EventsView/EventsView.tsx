@@ -57,6 +57,7 @@ export default function EventsView() {
 				'minGroupSize',
 				'maxGroupSize'
 			]}
+			getRowLink={row => `/events/${row.original.id}`}
 			additionalActions={[
 				<EventFormDialog key='create-event'>
 					<Button className='h-7'>Create Event</Button>

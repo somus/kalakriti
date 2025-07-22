@@ -155,7 +155,7 @@ const Actions = ({ participant }: { participant: Participant }) => {
 				<Button
 					aria-label='Open menu'
 					variant='ghost'
-					className='flex size-8 p-0 data-[state=open]:bg-muted'
+					className='flex size-6 p-0 data-[state=open]:bg-muted'
 				>
 					<Ellipsis className='size-4' aria-hidden='true' />
 				</Button>

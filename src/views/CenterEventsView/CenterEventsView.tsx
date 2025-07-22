@@ -2,6 +2,7 @@ import DataTableWrapper from '@/components/data-table-wrapper';
 import useZero, { Zero } from '@/hooks/useZero';
 import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
+import { useLocation } from 'react-router';
 
 import { SubEvent } from '../CenterEventView/CenterEventView';
 import { columns } from './columns';
@@ -30,6 +31,8 @@ export default function CenterEventsView() {
 	const zero = useZero();
 	const [events, status] = useQuery(centerEventsQuery(zero));
 
+	const { pathname } = useLocation();
+
 	if (status.type !== 'complete') {
 		return null;
 	}
@@ -47,6 +50,7 @@ export default function CenterEventsView() {
 			data={eventRows as CenterEventRow[]}
 			columns={columns}
 			columnsConfig={columnsConfig}
+			getRowLink={row => `${pathname}/${row.original.id}`}
 		/>
 	);
 }

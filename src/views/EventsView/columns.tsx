@@ -10,9 +10,8 @@ import {
 import useZero from '@/hooks/useZero';
 import { Row, createColumnHelper } from '@tanstack/react-table';
 import { format } from 'date-fns';
-import { Ellipsis, LinkIcon } from 'lucide-react';
+import { Ellipsis } from 'lucide-react';
 import { useState } from 'react';
-import { Link } from 'react-router';
 import { toast } from 'sonner';
 
 import EventFormDialog from './EventFormDialog';
@@ -21,24 +20,6 @@ import { Event, EventRow } from './EventsView';
 const columnHelper = createColumnHelper<EventRow>();
 
 export const columns = [
-	columnHelper.display({
-		id: 'select',
-		header: () => null,
-		cell: ({ row }) => (
-			<Button
-				aria-label='View event'
-				variant='ghost'
-				className='flex size-8 p-0 data-[state=open]:bg-muted'
-				asChild
-			>
-				<Link to={`/events/${row.original.id}`}>
-					<LinkIcon className='size-4' />
-				</Link>
-			</Button>
-		),
-		enableSorting: false,
-		enableHiding: false
-	}),
 	columnHelper.accessor(
 		row => `${row.event.name} - ${row.subEvent.participantCategory?.name}`,
 		{
@@ -248,7 +229,8 @@ const Actions = ({ eventRow }: { eventRow: EventRow }) => {
 				<Button
 					aria-label='Open menu'
 					variant='ghost'
-					className='flex size-8 p-0 data-[state=open]:bg-muted'
+					className='flex size-6 p-0 data-[state=open]:bg-muted'
+					onClick={e => e.stopPropagation()}
 				>
 					<Ellipsis className='size-4' aria-hidden='true' />
 				</Button>
