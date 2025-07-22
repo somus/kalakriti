@@ -121,13 +121,13 @@ export default function ParticipantFormModal({
 					dob: data.dob.getTime(),
 					gender: data.gender,
 					centerId: data.center ?? defaultCenter
-				}).server;
+				}).client;
 			} else {
 				// Update participant
 				await zero.mutate.participants.update({
 					id: participant.id,
 					name: data.name
-				}).server;
+				}).client;
 			}
 
 			// Close dialog on success

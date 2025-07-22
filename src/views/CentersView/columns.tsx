@@ -78,6 +78,13 @@ export const columns = [
 		},
 		enableSorting: false
 	}),
+	columnHelper.accessor(row => row.participants.length, {
+		id: 'participants',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Participants' />
+		),
+		cell: ({ row }) => <div>{row.getValue('participants')}</div>
+	}),
 	columnHelper.accessor(row => (row.isLocked ?? false).toString(), {
 		id: 'isLocked',
 		header: ({ column }) => (
@@ -99,7 +106,7 @@ export const columns = [
 	columnHelper.accessor(row => (row.enableEventMapping ?? false).toString(), {
 		id: 'enableEventMapping',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Enable Event Mapping' />
+			<DataTableColumnHeader column={column} title='Event Mapping Enabled?' />
 		),
 		cell: ({ row }) => (
 			<div className='capitalize'>
@@ -111,7 +118,7 @@ export const columns = [
 			</div>
 		),
 		meta: {
-			displayName: 'Enable Event Mapping'
+			displayName: 'Event Mapping Enabled?'
 		}
 	}),
 	{
@@ -151,7 +158,7 @@ const Actions = ({ center }: { center: Center }) => {
 								id: center.id,
 								isLocked: !center.isLocked
 							})
-							.server.catch((e: Error) => {
+							.client.catch((e: Error) => {
 								toast.error(
 									`Error ${center.isLocked ? 'unlocking' : 'locking'} center`,
 									{
@@ -170,7 +177,7 @@ const Actions = ({ center }: { center: Center }) => {
 								id: center.id,
 								enableEventMapping: !center.enableEventMapping
 							})
-							.server.catch((e: Error) => {
+							.client.catch((e: Error) => {
 								toast.error(
 									`Error ${center.enableEventMapping ? 'disabling' : 'enabling'} event mapping`,
 									{
@@ -189,7 +196,7 @@ const Actions = ({ center }: { center: Center }) => {
 							.delete({
 								id: center.id
 							})
-							.server.catch((e: Error) => {
+							.client.catch((e: Error) => {
 								toast.error('Error deleting center', {
 									description: e.message || 'Something went wrong'
 								});

@@ -1,6 +1,6 @@
 import { createColumnConfigHelper } from '@/components/data-table-filter/core/filters';
 import { Center } from '@/layout/CenterLayout';
-import { Heading1Icon, ShieldUserIcon } from 'lucide-react';
+import { HashIcon, Heading1Icon, ShieldUserIcon } from 'lucide-react';
 
 const dtf = createColumnConfigHelper<Center>();
 
@@ -11,6 +11,13 @@ export const columnsConfig = [
 		.accessor(row => row.name)
 		.displayName('Name')
 		.icon(Heading1Icon)
+		.build(),
+	dtf
+		.number()
+		.id('participants')
+		.accessor(row => row.participants.length)
+		.displayName('Participants')
+		.icon(HashIcon)
 		.build(),
 	dtf
 		.multiOption()

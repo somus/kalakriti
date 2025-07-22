@@ -79,14 +79,14 @@ export default function EventCategoryFormModal({
 		try {
 			if (!eventCategory) {
 				// Create the eventCategory in db
-				await zero.mutate.eventCategories.create(data).server;
+				await zero.mutate.eventCategories.create(data).client;
 			} else {
 				// Update eventCategory
 				await zero.mutate.eventCategories.update({
 					id: eventCategory.id,
 					name: data.name,
 					coordinatorId: data.coordinatorId
-				}).server;
+				}).client;
 			}
 
 			// Close dialog on success

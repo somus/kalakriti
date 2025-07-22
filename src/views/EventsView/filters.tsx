@@ -124,7 +124,7 @@ export const columnsConfig = [
 	dtf
 		.number()
 		.id('participants')
-		.accessor(row => row.subEvent.participants)
+		.accessor(row => row.subEvent.participants.length)
 		.displayName('Participants')
 		.icon(HashIcon)
 		.build(),

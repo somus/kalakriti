@@ -291,11 +291,11 @@ export default function EventFormModal({
 			};
 			if (!event) {
 				// Create the event in db
-				await zero.mutate.events.create(mutationData).server;
+				await zero.mutate.events.create(mutationData).client;
 			} else {
 				// Update event
 				await zero.mutate.events.update({ id: event.id, ...mutationData })
-					.server;
+					.client;
 			}
 
 			// Close dialog on success

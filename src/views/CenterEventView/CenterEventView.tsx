@@ -25,7 +25,9 @@ function subEventQuery(z: Zero, eventId: string) {
 	return z.query.subEvents
 		.where('id', eventId)
 		.related('participants', q =>
-			q.related('participant', q => q.related('center'))
+			q
+				.related('participant', q => q.related('center'))
+				.orderBy('createdAt', 'desc')
 		)
 		.related('participantCategory')
 		.related('event', q => q.related('category').related('subEvents'))

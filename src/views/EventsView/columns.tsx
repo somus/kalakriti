@@ -246,7 +246,7 @@ const Actions = ({ eventRow }: { eventRow: EventRow }) => {
 							.delete({
 								id: eventRow.subEvent.id
 							})
-							.server.catch((e: Error) => {
+							.client.catch((e: Error) => {
 								toast.error('Error deleting event', {
 									description: e.message || 'Something went wrong'
 								});

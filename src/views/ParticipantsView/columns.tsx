@@ -175,7 +175,7 @@ const Actions = ({ participant }: { participant: Participant }) => {
 							.delete({
 								id: participant.id
 							})
-							.server.catch((e: Error) => {
+							.client.catch((e: Error) => {
 								toast.error('Error deleting participant', {
 									description: e.message || 'Something went wrong'
 								});

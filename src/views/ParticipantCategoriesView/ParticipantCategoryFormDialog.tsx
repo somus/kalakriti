@@ -82,13 +82,13 @@ export default function ParticipantCategoryFormModal({
 		try {
 			if (!participantCategory) {
 				// Create the participantCategory in db
-				await zero.mutate.participantCategories.create(data).server;
+				await zero.mutate.participantCategories.create(data).client;
 			} else {
 				// Update participantCategory
 				await zero.mutate.participantCategories.update({
 					id: participantCategory.id,
 					...data
-				}).server;
+				}).client;
 			}
 
 			// Close dialog on success

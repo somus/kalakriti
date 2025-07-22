@@ -159,7 +159,7 @@ const Actions = ({
 				if (groupId) {
 					z.mutate.subEventParticipants
 						.deleteByGroupId({ groupId })
-						.server.catch((e: Error) => {
+						.client.catch((e: Error) => {
 							toast.error('Error deleting participant group from event', {
 								description: e.message || 'Something went wrong'
 							});
@@ -169,7 +169,7 @@ const Actions = ({
 						.delete({
 							id: participantId
 						})
-						.server.catch((e: Error) => {
+						.client.catch((e: Error) => {
 							toast.error('Error deleting participant from event', {
 								description: e.message || 'Something went wrong'
 							});

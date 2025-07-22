@@ -93,10 +93,10 @@ export default function CenterFormModal({
 		try {
 			if (!center) {
 				// Create the center in db
-				await zero.mutate.centers.create(data).server;
+				await zero.mutate.centers.create(data).client;
 			} else {
 				// Update center
-				await zero.mutate.centers.update({ id: center.id, ...data }).server;
+				await zero.mutate.centers.update({ id: center.id, ...data }).client;
 			}
 
 			// Close dialog on success

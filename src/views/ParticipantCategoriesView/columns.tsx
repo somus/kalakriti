@@ -107,7 +107,7 @@ const Actions = ({
 							.delete({
 								id: participantCategory.id
 							})
-							.server.catch((e: Error) => {
+							.client.catch((e: Error) => {
 								toast.error('Error deleting participant category', {
 									description: e.message || 'Something went wrong'
 								});
