@@ -257,11 +257,13 @@ const Actions = ({ eventRow }: { eventRow: EventRow }) => {
 				</DropDrawerItem>
 			</DropDrawerContent>
 			{isDialogOpen && (
-				<EventFormDialog
-					event={eventRow.event}
-					open={isDialogOpen}
-					onOpenChange={setIsDialogOpen}
-				/>
+				<div onClick={e => e.stopPropagation()}>
+					<EventFormDialog
+						event={eventRow.event}
+						open={isDialogOpen}
+						onOpenChange={setIsDialogOpen}
+					/>
+				</div>
 			)}
 		</DropDrawer>
 	);

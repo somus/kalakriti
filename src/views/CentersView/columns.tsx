@@ -214,11 +214,13 @@ const Actions = ({ center }: { center: Center }) => {
 				</DropDrawerItem>
 			</DropDrawerContent>
 			{isDialogOpen && (
-				<CenterFormDialog
-					center={center}
-					open={isDialogOpen}
-					onOpenChange={setIsDialogOpen}
-				/>
+				<div onClick={e => e.stopPropagation()}>
+					<CenterFormDialog
+						center={center}
+						open={isDialogOpen}
+						onOpenChange={setIsDialogOpen}
+					/>
+				</div>
 			)}
 		</DropDrawer>
 	);
