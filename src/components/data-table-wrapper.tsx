@@ -55,6 +55,7 @@ export default function DataTableWrapper<
 	additionalActions,
 	children,
 	className,
+	containerClassName,
 	enableRowSelection = false,
 	columnsToHide = [],
 	getRowLink
@@ -69,6 +70,7 @@ export default function DataTableWrapper<
 	additionalActions?: React.ReactNode[];
 	children?: (table: TanstackTable<TData>) => React.ReactNode;
 	className?: string;
+	containerClassName?: string;
 	enableRowSelection?: boolean;
 	columnsToHide?: string[];
 	getRowLink?: (row: Row<TData>) => string;
@@ -178,7 +180,12 @@ export default function DataTableWrapper<
 					<DataTableViewOptions table={table} />
 					{additionalActions}
 				</div>
-				<div className='rounded-md border bg-white dark:bg-inherit flex-[1_1_0] overflow-auto'>
+				<div
+					className={cn(
+						'rounded-md border bg-white dark:bg-inherit flex-[1_1_0] overflow-auto',
+						containerClassName
+					)}
+				>
 					<Table containerClassName='overflow-x-visible'>
 						<TableHeader className='sticky top-0 bg-muted shadow'>
 							{table.getHeaderGroups().map(headerGroup => (

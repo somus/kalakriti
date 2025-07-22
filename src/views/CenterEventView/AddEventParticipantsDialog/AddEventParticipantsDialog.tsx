@@ -10,6 +10,7 @@ import {
 	ModalTrigger
 } from '@/components/ui/credenza';
 import { H3 } from '@/components/ui/typography';
+import { useIsMobile } from '@/hooks/use-mobile';
 import useZero from '@/hooks/useZero';
 import LoadingScreen from '@/views/general/LoadingScreen';
 import { createId } from '@paralleldrive/cuid2';
@@ -119,7 +120,7 @@ export default function AddEventParticipantsDialog({
 					participantIds: selectedRows,
 					subEventId: currentEvent.id,
 					groupId: isGroupEvent ? createId() : undefined
-				}).server;
+				}).client;
 			} catch (e) {
 				toast.error('Error adding participants', {
 					description: e instanceof Error ? e.message : 'Something went wrong'
@@ -130,6 +131,7 @@ export default function AddEventParticipantsDialog({
 		},
 		[zero, currentEvent.id, isGroupEvent]
 	);
+	const isMobile = useIsMobile();
 
 	if (status.type !== 'complete') {
 		return <LoadingScreen />;
@@ -142,7 +144,7 @@ export default function AddEventParticipantsDialog({
 				className='overflow-auto sm:max-w-[425px] md:max-w-[600px] xl:max-w-[900px] 2xl:max-w-[1200px] gap-0'
 				aria-describedby={undefined}
 			>
-				<ModalHeader className='pb-0'>
+				<ModalHeader className={isMobile ? 'pb-0' : ''}>
 					<ModalTitle>
 						<div className='flex gap-2 items-end flex-wrap'>
 							<H3>
@@ -175,6 +177,7 @@ export default function AddEventParticipantsDialog({
 					columns={columns}
 					columnsConfig={columnsConfig}
 					disabledRows={participantsToDisable}
+					containerClassName={isMobile ? 'flex-none' : ''}
 				>
 					{table => {
 						const noOfSelectedRows = table.getSelectedRowModel().rows.length;
