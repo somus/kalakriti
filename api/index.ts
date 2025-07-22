@@ -32,6 +32,7 @@ app.use('*', clerkMiddleware());
 app.post('/push', async c => {
 	const auth = getAuth(c);
 	if (!auth?.userId) {
+		console.log(JSON.stringify(auth, null, 2));
 		return c.json({
 			message: 'You are not logged in.'
 		});
@@ -54,20 +55,6 @@ app.post('/push', async c => {
 	} catch (e) {
 		return Error.isError(e) ? c.json(e) : c.json({ message: e });
 	}
-});
-
-app.get('/', c => {
-	const auth = getAuth(c);
-	if (!auth?.userId) {
-		return c.json({
-			message: 'You are not logged in.'
-		});
-	}
-
-	return c.json({
-		message: 'You are logged in!',
-		userId: auth.userId
-	});
 });
 
 export default {
