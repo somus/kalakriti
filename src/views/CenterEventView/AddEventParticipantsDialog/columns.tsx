@@ -10,7 +10,9 @@ import { formatDate } from 'date-fns';
 import { Calendar1Icon } from 'lucide-react';
 import { Participant } from 'shared/db/schema.zero';
 
-const columnHelper = createColumnHelper<Participant>();
+const columnHelper = createColumnHelper<
+	Participant & { disableReason?: string }
+>();
 
 export const columns = [
 	columnHelper.display({
@@ -45,16 +47,21 @@ export const columns = [
 						</span>
 					</TooltipTrigger>
 					<TooltipContent>
-						<div className='flex flex-col gap-2'>
-							<p>
-								Can&apos;t select this participant because of one of the reasons
-							</p>
-							<ul className='list-disc list-inside'>
-								<li>Participant have reached their total event limit</li>
-								<li>Participant have reached their category event limit</li>
-								<li>Participant have a time conflict with the current event</li>
-							</ul>
-						</div>
+						{row.original.disableReason ?? (
+							<div className='flex flex-col gap-2'>
+								<p>
+									Can&apos;t select this participant because of one of the
+									reasons
+								</p>
+								<ul className='list-disc list-inside'>
+									<li>Participant have reached their total event limit</li>
+									<li>Participant have reached their category event limit</li>
+									<li>
+										Participant have a time conflict with the current event
+									</li>
+								</ul>
+							</div>
+						)}
 					</TooltipContent>
 				</Tooltip>
 			),

@@ -59,25 +59,53 @@ export default function AddEventParticipantsDialog({
 		currentEvent.participantCategory?.totalEventsAllowed;
 	const maxEventsPerCategory =
 		currentEvent.participantCategory?.maxEventsPerCategory;
-	const participantsToDisable =
-		totalEventsAllowed && maxEventsPerCategory
-			? filteredParticipants
-					.filter(
-						participant =>
-							participant.subEvents.length >= totalEventsAllowed ||
-							participant.subEvents.filter(
-								e => e.subEvent?.event?.eventCategoryId === eventCategoryId
-							).length >= maxEventsPerCategory ||
-							participant.subEvents.some(
-								subEvent =>
-									subEvent?.subEvent?.startTime &&
-									subEvent?.subEvent?.endTime &&
-									currentEvent.startTime < subEvent.subEvent.endTime &&
-									currentEvent.endTime > subEvent.subEvent.startTime
-							)
-					)
-					.map(participant => participant.id)
-			: [];
+
+	let participantsData = filteredParticipants;
+	const participantsToDisable: string[] = [];
+
+	if (totalEventsAllowed && maxEventsPerCategory) {
+		participantsData = filteredParticipants.map(participant => {
+			if (participant.subEvents.length >= totalEventsAllowed) {
+				participantsToDisable.push(participant.id);
+				return {
+					...participant,
+					disableReason: 'Participant have reached their total event limit'
+				};
+			}
+
+			if (
+				participant.subEvents.filter(
+					e => e.subEvent?.event?.eventCategoryId === eventCategoryId
+				).length >= maxEventsPerCategory
+			) {
+				participantsToDisable.push(participant.id);
+				return {
+					...participant,
+					disableReason:
+						'Participant have reached their maximum event limit for this category'
+				};
+			}
+
+			if (
+				participant.subEvents.some(
+					subEvent =>
+						subEvent?.subEvent?.startTime &&
+						subEvent?.subEvent?.endTime &&
+						currentEvent.startTime < subEvent.subEvent.endTime &&
+						currentEvent.endTime > subEvent.subEvent.startTime
+				)
+			) {
+				participantsToDisable.push(participant.id);
+				return {
+					...participant,
+					disableReason:
+						'Participant have an overlapping event at the same time as this event'
+				};
+			}
+
+			return participant;
+		});
+	}
 
 	const [open, setOpen] = useState(false);
 	const handleAdd = useCallback(
@@ -143,7 +171,7 @@ export default function AddEventParticipantsDialog({
 					</ModalTitle>
 				</ModalHeader>
 				<DataTableWrapper
-					data={filteredParticipants as Participant[]}
+					data={participantsData as Participant[]}
 					columns={columns}
 					columnsConfig={columnsConfig}
 					disabledRows={participantsToDisable}
