@@ -150,7 +150,7 @@ export const columns = [
 			return (
 				<Dialog>
 					<DialogTrigger asChild>
-						<Button variant='ghost' size='icon'>
+						<Button variant='ghost' size='icon' className='size-6'>
 							<QrCodeIcon className='size-4' aria-hidden='true' />
 						</Button>
 					</DialogTrigger>
