@@ -139,25 +139,6 @@ export const schema = {
             "name"
           >,
         },
-        phoneNumber: {
-          type: "string",
-          optional: false,
-          customType: null as unknown as ZeroCustomType<
-            typeof zeroSchema,
-            "centers",
-            "phoneNumber"
-          >,
-          serverName: "phone_number",
-        },
-        email: {
-          type: "string",
-          optional: false,
-          customType: null as unknown as ZeroCustomType<
-            typeof zeroSchema,
-            "centers",
-            "email"
-          >,
-        },
         isLocked: {
           type: "boolean",
           optional: true,

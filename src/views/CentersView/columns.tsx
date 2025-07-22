@@ -32,20 +32,6 @@ export const columns = [
 		),
 		cell: ({ row }) => <div>{row.getValue('name')}</div>
 	}),
-	columnHelper.accessor(row => row.email, {
-		id: 'email',
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Email' />
-		),
-		cell: ({ row }) => <div>{row.getValue('email')}</div>
-	}),
-	columnHelper.accessor(row => row.phoneNumber, {
-		id: 'phoneNumber',
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Phone Number' />
-		),
-		cell: ({ row }) => <div>{row.getValue('phoneNumber')}</div>
-	}),
 	columnHelper.accessor(row => row.liaisons.map(liason => liason.user), {
 		id: 'liaisons',
 		header: ({ column }) => (

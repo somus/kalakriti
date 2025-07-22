@@ -169,6 +169,13 @@
       "when": 1753160848141,
       "tag": "0023_living_roulette",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1753208533547,
+      "tag": "0024_lush_bucky",
+      "breakpoints": true
     }
   ]
 }

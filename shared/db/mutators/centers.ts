@@ -7,8 +7,6 @@ import { AuthData, Schema } from '../schema.zero.ts';
 
 export interface CreateCenterArgs {
 	name: string;
-	phoneNumber: string;
-	email: string;
 	liaisons: string[];
 	guardians: string[];
 }

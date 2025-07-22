@@ -21,13 +21,6 @@ import * as z from 'zod';
 
 const centerSchema = z.object({
 	name: z.string({ error: 'Name is required' }),
-	phoneNumber: z
-		.string({ error: 'Phone number is required' })
-		.refine(
-			value => /^[6-9]\d{9}$/.test(value),
-			'Please enter a valid indian mobile number'
-		),
-	email: z.email({ error: 'Email is required' }),
 	liaisons: z
 		.array(z.string(), { error: 'Liaisons are required' })
 		.min(1, { error: 'Liaisons are required' }),
@@ -84,8 +77,6 @@ export default function CenterFormModal({
 
 		return {
 			name: center.name,
-			phoneNumber: center.phoneNumber ?? '',
-			email: center.email,
 			liaisons: center.liaisons.map(cl => cl.userId),
 			guardians: center.guardians.map(cg => cg.userId)
 		};
@@ -146,8 +137,6 @@ export default function CenterFormModal({
 				>
 					<ModalBody className='space-y-4'>
 						<InputField name='name' label='Name' />
-						<InputField name='phoneNumber' label='Phone Number' />
-						<InputField name='email' label='Email' type='email' />
 						<MultiSelectField
 							name='liaisons'
 							label='Liaisons'

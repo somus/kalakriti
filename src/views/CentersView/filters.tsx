@@ -1,11 +1,6 @@
 import { createColumnConfigHelper } from '@/components/data-table-filter/core/filters';
 import { Center } from '@/layout/CenterLayout';
-import {
-	Heading1Icon,
-	MailIcon,
-	PhoneIcon,
-	ShieldUserIcon
-} from 'lucide-react';
+import { Heading1Icon, ShieldUserIcon } from 'lucide-react';
 
 const dtf = createColumnConfigHelper<Center>();
 
@@ -16,20 +11,6 @@ export const columnsConfig = [
 		.accessor(row => row.name)
 		.displayName('Name')
 		.icon(Heading1Icon)
-		.build(),
-	dtf
-		.text()
-		.id('email')
-		.accessor(row => row.email)
-		.displayName('Email')
-		.icon(MailIcon)
-		.build(),
-	dtf
-		.text()
-		.id('phoneNumber')
-		.accessor(row => row.phoneNumber)
-		.displayName('Phone Number')
-		.icon(PhoneIcon)
 		.build(),
 	dtf
 		.multiOption()

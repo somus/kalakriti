@@ -189,8 +189,6 @@ export const subEventsRelations = relations(subEvents, ({ one, many }) => ({
 export const centers = pgTable('centers', {
 	id: varchar('id').primaryKey(),
 	name: varchar('name').notNull(),
-	phoneNumber: varchar('phone_number').notNull(),
-	email: varchar('email').notNull(),
 	isLocked: boolean('is_locked').notNull().default(false),
 	enableEventMapping: boolean('enable_event_mapping').notNull().default(false),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
