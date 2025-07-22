@@ -825,7 +825,7 @@ export const schema = {
         },
         phoneNumber: {
           type: "string",
-          optional: true,
+          optional: false,
           customType: null as unknown as ZeroCustomType<
             typeof zeroSchema,
             "users",
@@ -835,7 +835,7 @@ export const schema = {
         },
         email: {
           type: "string",
-          optional: false,
+          optional: true,
           customType: null as unknown as ZeroCustomType<
             typeof zeroSchema,
             "users",

@@ -23,8 +23,8 @@ export const users = pgTable('users', {
 	firstName: varchar('first_name').notNull(),
 	lastName: varchar('last_name'),
 	role: rolesEnum().default('volunteer').notNull(),
-	phoneNumber: varchar('phone_number'),
-	email: varchar('email').notNull(),
+	phoneNumber: varchar('phone_number').notNull(),
+	email: varchar('email'),
 	canLogin: boolean('can_login').default(false).notNull(),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at').defaultNow().notNull()

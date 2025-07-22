@@ -11,7 +11,8 @@ import { AuthData, Schema } from '../schema.zero.ts';
 export interface CreateUserArgs {
 	firstName: string;
 	lastName?: string;
-	email: string;
+	email?: string;
+	phoneNumber: string;
 	password?: string;
 	role: 'admin' | 'volunteer' | 'guardian';
 	canLogin: boolean;
@@ -34,6 +35,9 @@ export function createUserMutators(
 			} else {
 				if (!clerkClient) {
 					throw new Error('Clerk client is required');
+				}
+				if (!data.email) {
+					throw new Error('Email is required for login-enabled users');
 				}
 				let clerkUser: User | undefined;
 				try {

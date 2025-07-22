@@ -28,7 +28,7 @@ const userSchema = z
 	.object({
 		firstName: z.string({ error: 'Please enter a valid first name' }),
 		lastName: z.string().optional(),
-		email: z.email({ error: 'Please enter a valid email address' }),
+		email: z.email({ error: 'Please enter a valid email address' }).optional(),
 		password: z.string().optional(),
 		role: z.enum(rolesEnum.enumValues).default('volunteer').optional(),
 		canLogin: z.boolean().optional(),
@@ -38,21 +38,29 @@ const userSchema = z
 				value => /^[6-9]\d{9}$/.test(value),
 				'Please enter a valid indian mobile number'
 			)
-			.optional()
 	})
 	.check(ctx => {
 		if (
-			(ctx.value.canLogin === undefined
+			ctx.value.canLogin === undefined
 				? false
-				: ctx.value.canLogin || ctx.value.role === 'admin') &&
-			(!ctx.value.password || ctx.value.password.length < 10)
+				: ctx.value.canLogin || ctx.value.role === 'admin'
 		) {
-			ctx.issues.push({
-				code: 'custom',
-				message: 'Password must be at least 10 characters long',
-				path: ['password'],
-				input: ctx.value.password
-			});
+			if (!ctx.value.password || ctx.value.password.length < 10) {
+				ctx.issues.push({
+					code: 'custom',
+					message: 'Password must be at least 10 characters long',
+					path: ['password'],
+					input: ctx.value.password
+				});
+			}
+			if (!ctx.value.email) {
+				ctx.issues.push({
+					code: 'custom',
+					message: 'Email is required for login enabled users',
+					path: ['email'],
+					input: ctx.value.email
+				});
+			}
 		}
 	});
 
@@ -84,8 +92,8 @@ export default function UserFormModal({
 		return {
 			firstName: user.firstName,
 			lastName: user.lastName ?? undefined,
-			email: user.email,
-			phoneNumber: user.phoneNumber ?? undefined,
+			email: user.email ?? undefined,
+			phoneNumber: user.phoneNumber,
 			role: user.role ?? 'volunteer'
 		};
 	}, [user]);
@@ -167,7 +175,12 @@ export default function UserFormModal({
 					<ModalBody className='space-y-4'>
 						<InputField name='firstName' label='First Name' />
 						<InputField name='lastName' label='Last Name' />
-						<InputField name='email' label='Email' type='email' />
+						<InputField
+							name='email'
+							label='Email'
+							type='email'
+							disabled={!!user}
+						/>
 						<InputField name='phoneNumber' label='Phone Number' />
 						<SelectField name='role' label='Role' options={roleOptions} />
 						{!user && form.watch('role') !== 'admin' && (
