@@ -168,6 +168,16 @@ export const schema = {
           >,
           serverName: "is_locked",
         },
+        enableEventMapping: {
+          type: "boolean",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "centers",
+            "enableEventMapping"
+          >,
+          serverName: "enable_event_mapping",
+        },
         createdAt: {
           type: "number",
           optional: true,

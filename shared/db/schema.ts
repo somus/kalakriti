@@ -192,6 +192,7 @@ export const centers = pgTable('centers', {
 	phoneNumber: varchar('phone_number').notNull(),
 	email: varchar('email').notNull(),
 	isLocked: boolean('is_locked').notNull().default(false),
+	enableEventMapping: boolean('enable_event_mapping').notNull().default(false),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });

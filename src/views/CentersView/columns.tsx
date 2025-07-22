@@ -10,7 +10,13 @@ import {
 import useZero from '@/hooks/useZero';
 import { Center } from '@/layout/CenterLayout';
 import { Row, createColumnHelper } from '@tanstack/react-table';
-import { Ellipsis, LockIcon, LockOpenIcon } from 'lucide-react';
+import {
+	CheckIcon,
+	Ellipsis,
+	LockIcon,
+	LockOpenIcon,
+	XIcon
+} from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -104,6 +110,24 @@ export const columns = [
 			displayName: 'Locked'
 		}
 	}),
+	columnHelper.accessor(row => (row.enableEventMapping ?? false).toString(), {
+		id: 'enableEventMapping',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Enable Event Mapping' />
+		),
+		cell: ({ row }) => (
+			<div className='capitalize'>
+				{row.getValue('enableEventMapping') === 'true' ? (
+					<CheckIcon className='size-5 text-green-500' />
+				) : (
+					<XIcon className='size-5 text-destructive' />
+				)}
+			</div>
+		),
+		meta: {
+			displayName: 'Enable Event Mapping'
+		}
+	}),
 	{
 		id: 'actions',
 		cell: ({ row }: { row: Row<Center> }) => {
@@ -130,7 +154,7 @@ const Actions = ({ center }: { center: Center }) => {
 					<Ellipsis className='size-4' aria-hidden='true' />
 				</Button>
 			</DropDrawerTrigger>
-			<DropDrawerContent align='end'>
+			<DropDrawerContent align='end' onClick={e => e.stopPropagation()}>
 				<DropDrawerItem onSelect={() => setIsDialogOpen(true)}>
 					Edit
 				</DropDrawerItem>
@@ -152,6 +176,25 @@ const Actions = ({ center }: { center: Center }) => {
 					}}
 				>
 					{center.isLocked ? 'Unlock' : 'Lock'}
+				</DropDrawerItem>
+				<DropDrawerItem
+					onSelect={() => {
+						z.mutate.centers
+							.update({
+								id: center.id,
+								enableEventMapping: !center.enableEventMapping
+							})
+							.server.catch((e: Error) => {
+								toast.error(
+									`Error ${center.enableEventMapping ? 'disabling' : 'enabling'} event mapping`,
+									{
+										description: e.message || 'Something went wrong'
+									}
+								);
+							});
+					}}
+				>
+					{center.enableEventMapping ? 'Disable' : 'Enable'} Event Mapping
 				</DropDrawerItem>
 				<DropDrawerItem
 					variant='destructive'

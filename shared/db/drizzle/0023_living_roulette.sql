@@ -1,0 +1,1 @@
+ALTER TABLE "centers" ADD COLUMN "enable_event_mapping" boolean DEFAULT false NOT NULL;

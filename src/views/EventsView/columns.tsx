@@ -235,7 +235,7 @@ const Actions = ({ eventRow }: { eventRow: EventRow }) => {
 					<Ellipsis className='size-4' aria-hidden='true' />
 				</Button>
 			</DropDrawerTrigger>
-			<DropDrawerContent align='end'>
+			<DropDrawerContent align='end' onClick={e => e.stopPropagation()}>
 				<DropDrawerItem onSelect={() => setIsDialogOpen(true)}>
 					Edit
 				</DropDrawerItem>

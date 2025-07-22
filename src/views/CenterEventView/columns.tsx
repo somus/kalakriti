@@ -151,7 +151,10 @@ const Actions = ({
 			variant='ghost'
 			aria-label='Delete participant from event'
 			className='flex size-8 p-0 text-destructive hover:bg-destructive/10 hover:text-destructive *:[svg]:!text-destructive'
-			disabled={!!context?.center?.isLocked && role !== 'admin'}
+			disabled={
+				(!!context?.center?.isLocked || !context?.center?.enableEventMapping) &&
+				role !== 'admin'
+			}
 			onClick={() => {
 				if (groupId) {
 					z.mutate.subEventParticipants

@@ -122,7 +122,8 @@ export default function CenterEventView() {
 				columnsConfig={columnsConfig}
 				columnsToHide={['center']}
 				additionalActions={[
-					(center?.isLocked && role !== 'admin') ||
+					((center?.isLocked || !center?.enableEventMapping) &&
+						role !== 'admin') ||
 					participants.length >= maxParticipants ? (
 						<Tooltip key='create-participant'>
 							<TooltipTrigger asChild>
