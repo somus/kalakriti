@@ -27,10 +27,14 @@ export default function DashboardView() {
 	);
 
 	if (
-		(role === 'guardian' && center) ||
+		(role === 'guardian' && centers.length === 1 && center) ||
 		(role === 'volunteer' && centers.length === 1 && center)
 	) {
 		return <CenterPage center={center} />;
+	}
+
+	if ((role === 'volunteer' || role === 'guardian') && centers.length > 1) {
+		return null;
 	}
 
 	const participantsByCentersConfig = centers
@@ -150,8 +154,8 @@ export default function DashboardView() {
 					chartData={participantsByCentersData}
 				/>
 				<ChartPieDonut
-					title='Participants by Events'
-					dataLabel='Participants'
+					title='Participations by Events'
+					dataLabel='Participations'
 					chartConfig={participantsByEventsConfig}
 					chartData={participantsByEventsData}
 				/>

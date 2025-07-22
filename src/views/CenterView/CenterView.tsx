@@ -136,8 +136,8 @@ export function CenterPage({ center }: { center: Center }) {
 			</div>
 			<div className='@xl/main:grid-cols-1 @5xl/main:grid-cols-2 grid grid-cols-1 gap-4 px-4'>
 				<ChartPieDonut
-					title='Participants by Events'
-					dataLabel='Participants'
+					title='Participations by Events'
+					dataLabel='Participations'
 					chartConfig={participantsByEventsConfig}
 					chartData={participantsByEventsData}
 				/>
