@@ -69,8 +69,8 @@ export const columnsConfig = [
 	dtf
 		.option()
 		.accessor(row => row.event.allowedGender)
-		.id('gender')
-		.displayName('Gender')
+		.id('allowedGender')
+		.displayName('Allowed Gender')
 		.icon(CircleSmallIcon)
 		.options([
 			{ label: 'Male', value: 'male' },
