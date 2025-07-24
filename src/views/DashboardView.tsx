@@ -101,7 +101,12 @@ export default function DashboardView() {
 								<CardHeader className='relative'>
 									<CardDescription>Total Volunteers</CardDescription>
 									<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
-										{users.filter(user => user.role === 'volunteer').length}
+										{
+											users.filter(
+												user =>
+													user.role === 'volunteer' || user.role === 'admin'
+											).length
+										}
 									</CardTitle>
 								</CardHeader>
 							</Card>
@@ -186,15 +191,17 @@ export default function DashboardView() {
 							</TableHeader>
 							<TableBody>
 								{teamsEnum.enumValues.map(team => {
-									const lead = users.find(user => user.leading === team);
+									const leads = users.filter(user => user.leading === team);
 									return (
 										<TableRow key={team}>
 											<TableCell className='font-medium'>
 												{TEAMS_NAME_MAP[team]}
 											</TableCell>
 											<TableCell>
-												{lead?.firstName
-													? `${lead.firstName} ${lead.lastName}`
+												{leads.length > 0
+													? leads
+															.map(lead => `${lead.firstName} ${lead.lastName}`)
+															.join(', ')
 													: '-'}
 											</TableCell>
 										</TableRow>
