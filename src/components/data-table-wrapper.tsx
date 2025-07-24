@@ -28,6 +28,7 @@ import {
 	getSortedRowModel,
 	useReactTable
 } from '@tanstack/react-table';
+import orderBy from 'lodash/orderBy';
 import { CornerDownRightIcon } from 'lucide-react';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
@@ -127,7 +128,8 @@ export default function DataTableWrapper<
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[filterColumns]
 	);
-	const memoData = useMemo(() => data, [data]);
+	// Order data by createdAt in descending order if it is present
+	const memoData = useMemo(() => orderBy(data, 'createdAt', 'desc'), [data]);
 
 	const tstFilters = useMemo(() => createTSTFilters(filters), [filters]);
 

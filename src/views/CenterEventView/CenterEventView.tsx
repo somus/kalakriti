@@ -14,6 +14,7 @@ import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 import { formatDate } from 'date-fns';
 import groupBy from 'lodash/groupBy';
+import orderBy from 'lodash/orderBy';
 import { Navigate, useOutletContext, useParams } from 'react-router';
 import * as z from 'zod';
 
@@ -80,7 +81,8 @@ export default function CenterEventView() {
 					participant: {
 						name: `Group ${key + 1}`
 					},
-					subRows: group
+					createdAt: group[0].createdAt,
+					subRows: orderBy(group, 'participant.name')
 				})
 			)
 		: subEvent.participants;

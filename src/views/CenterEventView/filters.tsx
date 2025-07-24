@@ -45,13 +45,10 @@ export const columnsConfig = [
 		.accessor(row => row.participant?.center?.name)
 		.displayName('Center')
 		.icon(SchoolIcon)
-		.transformOptionFn(c => {
-			console.log(c);
-			return {
-				value: c,
-				label: c
-			};
-		})
+		.transformOptionFn(c => ({
+			value: c,
+			label: c
+		}))
 		.build(),
 	dtf
 		.option()
