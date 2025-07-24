@@ -1,0 +1,2 @@
+CREATE TYPE "public"."teams" AS ENUM('overall', 'events', 'arts', 'cultural', 'liaison', 'transport', 'venue', 'food', 'logistics', 'awards', 'hospitality', 'media', 'fundraising');--> statement-breakpoint
+ALTER TABLE "users" ADD COLUMN "leading" "teams";

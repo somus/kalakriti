@@ -15,6 +15,20 @@ export interface CreateUserArgs {
 	phoneNumber: string;
 	password?: string;
 	role: 'admin' | 'volunteer' | 'guardian';
+	leading?:
+		| 'overall'
+		| 'events'
+		| 'arts'
+		| 'cultural'
+		| 'liaison'
+		| 'transport'
+		| 'venue'
+		| 'food'
+		| 'logistics'
+		| 'awards'
+		| 'hospitality'
+		| 'media'
+		| 'fundraising';
 	canLogin: boolean;
 }
 
@@ -48,7 +62,8 @@ export function createUserMutators(
 						password: password,
 						skipPasswordChecks: true,
 						publicMetadata: {
-							role: data.role
+							role: data.role,
+							leading: data.leading
 						}
 					});
 					await tx.mutate.users.insert({ id: clerkUser.id, ...data });
@@ -86,7 +101,8 @@ export function createUserMutators(
 					lastName: change.lastName === null ? undefined : change.lastName,
 					publicMetadata: change.role
 						? {
-								role: change.role
+								role: change.role,
+								leading: change.leading
 							}
 						: undefined
 				});

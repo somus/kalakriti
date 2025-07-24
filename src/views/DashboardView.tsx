@@ -1,17 +1,28 @@
 import { ChartPieDonut } from '@/components/pie-chart';
 import {
 	Card,
+	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle
 } from '@/components/ui/card';
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow
+} from '@/components/ui/table';
 import { useApp } from '@/hooks/useApp';
 import useZero from '@/hooks/useZero';
 import { useQuery } from '@rocicorp/zero/react';
 import camelCase from 'lodash/camelCase';
 import { Link } from 'react-router';
+import { teamsEnum } from 'shared/db/schema';
 
 import { CenterPage, centerQuery } from './CenterView/CenterView';
+import { TEAMS_NAME_MAP } from './UsersView/columns';
 
 export default function DashboardView() {
 	const {
@@ -159,6 +170,40 @@ export default function DashboardView() {
 					chartConfig={participantsByEventsConfig}
 					chartData={participantsByEventsData}
 				/>
+			</div>
+			<div className='@xl/main:grid-cols-1 @5xl/main:grid-cols-2 grid grid-cols-1 gap-4 px-4'>
+				<Card className='flex flex-col h-full'>
+					<CardHeader className='items-center pb-0'>
+						<CardTitle>Leads</CardTitle>
+					</CardHeader>
+					<CardContent className='flex-1 pb-0'>
+						<Table>
+							<TableHeader>
+								<TableRow>
+									<TableHead>Team</TableHead>
+									<TableHead>Lead</TableHead>
+								</TableRow>
+							</TableHeader>
+							<TableBody>
+								{teamsEnum.enumValues.map(team => {
+									const lead = users.find(user => user.leading === team);
+									return (
+										<TableRow key={team}>
+											<TableCell className='font-medium'>
+												{TEAMS_NAME_MAP[team]}
+											</TableCell>
+											<TableCell>
+												{lead?.firstName
+													? `${lead.firstName} ${lead.lastName}`
+													: '-'}
+											</TableCell>
+										</TableRow>
+									);
+								})}
+							</TableBody>
+						</Table>
+					</CardContent>
+				</Card>
 			</div>
 		</div>
 	);

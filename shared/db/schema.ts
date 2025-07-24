@@ -11,6 +11,21 @@ import {
 } from 'drizzle-orm/pg-core';
 
 export const rolesEnum = pgEnum('roles', ['guardian', 'admin', 'volunteer']);
+export const teamsEnum = pgEnum('teams', [
+	'overall',
+	'events',
+	'arts',
+	'cultural',
+	'liaison',
+	'transport',
+	'venue',
+	'food',
+	'logistics',
+	'awards',
+	'hospitality',
+	'media',
+	'fundraising'
+]);
 export const genderEnum = pgEnum('gender', ['male', 'female']);
 export const allowedEventGenderEnum = pgEnum('allowed_event_gender', [
 	'male',
@@ -23,6 +38,7 @@ export const users = pgTable('users', {
 	firstName: varchar('first_name').notNull(),
 	lastName: varchar('last_name'),
 	role: rolesEnum().default('volunteer').notNull(),
+	leading: teamsEnum(),
 	phoneNumber: varchar('phone_number').notNull(),
 	email: varchar('email'),
 	canLogin: boolean('can_login').default(false).notNull(),

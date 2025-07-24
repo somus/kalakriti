@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { User } from 'shared/db/schema.zero';
 
-import { ROLE_STYLES_MAP } from './columns';
+import { ROLE_STYLES_MAP, TEAMS_NAME_MAP } from './columns';
 
 const dtf = createColumnConfigHelper<User>();
 
@@ -40,6 +40,17 @@ export const columnsConfig = [
 			value: r,
 			label: r,
 			icon: <div className={cn('size-2.5 rounded-full', ROLE_STYLES_MAP[r])} />
+		}))
+		.build(),
+	dtf
+		.option()
+		.accessor(row => row.leading)
+		.id('leading')
+		.displayName('Leading')
+		.icon(ShieldUserIcon)
+		.transformOptionFn(r => ({
+			value: r,
+			label: TEAMS_NAME_MAP[r]
 		}))
 		.build(),
 	dtf

@@ -823,6 +823,15 @@ export const schema = {
             "role"
           >,
         },
+        leading: {
+          type: "string",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "users",
+            "leading"
+          >,
+        },
         phoneNumber: {
           type: "string",
           optional: false,

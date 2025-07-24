@@ -1,4 +1,5 @@
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -29,6 +30,22 @@ export const ROLE_STYLES_MAP = {
 	admin: 'bg-red-500 border-red-500',
 	volunteer: 'bg-teal-500 border-teal-500',
 	guardian: 'bg-blue-500 border-blue-500'
+} as const;
+
+export const TEAMS_NAME_MAP = {
+	overall: 'Overall Lead',
+	events: 'Events',
+	arts: 'Arts',
+	cultural: 'Cultural',
+	liaison: 'Liaison',
+	transport: 'Transport',
+	venue: 'Venue',
+	food: 'Food',
+	logistics: 'Logistics',
+	awards: 'Awards',
+	hospitality: 'Hospitality',
+	media: 'Media',
+	fundraising: 'Fundraising'
 } as const;
 
 export const columns = [
@@ -104,6 +121,22 @@ export const columns = [
 		},
 		meta: {
 			displayName: 'Role'
+		}
+	}),
+	columnHelper.accessor(row => row.leading, {
+		id: 'leading',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Leading' />
+		),
+		cell: ({ row }) => {
+			const leading = row.getValue<User['leading']>('leading');
+
+			if (!leading) return null;
+
+			return <Badge>{TEAMS_NAME_MAP[leading]}</Badge>;
+		},
+		meta: {
+			displayName: 'Leading'
 		}
 	}),
 	columnHelper.accessor(row => row.email, {

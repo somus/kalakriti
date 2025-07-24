@@ -20,9 +20,11 @@ import get from 'lodash/get';
 import { LoaderCircle } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { rolesEnum } from 'shared/db/schema';
+import { rolesEnum, teamsEnum } from 'shared/db/schema';
 import { User } from 'shared/db/schema.zero';
 import * as z from 'zod';
+
+import { TEAMS_NAME_MAP } from './columns';
 
 const userSchema = z
 	.object({
@@ -31,6 +33,10 @@ const userSchema = z
 		email: z.email({ error: 'Please enter a valid email address' }).optional(),
 		password: z.string().optional(),
 		role: z.enum(rolesEnum.enumValues).default('volunteer').optional(),
+		leading: z
+			.enum([...teamsEnum.enumValues, ''])
+			.default('')
+			.optional(),
 		canLogin: z.boolean().optional(),
 		phoneNumber: z
 			.string()
@@ -94,7 +100,8 @@ export default function UserFormModal({
 			lastName: user.lastName ?? undefined,
 			email: user.email ?? undefined,
 			phoneNumber: user.phoneNumber,
-			role: user.role ?? 'volunteer'
+			role: user.role ?? 'volunteer',
+			leading: user.leading ?? ('' as UserFormData['leading'])
 		};
 	}, [user]);
 
@@ -114,11 +121,25 @@ export default function UserFormModal({
 				await zero.mutate.users.create({
 					...data,
 					role: data.role ?? 'volunteer',
+					leading:
+						(data.role === 'admin' || data.role === 'volunteer') &&
+						data.leading !== ''
+							? data.leading
+							: undefined,
 					canLogin: data.role === 'admin' || data.canLogin ? true : false
 				}).server;
 			} else {
 				// Update user
-				await zero.mutate.users.update({ id: user.id, ...data }).server;
+				await zero.mutate.users.update({
+					id: user.id,
+					...data,
+					leading:
+						data.role === 'admin' || data.role === 'volunteer'
+							? data.leading === ''
+								? null
+								: data.leading
+							: undefined
+				}).server;
 			}
 
 			// Close dialog on success
@@ -157,6 +178,11 @@ export default function UserFormModal({
 		label: role.charAt(0).toUpperCase() + role.slice(1)
 	}));
 
+	const teamOptions = teamsEnum.enumValues.map(team => ({
+		value: team,
+		label: TEAMS_NAME_MAP[team]
+	}));
+
 	return (
 		<Modal
 			open={open ?? isModalOpen}
@@ -183,6 +209,15 @@ export default function UserFormModal({
 						/>
 						<InputField name='phoneNumber' label='Phone Number' />
 						<SelectField name='role' label='Role' options={roleOptions} />
+						{(form.watch('role') !== 'admin' ||
+							form.watch('role') !== 'volunteer') && (
+							<SelectField
+								name='leading'
+								label='Leading'
+								options={teamOptions}
+								showClear
+							/>
+						)}
 						{!user && form.watch('role') !== 'admin' && (
 							<CheckboxField name='canLogin' label='Should allow login?' />
 						)}
