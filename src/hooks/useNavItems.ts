@@ -119,6 +119,19 @@ const getGuardianAndLiasonNavItems = (
 					.sort((a, b) => a.title.localeCompare(b.title))
 			];
 
+const getEventVolunteerNavItems = (events: Event[]): NavItem[] => [
+	homeNavItem,
+	...events
+		.flatMap(event =>
+			event.subEvents.map(subEvent => ({
+				title: `${event.name} - ${subEvent.participantCategory?.name}`,
+				url: `/events/${subEvent.id}`,
+				icon: TicketsIcon
+			}))
+		)
+		.sort((a, b) => a.title.localeCompare(b.title))
+];
+
 function eventsQuery(z: Zero) {
 	return z.query.events.related('subEvents', q =>
 		q.related('participantCategory')
@@ -141,8 +154,29 @@ export const useNavItems = () => {
 		return getAdminNavItems(centers, events);
 	}
 
-	if (user.role === 'guardian' || user.role == 'volunteer') {
+	if (
+		user.role === 'guardian' ||
+		(user.role === 'volunteer' && user.liaisoningCenters?.length > 0)
+	) {
 		return getGuardianAndLiasonNavItems(centers, events);
+	}
+
+	if (
+		user.role === 'volunteer' &&
+		(user.coordinatingEvents?.length > 0 ||
+			user.coordinatingEventCategories.length > 0)
+	) {
+		return getEventVolunteerNavItems(
+			events.filter(
+				event =>
+					user.coordinatingEvents
+						.map(event => event.eventId)
+						.includes(event.id) ||
+					user.coordinatingEventCategories
+						.map(category => category.id)
+						.includes(event.eventCategoryId)
+			)
+		);
 	}
 
 	return [homeNavItem];

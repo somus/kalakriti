@@ -1130,7 +1130,7 @@ export const schema = {
           sourceField: ["id"],
           destField: ["userId"],
           destSchema: "eventCoordinators",
-          cardinality: "one",
+          cardinality: "many",
         },
       ],
       volunteeringEvents: [
@@ -1138,7 +1138,7 @@ export const schema = {
           sourceField: ["id"],
           destField: ["userId"],
           destSchema: "eventVolunteers",
-          cardinality: "one",
+          cardinality: "many",
         },
       ],
       coordinatingEventCategories: [
@@ -1154,7 +1154,7 @@ export const schema = {
           sourceField: ["id"],
           destField: ["userId"],
           destSchema: "centerLiaisons",
-          cardinality: "one",
+          cardinality: "many",
         },
       ],
       guardianCenters: [
@@ -1162,7 +1162,7 @@ export const schema = {
           sourceField: ["id"],
           destField: ["userId"],
           destSchema: "centerGuardians",
-          cardinality: "one",
+          cardinality: "many",
         },
       ],
     },

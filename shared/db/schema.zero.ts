@@ -54,7 +54,29 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 			allowIfLoggedIn(authData, eb),
 			eb.or(
 				eb.exists('guardians', q => q.where('userId', authData.sub)),
-				eb.exists('liaisons', q => q.where('userId', authData.sub))
+				eb.exists('liaisons', q => q.where('userId', authData.sub)),
+				eb.exists('participants', q =>
+					q.whereExists('subEvents', q =>
+						q.whereExists('subEvent', q =>
+							q.whereExists('event', q =>
+								q.whereExists('coordinators', q =>
+									q.where('userId', authData.sub)
+								)
+							)
+						)
+					)
+				),
+				eb.exists('participants', q =>
+					q.whereExists('subEvents', q =>
+						q.whereExists('subEvent', q =>
+							q.whereExists('event', q =>
+								q.whereExists('category', q =>
+									q.where('coordinatorId', authData.sub)
+								)
+							)
+						)
+					)
+				)
 			)
 		);
 
@@ -70,6 +92,24 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 				),
 				eb.exists('center', q =>
 					q.whereExists('liaisons', q => q.where('userId', authData.sub))
+				),
+				eb.exists('subEvents', q =>
+					q.whereExists('subEvent', q =>
+						q.whereExists('event', q =>
+							q.whereExists('coordinators', q =>
+								q.where('userId', authData.sub)
+							)
+						)
+					)
+				),
+				eb.exists('subEvents', q =>
+					q.whereExists('subEvent', q =>
+						q.whereExists('event', q =>
+							q.whereExists('category', q =>
+								q.where('coordinatorId', authData.sub)
+							)
+						)
+					)
 				)
 			)
 		);
@@ -89,6 +129,18 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 				eb.exists('participant', q =>
 					q.whereExists('center', q =>
 						q.whereExists('liaisons', q => q.where('userId', authData.sub))
+					)
+				),
+				eb.exists('subEvent', q =>
+					q.whereExists('event', q =>
+						q.whereExists('coordinators', q => q.where('userId', authData.sub))
+					)
+				),
+				eb.exists('subEvent', q =>
+					q.whereExists('event', q =>
+						q.whereExists('category', q =>
+							q.where('coordinatorId', authData.sub)
+						)
 					)
 				)
 			)

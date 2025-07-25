@@ -46,24 +46,12 @@ export const users = pgTable('users', {
 	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
 
-export const usersRelations = relations(users, ({ many, one }) => ({
-	coordinatingEvents: one(eventCoordinators, {
-		fields: [users.id],
-		references: [eventCoordinators.userId]
-	}),
-	volunteeringEvents: one(eventVolunteers, {
-		fields: [users.id],
-		references: [eventVolunteers.userId]
-	}),
+export const usersRelations = relations(users, ({ many }) => ({
+	coordinatingEvents: many(eventCoordinators),
+	volunteeringEvents: many(eventVolunteers),
 	coordinatingEventCategories: many(eventCategories),
-	liaisoningCenters: one(centerLiaisons, {
-		fields: [users.id],
-		references: [centerLiaisons.userId]
-	}),
-	guardianCenters: one(centerGuardians, {
-		fields: [users.id],
-		references: [centerGuardians.userId]
-	})
+	liaisoningCenters: many(centerLiaisons),
+	guardianCenters: many(centerGuardians)
 }));
 
 export const eventCategories = pgTable('event_categories', {

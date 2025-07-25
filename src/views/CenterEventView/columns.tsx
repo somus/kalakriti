@@ -139,10 +139,11 @@ const Actions = ({
 	const context = useOutletContext<CenterOutletContext>();
 	const z = useZero();
 	const {
-		user: { role }
+		user: { role, liaisoningCenters, guardianCenters }
 	} = useApp();
+	const canDelete = liaisoningCenters.length > 0 || guardianCenters.length > 0;
 
-	if (isSubGroupItem) {
+	if (isSubGroupItem || !canDelete) {
 		return null;
 	}
 

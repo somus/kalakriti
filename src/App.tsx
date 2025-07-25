@@ -64,6 +64,20 @@ function App() {
 							}
 						/>
 
+						{/* Volunteer Routes */}
+						<Route
+							element={<ProtectedRoute allowedRoles={['admin', 'volunteer']} />}
+						>
+							<Route
+								path='/events/:eventId'
+								element={
+									<Suspense fallback={<LoadingScreen />}>
+										<EventView />
+									</Suspense>
+								}
+							/>
+						</Route>
+
 						{/* Admin Routes */}
 						<Route element={<ProtectedRoute allowedRoles={['admin']} />}>
 							<Route
@@ -81,14 +95,6 @@ function App() {
 									element={
 										<Suspense fallback={<LoadingScreen />}>
 											<EventsView />
-										</Suspense>
-									}
-								/>
-								<Route
-									path=':eventId'
-									element={
-										<Suspense fallback={<LoadingScreen />}>
-											<EventView />
 										</Suspense>
 									}
 								/>

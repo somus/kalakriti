@@ -26,7 +26,13 @@ import { TEAMS_NAME_MAP } from './UsersView/columns';
 
 export default function DashboardView() {
 	const {
-		user: { role }
+		user: {
+			role,
+			liaisoningCenters,
+			coordinatingEventCategories,
+			coordinatingEvents,
+			guardianCenters
+		}
 	} = useApp();
 	const zero = useZero();
 	const [center] = useQuery(centerQuery(zero));
@@ -38,14 +44,10 @@ export default function DashboardView() {
 	);
 
 	if (
-		(role === 'guardian' && centers.length === 1 && center) ||
-		(role === 'volunteer' && centers.length === 1 && center)
+		(role === 'guardian' && guardianCenters?.length === 1 && center) ||
+		(role === 'volunteer' && liaisoningCenters?.length === 1 && center)
 	) {
 		return <CenterPage center={center} />;
-	}
-
-	if ((role === 'volunteer' || role === 'guardian') && centers.length > 1) {
-		return null;
 	}
 
 	const participantsByCentersConfig = centers
@@ -94,7 +96,7 @@ export default function DashboardView() {
 	return (
 		<div className='@container/main flex flex-col gap-4 py-4 md:gap-6 md:py-6'>
 			<div className='[&_[data-slot=card]]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4 grid grid-cols-1 gap-4 px-4 [&_[data-slot=card]]:bg-gradient-to-t [&_[data-slot=card]]:from-primary/5 [&_[data-slot=card]]:to-card dark:[&_[data-slot=card]]:bg-card'>
-				{role === 'admin' ? (
+				{role === 'admin' && (
 					<>
 						<Link to={`/users`}>
 							<Card className='@container/card'>
@@ -142,76 +144,86 @@ export default function DashboardView() {
 							</Card>
 						</Link>
 					</>
-				) : (
-					<>
-						{/* Liason dashboard for liasons with multiple centers */}
-						{centers.map(center => (
-							<Link to={`/centers/${center.id}`} key={center.id}>
-								<Card className='@container/card'>
-									<CardHeader className='relative'>
-										<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
-											{center.name}
-										</CardTitle>
-										<CardDescription>
-											{center.participants.length} participants
-										</CardDescription>
-									</CardHeader>
-								</Card>
-							</Link>
-						))}
-					</>
 				)}
+				{(role === 'volunteer' || role === 'guardian') &&
+					centers.length > 1 && (
+						<>
+							{/* Liason and guardian dashboard for liasons & guardians with multiple centers */}
+							{centers.map(center => (
+								<Link to={`/centers/${center.id}`} key={center.id}>
+									<Card className='@container/card'>
+										<CardHeader className='relative'>
+											<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
+												{center.name}
+											</CardTitle>
+											<CardDescription>
+												{center.participants.length} participants
+											</CardDescription>
+										</CardHeader>
+									</Card>
+								</Link>
+							))}
+						</>
+					)}
 			</div>
-			<div className='@xl/main:grid-cols-1 @5xl/main:grid-cols-2 grid grid-cols-1 gap-4 px-4'>
-				<ChartPieDonut
-					title='Participants by Center'
-					dataLabel='Participants'
-					chartConfig={participantsByCentersConfig}
-					chartData={participantsByCentersData}
-				/>
-				<ChartPieDonut
-					title='Participations by Events'
-					dataLabel='Participations'
-					chartConfig={participantsByEventsConfig}
-					chartData={participantsByEventsData}
-				/>
-			</div>
-			<div className='@xl/main:grid-cols-1 @5xl/main:grid-cols-2 grid grid-cols-1 gap-4 px-4'>
-				<Card className='flex flex-col h-full'>
-					<CardHeader className='items-center pb-0'>
-						<CardTitle>Leads</CardTitle>
-					</CardHeader>
-					<CardContent className='flex-1 pb-0'>
-						<Table>
-							<TableHeader>
-								<TableRow>
-									<TableHead>Team</TableHead>
-									<TableHead>Lead</TableHead>
-								</TableRow>
-							</TableHeader>
-							<TableBody>
-								{teamsEnum.enumValues.map(team => {
-									const leads = users.filter(user => user.leading === team);
-									return (
-										<TableRow key={team}>
-											<TableCell className='font-medium'>
-												{TEAMS_NAME_MAP[team]}
-											</TableCell>
-											<TableCell>
-												{leads.length > 0
-													? leads
-															.map(lead => `${lead.firstName} ${lead.lastName}`)
-															.join(', ')
-													: '-'}
-											</TableCell>
-										</TableRow>
-									);
-								})}
-							</TableBody>
-						</Table>
-					</CardContent>
-				</Card>
-			</div>
+			{(role === 'admin' ||
+				coordinatingEvents.length > 0 ||
+				coordinatingEventCategories.length > 0) && (
+				<div className='@xl/main:grid-cols-1 @5xl/main:grid-cols-2 grid grid-cols-1 gap-4 px-4'>
+					<ChartPieDonut
+						title='Participants by Center'
+						dataLabel='Participants'
+						chartConfig={participantsByCentersConfig}
+						chartData={participantsByCentersData}
+					/>
+					<ChartPieDonut
+						title='Participations by Events'
+						dataLabel='Participations'
+						chartConfig={participantsByEventsConfig}
+						chartData={participantsByEventsData}
+					/>
+				</div>
+			)}
+			{role === 'admin' && (
+				<div className='@xl/main:grid-cols-1 @5xl/main:grid-cols-2 grid grid-cols-1 gap-4 px-4'>
+					<Card className='flex flex-col h-full'>
+						<CardHeader className='items-center pb-0'>
+							<CardTitle>Leads</CardTitle>
+						</CardHeader>
+						<CardContent className='flex-1 pb-0'>
+							<Table>
+								<TableHeader>
+									<TableRow>
+										<TableHead>Team</TableHead>
+										<TableHead>Lead</TableHead>
+									</TableRow>
+								</TableHeader>
+								<TableBody>
+									{teamsEnum.enumValues.map(team => {
+										const leads = users.filter(user => user.leading === team);
+										return (
+											<TableRow key={team}>
+												<TableCell className='font-medium'>
+													{TEAMS_NAME_MAP[team]}
+												</TableCell>
+												<TableCell>
+													{leads.length > 0
+														? leads
+																.map(
+																	lead => `${lead.firstName} ${lead.lastName}`
+																)
+																.join(', ')
+														: '-'}
+												</TableCell>
+											</TableRow>
+										);
+									})}
+								</TableBody>
+							</Table>
+						</CardContent>
+					</Card>
+				</div>
+			)}
 		</div>
 	);
 }
