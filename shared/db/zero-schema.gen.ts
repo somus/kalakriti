@@ -435,6 +435,162 @@ export const schema = {
       },
       primaryKey: ["id"],
     },
+    inventory: {
+      name: "inventory",
+      columns: {
+        id: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "inventory",
+            "id"
+          >,
+        },
+        name: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "inventory",
+            "name"
+          >,
+        },
+        quantity: {
+          type: "number",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "inventory",
+            "quantity"
+          >,
+        },
+        unitPrice: {
+          type: "number",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "inventory",
+            "unitPrice"
+          >,
+          serverName: "unit_price",
+        },
+        eventId: {
+          type: "string",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "inventory",
+            "eventId"
+          >,
+          serverName: "event_id",
+        },
+        createdAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "inventory",
+            "createdAt"
+          >,
+          serverName: "created_at",
+        },
+        updatedAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "inventory",
+            "updatedAt"
+          >,
+          serverName: "updated_at",
+        },
+      },
+      primaryKey: ["id"],
+    },
+    inventoryTransactions: {
+      name: "inventoryTransactions",
+      columns: {
+        id: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "inventoryTransactions",
+            "id"
+          >,
+        },
+        inventoryId: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "inventoryTransactions",
+            "inventoryId"
+          >,
+          serverName: "inventory_id",
+        },
+        eventId: {
+          type: "string",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "inventoryTransactions",
+            "eventId"
+          >,
+          serverName: "event_id",
+        },
+        type: {
+          type: "string",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "inventoryTransactions",
+            "type"
+          >,
+        },
+        quantity: {
+          type: "number",
+          optional: false,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "inventoryTransactions",
+            "quantity"
+          >,
+        },
+        notes: {
+          type: "string",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "inventoryTransactions",
+            "notes"
+          >,
+        },
+        createdAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "inventoryTransactions",
+            "createdAt"
+          >,
+          serverName: "created_at",
+        },
+        updatedAt: {
+          type: "number",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "inventoryTransactions",
+            "updatedAt"
+          >,
+          serverName: "updated_at",
+        },
+      },
+      primaryKey: ["id"],
+      serverName: "inventory_transactions",
+    },
     participantCategories: {
       name: "participantCategories",
       columns: {
@@ -1033,6 +1189,50 @@ export const schema = {
           destField: ["eventId"],
           destSchema: "subEvents",
           cardinality: "many",
+        },
+      ],
+      inventoryTransactions: [
+        {
+          sourceField: ["id"],
+          destField: ["eventId"],
+          destSchema: "inventoryTransactions",
+          cardinality: "many",
+        },
+      ],
+    },
+    inventory: {
+      event: [
+        {
+          sourceField: ["eventId"],
+          destField: ["id"],
+          destSchema: "events",
+          cardinality: "one",
+        },
+      ],
+      transactions: [
+        {
+          sourceField: ["id"],
+          destField: ["inventoryId"],
+          destSchema: "inventoryTransactions",
+          cardinality: "many",
+        },
+      ],
+    },
+    inventoryTransactions: {
+      event: [
+        {
+          sourceField: ["eventId"],
+          destField: ["id"],
+          destSchema: "events",
+          cardinality: "one",
+        },
+      ],
+      inventory: [
+        {
+          sourceField: ["inventoryId"],
+          destField: ["id"],
+          destSchema: "inventory",
+          cardinality: "one",
         },
       ],
     },

@@ -57,7 +57,10 @@ export default function MainLayout() {
 		kvStore: 'idb',
 		mutators: createMutators({
 			sub: user.id,
-			meta: { role: user.publicMetadata.role as AuthData['meta']['role'] }
+			meta: {
+				role: user.publicMetadata.role as AuthData['meta']['role'],
+				leading: user.publicMetadata.leading as AuthData['meta']['leading']
+			}
 		})
 	});
 

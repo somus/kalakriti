@@ -11,11 +11,13 @@ import { type Schema, schema } from './zero-schema.gen';
 export { schema, type Schema };
 
 export type Roles = (typeof drizzleSchema.rolesEnum.enumValues)[number];
+export type Teams = (typeof drizzleSchema.teamsEnum.enumValues)[number];
 
 export interface AuthData {
 	sub: string; // assuming sub is the user identifier
 	meta: {
 		role?: Roles;
+		leading?: Teams;
 	};
 }
 
@@ -30,6 +32,10 @@ export type ParticipantCategory = Row<
 >;
 export type Participant = Row<typeof schema.tables.participants>;
 export type EventParticipant = Row<typeof schema.tables.subEventParticipants>;
+export type InventoryTransaction = Row<
+	typeof schema.tables.inventoryTransactions
+>;
+export type Inventory = Row<typeof schema.tables.inventory>;
 
 export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 	const allowIfLoggedIn = (
@@ -261,6 +267,16 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 			)
 		);
 
+	const inventoryPermission = (
+		authData: AuthData,
+		eb: ExpressionBuilder<Schema, 'inventory' | 'inventoryTransactions'>
+	) =>
+		eb.and(
+			allowIfLoggedIn(authData, eb),
+			eb.cmpLit(authData.meta.role ?? '', '=', 'volunteer'),
+			eb.cmpLit(authData.meta.leading ?? '', '=', 'logistics')
+		);
+
 	return {
 		eventCategories: {
 			row: {
@@ -320,6 +336,16 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 		subEventParticipants: {
 			row: {
 				select: [loggedInUserIsAdmin, eventParticipantPermission]
+			}
+		},
+		inventory: {
+			row: {
+				select: [loggedInUserIsAdmin, inventoryPermission]
+			}
+		},
+		inventoryTransactions: {
+			row: {
+				select: [loggedInUserIsAdmin, inventoryPermission]
 			}
 		}
 	} satisfies PermissionsConfig<AuthData, Schema>;

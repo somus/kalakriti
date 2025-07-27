@@ -190,6 +190,13 @@
       "when": 1753368987899,
       "tag": "0026_eager_gertrude_yorkes",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1753603054477,
+      "tag": "0027_purple_the_renegades",
+      "breakpoints": true
     }
   ]
 }

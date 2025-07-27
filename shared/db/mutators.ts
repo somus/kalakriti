@@ -5,6 +5,7 @@ import { CustomMutatorDefs } from '@rocicorp/zero';
 import { createCenterMutators } from './mutators/centers.ts';
 import { createEventCategoryMutators } from './mutators/eventCategories.ts';
 import { createEventMutators } from './mutators/events.ts';
+import { createInventoryMutators } from './mutators/inventory.ts';
 import { createParticipantCategoryMutators } from './mutators/participantCategories.ts';
 import { createParticipantMutators } from './mutators/participants.ts';
 import { createSubEventParticipantMutators } from './mutators/subEventParticipants.ts';
@@ -30,6 +31,7 @@ export function createMutators(
 		centers: createCenterMutators(authData),
 		participantCategories: createParticipantCategoryMutators(authData),
 		participants: createParticipantMutators(authData),
-		subEventParticipants: createSubEventParticipantMutators(authData)
+		subEventParticipants: createSubEventParticipantMutators(authData),
+		inventory: createInventoryMutators(authData)
 	} as const satisfies CustomMutatorDefs<Schema>;
 }

@@ -33,6 +33,7 @@ const ParticipantCategoriesView = lazy(
 const ParticipantsView = lazy(
 	() => import('@/views/ParticipantsView/ParticipantsView')
 );
+const InventoryView = lazy(() => import('@/views/InventoryView/InventoryView'));
 
 function App() {
 	return (
@@ -73,6 +74,14 @@ function App() {
 								element={
 									<Suspense fallback={<LoadingScreen />}>
 										<EventView />
+									</Suspense>
+								}
+							/>
+							<Route
+								path='/inventory'
+								element={
+									<Suspense fallback={<LoadingScreen />}>
+										<InventoryView />
 									</Suspense>
 								}
 							/>

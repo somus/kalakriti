@@ -3,7 +3,13 @@ import { useApp } from '@/hooks/useApp';
 import useZero, { Zero } from '@/hooks/useZero';
 import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
-import { HomeIcon, SchoolIcon, TicketsIcon, UsersIcon } from 'lucide-react';
+import {
+	HomeIcon,
+	PackageIcon,
+	SchoolIcon,
+	TicketsIcon,
+	UsersIcon
+} from 'lucide-react';
 import { Center } from 'shared/db/schema.zero';
 
 const homeNavItem: NavItem = {
@@ -59,6 +65,17 @@ const getAdminNavItems = (centers: Center[], events: Event[]): NavItem[] => [
 			{
 				title: 'Categories',
 				url: '/participants/categories'
+			}
+		]
+	},
+	{
+		title: 'Inventory',
+		url: '/inventory',
+		icon: PackageIcon,
+		items: [
+			{
+				title: 'Transactions',
+				url: '/inventory/transactions'
 			}
 		]
 	}
@@ -132,6 +149,21 @@ const getEventVolunteerNavItems = (events: Event[]): NavItem[] => [
 		.sort((a, b) => a.title.localeCompare(b.title))
 ];
 
+const getLogisticsCoordinatorNavItems = (): NavItem[] => [
+	homeNavItem,
+	{
+		title: 'Inventory',
+		url: '/inventory',
+		icon: PackageIcon,
+		items: [
+			{
+				title: 'Transactions',
+				url: '/inventory/transactions'
+			}
+		]
+	}
+];
+
 function eventsQuery(z: Zero) {
 	return z.query.events.related('subEvents', q =>
 		q.related('participantCategory')
@@ -152,6 +184,10 @@ export const useNavItems = () => {
 
 	if (user.role === 'admin') {
 		return getAdminNavItems(centers, events);
+	}
+
+	if (user.role === 'volunteer' && user.leading === 'logistics') {
+		return getLogisticsCoordinatorNavItems();
 	}
 
 	if (

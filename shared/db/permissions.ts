@@ -15,6 +15,18 @@ export function assertIsAdmin(authData: AuthData | undefined) {
 	}
 }
 
+export function assertIsAdminOrLogisticsCoordinator(
+	authData: AuthData | undefined
+) {
+	assertIsLoggedIn(authData);
+	if (
+		authData?.meta.leading !== 'logistics' &&
+		authData?.meta.role !== 'admin'
+	) {
+		throw new Error('Unauthorized');
+	}
+}
+
 export async function assertIsAdminOrGuardianOrLiasonOfCenter(
 	tx: Transaction<Schema>,
 	authData: AuthData | undefined,
