@@ -14,7 +14,7 @@ function inventoryQuery(z: Zero) {
 
 export type Inventory = Row<ReturnType<typeof inventoryQuery>>;
 
-export default function EventCategoriesView() {
+export default function InventoryView() {
 	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 	const z = useZero();

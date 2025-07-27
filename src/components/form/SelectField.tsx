@@ -57,6 +57,7 @@ export function SelectField<T extends FieldValues>({
 						onValueChange={field.onChange}
 						defaultValue={field.value}
 						disabled={field.disabled}
+						value={field.value}
 					>
 						<FormControl className='w-full'>
 							<SelectTrigger>

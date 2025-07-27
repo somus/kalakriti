@@ -6,6 +6,7 @@ import { createCenterMutators } from './mutators/centers.ts';
 import { createEventCategoryMutators } from './mutators/eventCategories.ts';
 import { createEventMutators } from './mutators/events.ts';
 import { createInventoryMutators } from './mutators/inventory.ts';
+import { createInventoryTransactionMutators } from './mutators/inventoryTransactions.ts';
 import { createParticipantCategoryMutators } from './mutators/participantCategories.ts';
 import { createParticipantMutators } from './mutators/participants.ts';
 import { createSubEventParticipantMutators } from './mutators/subEventParticipants.ts';
@@ -32,6 +33,7 @@ export function createMutators(
 		participantCategories: createParticipantCategoryMutators(authData),
 		participants: createParticipantMutators(authData),
 		subEventParticipants: createSubEventParticipantMutators(authData),
-		inventory: createInventoryMutators(authData)
+		inventory: createInventoryMutators(authData),
+		inventoryTransactions: createInventoryTransactionMutators(authData)
 	} as const satisfies CustomMutatorDefs<Schema>;
 }

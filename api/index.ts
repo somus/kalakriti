@@ -45,7 +45,10 @@ app.post('/push', async c => {
 			createMutators(
 				{
 					sub: auth.userId,
-					meta: { role: user.publicMetadata.role as AuthData['meta']['role'] }
+					meta: {
+						role: user.publicMetadata.role as AuthData['meta']['role'],
+						leading: user.publicMetadata.leading as AuthData['meta']['leading']
+					}
 				},
 				clerkClient
 			),

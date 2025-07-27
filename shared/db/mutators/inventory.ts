@@ -23,7 +23,8 @@ export function createInventoryMutators(authData: AuthData | undefined) {
 				id: createId(),
 				inventoryId,
 				type: inventoryTransactionType.enumValues[0],
-				quantity: data.quantity
+				quantity: data.quantity,
+				eventId: data.eventId
 			});
 		},
 		update: async (

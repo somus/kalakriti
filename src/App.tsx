@@ -34,6 +34,9 @@ const ParticipantsView = lazy(
 	() => import('@/views/ParticipantsView/ParticipantsView')
 );
 const InventoryView = lazy(() => import('@/views/InventoryView/InventoryView'));
+const InventoryTransactionsView = lazy(
+	() => import('@/views/InventoryTransactionsView/InventoryTransactionsView')
+);
 
 function App() {
 	return (
@@ -82,6 +85,14 @@ function App() {
 								element={
 									<Suspense fallback={<LoadingScreen />}>
 										<InventoryView />
+									</Suspense>
+								}
+							/>
+							<Route
+								path='/inventory/transactions'
+								element={
+									<Suspense fallback={<LoadingScreen />}>
+										<InventoryTransactionsView />
 									</Suspense>
 								}
 							/>

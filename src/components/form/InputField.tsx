@@ -1,5 +1,6 @@
 import {
 	FormControl,
+	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -14,6 +15,7 @@ interface InputFieldProps<T extends FieldValues> {
 	label: string;
 	control?: Control<T>;
 	type?: string;
+	description?: string;
 }
 
 export function InputField<T extends FieldValues>({
@@ -21,6 +23,7 @@ export function InputField<T extends FieldValues>({
 	label,
 	control,
 	type = 'text',
+	description,
 	...props
 }: InputFieldProps<T> & Omit<ComponentProps<typeof Input>, 'name' | 'type'>) {
 	// If control is not provided, try to get it from context
@@ -47,6 +50,7 @@ export function InputField<T extends FieldValues>({
 							}
 						/>
 					</FormControl>
+					{description && <FormDescription>{description}</FormDescription>}
 					<FormMessage />
 				</FormItem>
 			)}
