@@ -224,6 +224,8 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 			allowIfLoggedIn(authData, eb),
 			eb.or(
 				eb.cmp('id', '=', authData.sub),
+				eb.cmpLit(authData.meta.leading ?? '', '=', 'logistics'),
+				eb.cmpLit(authData.meta.leading ?? '', '=', 'food'),
 				eb.exists('liaisoningCenters', q =>
 					q.whereExists('center', q =>
 						q.whereExists('guardians', q => q.where('userId', authData.sub))

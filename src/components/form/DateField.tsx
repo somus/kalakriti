@@ -44,7 +44,6 @@ export function DateField<T extends FieldValues>({
 		<FormField
 			control={resolvedControl}
 			name={name}
-			disabled={disabled}
 			render={({ field }) => {
 				const date = field.value;
 				return (
@@ -59,7 +58,7 @@ export function DateField<T extends FieldValues>({
 											'w-[200px] justify-start text-left font-normal',
 											!date && 'text-muted-foreground'
 										)}
-										disabled={field.disabled}
+										disabled={disabled}
 									>
 										<CalendarIcon className='mr-2 h-4 w-4' />
 										{date ? format(date, 'PPP') : <span>Pick a date</span>}

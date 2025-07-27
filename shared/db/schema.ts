@@ -58,7 +58,8 @@ export const usersRelations = relations(users, ({ many }) => ({
 	volunteeringEvents: many(eventVolunteers),
 	coordinatingEventCategories: many(eventCategories),
 	liaisoningCenters: many(centerLiaisons),
-	guardianCenters: many(centerGuardians)
+	guardianCenters: many(centerGuardians),
+	inventoryTransactions: many(inventoryTransactions)
 }));
 
 export const eventCategories = pgTable('event_categories', {
@@ -386,6 +387,9 @@ export const inventoryTransactions = pgTable('inventory_transactions', {
 	eventId: varchar('event_id').references(() => events.id, {
 		onDelete: 'set null'
 	}),
+	transactorId: varchar('user_id').references(() => users.id, {
+		onDelete: 'set null'
+	}),
 	type: inventoryTransactionType().notNull(),
 	quantity: integer('quantity').notNull(),
 	notes: varchar('notes'),
@@ -403,6 +407,10 @@ export const inventoryTransactionsRelations = relations(
 		inventory: one(inventory, {
 			fields: [inventoryTransactions.inventoryId],
 			references: [inventory.id]
+		}),
+		transactor: one(users, {
+			fields: [inventoryTransactions.transactorId],
+			references: [users.id]
 		})
 	})
 );

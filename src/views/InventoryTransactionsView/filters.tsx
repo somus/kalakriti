@@ -5,7 +5,8 @@ import {
 	ContainerIcon,
 	Heading1Icon,
 	NotebookPenIcon,
-	ShieldUserIcon
+	ShieldUserIcon,
+	TicketsIcon
 } from 'lucide-react';
 
 import { InventoryTransaction } from './InventoryTransactionsView';
@@ -50,10 +51,21 @@ export const columnsConfig = [
 		.accessor(row => row.event)
 		.id('event')
 		.displayName('Event')
-		.icon(ShieldUserIcon)
+		.icon(TicketsIcon)
 		.transformOptionFn(c => ({
 			value: c.id,
 			label: c.name
+		}))
+		.build(),
+	dtf
+		.option()
+		.id('transactor')
+		.accessor(row => row.transactor)
+		.displayName('Volunteer')
+		.icon(ShieldUserIcon)
+		.transformOptionFn(c => ({
+			value: c.id,
+			label: `${c.firstName} ${c.lastName}`
 		}))
 		.build()
 ] as const;

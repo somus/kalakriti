@@ -37,7 +37,6 @@ export function MultiSelectField<T extends FieldValues>({
 		<FormField
 			control={resolvedControl}
 			name={name}
-			disabled={disabled}
 			render={({ field }) => (
 				<FormItem className='flex-1'>
 					<FormLabel className={hideLabel ? 'sr-only' : ''}>{label}</FormLabel>
@@ -50,6 +49,7 @@ export function MultiSelectField<T extends FieldValues>({
 								const option = options.find(opt => opt.value === id);
 								return option ?? { value: id, label: id };
 							})}
+							disabled={disabled}
 							onChange={options => {
 								methods.setValue(
 									name,

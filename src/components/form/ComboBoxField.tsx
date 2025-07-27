@@ -54,7 +54,6 @@ export function ComboBoxField<T extends FieldValues>({
 		<FormField
 			control={resolvedControl}
 			name={name}
-			disabled={disabled}
 			render={({ field }) => (
 				<FormItem className='flex-1'>
 					<FormLabel className={hideLabel ? 'sr-only' : ''}>{label}</FormLabel>

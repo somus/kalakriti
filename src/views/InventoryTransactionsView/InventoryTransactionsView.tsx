@@ -12,6 +12,7 @@ function inventoryTransactionsQuery(z: Zero) {
 	return z.query.inventoryTransactions
 		.related('event')
 		.related('inventory')
+		.related('transactor')
 		.orderBy('createdAt', 'desc');
 }
 

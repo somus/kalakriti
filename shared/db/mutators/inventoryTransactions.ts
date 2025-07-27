@@ -16,6 +16,7 @@ export interface CreateInventoryTransactionArgs {
 		| 'event_dispatch';
 	notes?: string;
 	eventId?: string;
+	transactorId?: string;
 }
 
 export function createInventoryTransactionMutators(
@@ -42,7 +43,8 @@ export function createInventoryTransactionMutators(
 				inventoryId: inventory.id,
 				type: data.type,
 				quantity: data.quantity,
-				eventId: data.eventId
+				eventId: data.eventId,
+				transactorId: data.transactorId
 			});
 			let quantity = inventory.quantity;
 			if (data.type === 'event_dispatch') {

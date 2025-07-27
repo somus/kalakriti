@@ -64,6 +64,20 @@ export const columns = [
 			return event ? <Badge variant='outline'>{event.name}</Badge> : null;
 		}
 	}),
+	columnHelper.accessor(row => row.transactor, {
+		id: 'transactor',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Volunteer' />
+		),
+		cell: ({ row }) => {
+			const transactor = row.getValue<
+				InventoryTransaction['transactor'] | undefined
+			>('transactor');
+			return transactor ? (
+				<Badge variant='outline'>{`${transactor.firstName} ${transactor.lastName}`}</Badge>
+			) : null;
+		}
+	}),
 	{
 		id: 'actions',
 		cell: ({ row }: { row: Row<InventoryTransaction> }) => {

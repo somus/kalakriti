@@ -30,7 +30,8 @@ const inventoryTransactionSchema = z.object({
 	inventoryId: z.string(),
 	type: z.enum(inventoryTransactionType.enumValues),
 	quantity: z.number().min(0),
-	eventId: z.string().nullable().optional(),
+	eventId: z.string().optional(),
+	transactorId: z.string().optional(),
 	notes: z.string().min(1).max(255).optional()
 });
 
@@ -48,7 +49,12 @@ export default function InventoryTransactionFormModal({
 	const zero = useZero();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [events] = useQuery(zero.query.events.orderBy('name', 'asc'));
+	const [events] = useQuery(
+		zero.query.events
+			.related('coordinators', q => q.related('user'))
+			.related('volunteers', q => q.related('user'))
+			.orderBy('name', 'asc')
+	);
 	const [inventories] = useQuery(zero.query.inventory.orderBy('name', 'asc'));
 
 	if (!children && !(open !== undefined && onOpenChange)) {
@@ -71,6 +77,7 @@ export default function InventoryTransactionFormModal({
 		value: inventory.id,
 		label: inventory.name
 	}));
+	const eventsMap = keyBy(events, 'id');
 	const inventoriesMap = keyBy(inventories, 'id');
 
 	// Get inventoryTransaction default values
@@ -92,6 +99,7 @@ export default function InventoryTransactionFormModal({
 		}
 		if (ctx.value.inventoryId) {
 			if (
+				inventoriesMap[ctx.value.inventoryId]?.eventId &&
 				ctx.value.eventId !== inventoriesMap[ctx.value.inventoryId]?.eventId
 			) {
 				ctx.issues.push({
@@ -113,6 +121,19 @@ export default function InventoryTransactionFormModal({
 					input: ctx.value.quantity
 				});
 			}
+
+			if (
+				(ctx.value.type === 'event_dispatch' ||
+					ctx.value.type === 'event_return') &&
+				!ctx.value.transactorId
+			) {
+				ctx.issues.push({
+					code: 'custom',
+					message: 'Volunteer is required for dispatch and return transactions',
+					path: ['transactorId'],
+					input: ctx.value.transactorId
+				});
+			}
 		}
 	});
 
@@ -121,6 +142,21 @@ export default function InventoryTransactionFormModal({
 		defaultValues
 	});
 	const { setValue, watch } = form;
+	const currentEventId = watch('eventId');
+	const transactorOptions =
+		currentEventId &&
+		(watch('type') === 'event_dispatch' || watch('type') === 'event_return')
+			? [
+					...eventsMap[currentEventId].coordinators.map(coordinator => ({
+						label: `${coordinator.user?.firstName} ${coordinator.user?.lastName}`,
+						value: coordinator.userId
+					})),
+					...eventsMap[currentEventId].volunteers.map(volunteer => ({
+						label: `${volunteer.user?.firstName} ${volunteer.user?.lastName}`,
+						value: volunteer.userId
+					}))
+				].sort((a, b) => a.label.localeCompare(b.label))
+			: [];
 
 	const handleFormSubmit = async (data: InventoryTransactionFormData) => {
 		setIsSubmitting(true);
@@ -129,7 +165,8 @@ export default function InventoryTransactionFormModal({
 			// Create the inventoryTransaction in db
 			await zero.mutate.inventoryTransactions.create({
 				...data,
-				eventId: data.eventId ?? undefined
+				eventId: data.eventId === '' ? undefined : data.eventId,
+				transactorId: data.transactorId === '' ? undefined : data.transactorId
 			}).client;
 
 			// Close dialog on success
@@ -203,6 +240,12 @@ export default function InventoryTransactionFormModal({
 							options={eventOptions}
 							showClear
 							disabled={!!inventoriesMap[watch('inventoryId')]?.eventId}
+						/>
+						<SelectField
+							name='transactorId'
+							label='Volunteer'
+							options={transactorOptions}
+							showClear
 						/>
 						<InputField name='notes' type='text' label='Notes' />
 					</ModalBody>

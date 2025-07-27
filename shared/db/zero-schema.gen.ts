@@ -540,6 +540,16 @@ export const schema = {
           >,
           serverName: "event_id",
         },
+        transactorId: {
+          type: "string",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "inventoryTransactions",
+            "transactorId"
+          >,
+          serverName: "user_id",
+        },
         type: {
           type: "string",
           optional: false,
@@ -1235,6 +1245,14 @@ export const schema = {
           cardinality: "one",
         },
       ],
+      transactor: [
+        {
+          sourceField: ["transactorId"],
+          destField: ["id"],
+          destSchema: "users",
+          cardinality: "one",
+        },
+      ],
     },
     participantCategories: {
       participants: [
@@ -1362,6 +1380,14 @@ export const schema = {
           sourceField: ["id"],
           destField: ["userId"],
           destSchema: "centerGuardians",
+          cardinality: "many",
+        },
+      ],
+      inventoryTransactions: [
+        {
+          sourceField: ["id"],
+          destField: ["transactorId"],
+          destSchema: "inventoryTransactions",
           cardinality: "many",
         },
       ],

@@ -49,14 +49,13 @@ export function SelectField<T extends FieldValues>({
 		<FormField
 			control={resolvedControl}
 			name={name}
-			disabled={disabled}
 			render={({ field }) => (
 				<FormItem className='flex-1'>
 					<FormLabel className={hideLabel ? 'sr-only' : ''}>{label}</FormLabel>
 					<Select
 						onValueChange={field.onChange}
 						defaultValue={field.value}
-						disabled={field.disabled}
+						disabled={disabled}
 						value={field.value}
 					>
 						<FormControl className='w-full'>
