@@ -197,6 +197,13 @@
       "when": 1753603054477,
       "tag": "0027_purple_the_renegades",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1753611105286,
+      "tag": "0028_shocking_impossible_man",
+      "breakpoints": true
     }
   ]
 }

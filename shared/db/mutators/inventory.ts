@@ -3,6 +3,7 @@ import { createId } from '@paralleldrive/cuid2';
 import { CustomMutatorDefs, UpdateValue } from '@rocicorp/zero';
 
 import { assertIsAdminOrLogisticsCoordinator } from '../permissions.ts';
+import { inventoryTransactionType } from '../schema.ts';
 import { AuthData, Schema } from '../schema.zero.ts';
 
 export interface CreateInventoryArgs {
@@ -16,7 +17,14 @@ export function createInventoryMutators(authData: AuthData | undefined) {
 	return {
 		create: async (tx, data: CreateInventoryArgs) => {
 			assertIsAdminOrLogisticsCoordinator(authData);
-			await tx.mutate.inventory.insert({ id: createId(), ...data });
+			const inventoryId = createId();
+			await tx.mutate.inventory.insert({ id: inventoryId, ...data });
+			await tx.mutate.inventoryTransactions.insert({
+				id: createId(),
+				inventoryId,
+				type: inventoryTransactionType.enumValues[0],
+				quantity: data.quantity
+			});
 		},
 		update: async (
 			tx,

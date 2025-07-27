@@ -33,7 +33,7 @@ export const allowedEventGenderEnum = pgEnum('allowed_event_gender', [
 	'both'
 ]);
 export const inventoryTransactionType = pgEnum('inventory_transaction_type', [
-	'initial_inventory ',
+	'initial_inventory',
 	'purchase',
 	'adjustment',
 	'event_return',
