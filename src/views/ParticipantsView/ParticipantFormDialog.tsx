@@ -118,7 +118,8 @@ export default function ParticipantFormModal({
 			if (!participant) {
 				await zero.mutate.participants.create({
 					name: data.name,
-					dob: data.dob.getTime(),
+					// TODO: Fix timezone difference properly
+					dob: data.dob.setHours(12),
 					gender: data.gender,
 					centerId: data.center ?? defaultCenter
 				}).client;
