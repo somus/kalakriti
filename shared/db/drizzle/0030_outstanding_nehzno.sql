@@ -1,0 +1,1 @@
+ALTER TABLE "inventory" ADD COLUMN "photo_path" varchar;
