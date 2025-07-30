@@ -211,6 +211,13 @@
       "when": 1753644800752,
       "tag": "0029_big_lady_mastermind",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1753899793082,
+      "tag": "0030_outstanding_nehzno",
+      "breakpoints": true
     }
   ]
 }
