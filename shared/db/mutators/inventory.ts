@@ -11,6 +11,7 @@ export interface CreateInventoryArgs {
 	quantity: number;
 	unitPrice: number;
 	eventId?: string;
+	photoPath?: string;
 }
 
 export function createInventoryMutators(authData: AuthData | undefined) {
@@ -29,7 +30,10 @@ export function createInventoryMutators(authData: AuthData | undefined) {
 		},
 		update: async (
 			tx,
-			change: Omit<
+			{
+				photoPath,
+				...change
+			}: Omit<
 				UpdateValue<Schema['tables']['inventory']>,
 				'quantity' | 'createdAt'
 			>
@@ -37,6 +41,7 @@ export function createInventoryMutators(authData: AuthData | undefined) {
 			assertIsAdminOrLogisticsCoordinator(authData);
 			await tx.mutate.inventory.update({
 				...change,
+				photoPath,
 				updatedAt: new Date().getTime()
 			});
 		},

@@ -13,6 +13,8 @@ import {
 	useFormState
 } from 'react-hook-form';
 
+import { Button } from './button';
+
 const Form = FormProvider;
 
 interface FormFieldContextValue<
@@ -42,7 +44,7 @@ const FormField = <
 const useFormField = () => {
 	const fieldContext = React.useContext(FormFieldContext);
 	const itemContext = React.useContext(FormItemContext);
-	const { getFieldState } = useFormContext();
+	const { getFieldState, setValue, watch } = useFormContext();
 	const formState = useFormState({ name: fieldContext.name });
 	const fieldState = getFieldState(fieldContext.name, formState);
 
@@ -58,6 +60,9 @@ const useFormField = () => {
 		formItemId: `${id}-form-item`,
 		formDescriptionId: `${id}-form-item-description`,
 		formMessageId: `${id}-form-item-message`,
+		watch,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		setValue: (value: any) => setValue(fieldContext.name, value),
 		...fieldState
 	};
 };
@@ -86,9 +91,14 @@ function FormItem({ className, ...props }: React.ComponentProps<'div'>) {
 
 function FormLabel({
 	className,
+	showClear = false,
+	children,
 	...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
-	const { error, formItemId } = useFormField();
+}: React.ComponentProps<typeof LabelPrimitive.Root> & {
+	showClear?: boolean;
+}) {
+	const { error, formItemId, watch, setValue, name } = useFormField();
+	const canShowClear = showClear && !!watch(name) && watch(name) !== '';
 
 	return (
 		<Label
@@ -97,7 +107,24 @@ function FormLabel({
 			className={cn('data-[error=true]:text-destructive', className)}
 			htmlFor={formItemId}
 			{...props}
-		/>
+		>
+			<div className='flex flex-1 items-center gap-1 content-between'>
+				<p className='flex-1'>{children}</p>
+				{canShowClear && (
+					<Button
+						variant='link'
+						size='sm'
+						className='text-muted-foreground hover:text-destructive'
+						onClick={() => {
+							setValue('');
+						}}
+						type='button'
+					>
+						Clear
+					</Button>
+				)}
+			</div>
+		</Label>
 	);
 }
 
