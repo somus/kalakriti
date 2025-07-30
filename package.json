@@ -160,6 +160,7 @@
 		"@tailwindcss/oxide",
 		"esbuild",
 		"protobufjs",
-		"sharp"
+		"sharp",
+		"@smithy/core"
 	]
 }
