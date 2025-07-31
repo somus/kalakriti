@@ -475,16 +475,6 @@ export const schema = {
           >,
           serverName: "unit_price",
         },
-        photoPath: {
-          type: "string",
-          optional: true,
-          customType: null as unknown as ZeroCustomType<
-            typeof zeroSchema,
-            "inventory",
-            "photoPath"
-          >,
-          serverName: "photo_path",
-        },
         eventId: {
           type: "string",
           optional: true,
