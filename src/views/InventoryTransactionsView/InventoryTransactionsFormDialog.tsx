@@ -217,12 +217,13 @@ export default function InventoryTransactionFormModal({
 							name='inventoryId'
 							label='Inventory'
 							options={inventoryOptions}
+							isRequired
 						/>
 						<SelectField
 							name='type'
 							label='Type'
 							options={typeOptions}
-							showClear
+							isRequired
 						/>
 						<InputField
 							name='quantity'
@@ -233,19 +234,18 @@ export default function InventoryTransactionFormModal({
 									? `There are ${selectedInventory?.quantity ?? 0} items left`
 									: undefined
 							}
+							isRequired
 						/>
 						<SelectField
 							name='eventId'
 							label='Event'
 							options={eventOptions}
-							showClear
 							disabled={!!inventoriesMap[watch('inventoryId')]?.eventId}
 						/>
 						<SelectField
 							name='transactorId'
 							label='Volunteer'
 							options={transactorOptions}
-							showClear
 						/>
 						<InputField name='notes' type='text' label='Notes' />
 					</ModalBody>

@@ -16,6 +16,7 @@ interface MultiSelectFieldProps<T extends FieldValues> {
 	placeholder?: string;
 	disabled?: boolean;
 	hideLabel?: boolean;
+	isRequired?: boolean;
 }
 
 export type { Option } from '@/components/ui/input-multiselect';
@@ -27,7 +28,8 @@ export function MultiSelectField<T extends FieldValues>({
 	options,
 	placeholder = 'Select an option',
 	disabled = false,
-	hideLabel = false
+	hideLabel = false,
+	isRequired = false
 }: MultiSelectFieldProps<T>) {
 	// If control is not provided, try to get it from context
 	const methods = useFormContext<T>();
@@ -39,7 +41,13 @@ export function MultiSelectField<T extends FieldValues>({
 			name={name}
 			render={({ field }) => (
 				<FormItem className='flex-1'>
-					<FormLabel className={hideLabel ? 'sr-only' : ''}>{label}</FormLabel>
+					<FormLabel
+						className={hideLabel ? 'sr-only' : ''}
+						isRequired={isRequired}
+						showClear={false}
+					>
+						{label}
+					</FormLabel>
 					<FormControl className='w-full'>
 						<MultipleSelector
 							defaultOptions={options}

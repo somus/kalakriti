@@ -91,14 +91,17 @@ function FormItem({ className, ...props }: React.ComponentProps<'div'>) {
 
 function FormLabel({
 	className,
-	showClear = false,
+	isRequired = false,
 	children,
+	showClear = true,
 	...props
 }: React.ComponentProps<typeof LabelPrimitive.Root> & {
+	isRequired?: boolean;
 	showClear?: boolean;
 }) {
 	const { error, formItemId, watch, setValue, name } = useFormField();
-	const canShowClear = showClear && !!watch(name) && watch(name) !== '';
+	const canShowClear =
+		showClear && !isRequired && !!watch(name) && watch(name) !== '';
 
 	return (
 		<Label
@@ -109,7 +112,10 @@ function FormLabel({
 			{...props}
 		>
 			<div className='flex flex-1 items-center gap-1 content-between'>
-				<p className='flex-1'>{children}</p>
+				<p className='flex-1'>
+					{children}
+					{isRequired && <span className='text-destructive ml-1'>*</span>}
+				</p>
 				{canShowClear && (
 					<Button
 						variant='link'

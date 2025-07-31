@@ -199,7 +199,7 @@ export default function UserFormModal({
 					className='flex flex-col flex-1'
 				>
 					<ModalBody className='space-y-4'>
-						<InputField name='firstName' label='First Name' />
+						<InputField name='firstName' label='First Name' isRequired />
 						<InputField name='lastName' label='Last Name' />
 						<InputField
 							name='email'
@@ -207,15 +207,19 @@ export default function UserFormModal({
 							type='email'
 							disabled={!!user}
 						/>
-						<InputField name='phoneNumber' label='Phone Number' />
-						<SelectField name='role' label='Role' options={roleOptions} />
+						<InputField name='phoneNumber' label='Phone Number' isRequired />
+						<SelectField
+							name='role'
+							label='Role'
+							options={roleOptions}
+							isRequired
+						/>
 						{(form.watch('role') !== 'admin' ||
 							form.watch('role') !== 'volunteer') && (
 							<SelectField
 								name='leading'
 								label='Leading'
 								options={teamOptions}
-								showClear
 							/>
 						)}
 						{!user && form.watch('role') !== 'admin' && (
@@ -223,7 +227,12 @@ export default function UserFormModal({
 						)}
 						{!user &&
 							(form.watch('role') === 'admin' || form.watch('canLogin')) && (
-								<InputField name='password' label='Password' type='password' />
+								<InputField
+									name='password'
+									label='Password'
+									type='password'
+									isRequired
+								/>
 							)}
 					</ModalBody>
 					<ModalFooter>

@@ -25,6 +25,7 @@ interface DateFieldProps<T extends FieldValues> {
 	control?: Control<T>;
 	disabled?: boolean;
 	disabledDates?: Matcher | Matcher[];
+	isRequired?: boolean;
 }
 
 export function DateField<T extends FieldValues>({
@@ -33,6 +34,7 @@ export function DateField<T extends FieldValues>({
 	control,
 	disabled = false,
 	disabledDates,
+	isRequired = false,
 	...props
 }: DateFieldProps<T> &
 	Omit<ComponentProps<typeof Calendar>, 'name' | 'disabled'>) {
@@ -48,7 +50,7 @@ export function DateField<T extends FieldValues>({
 				const date = field.value;
 				return (
 					<FormItem>
-						<FormLabel>{label}</FormLabel>
+						<FormLabel isRequired={isRequired}>{label}</FormLabel>
 						<FormControl>
 							<Popover>
 								<PopoverTrigger asChild>

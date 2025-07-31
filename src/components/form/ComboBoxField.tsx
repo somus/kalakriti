@@ -36,6 +36,7 @@ interface ComboBoxFieldProps<T extends FieldValues> {
 	options: ComboBoxOption[];
 	disabled?: boolean;
 	hideLabel?: boolean;
+	isRequired?: boolean;
 }
 
 export function ComboBoxField<T extends FieldValues>({
@@ -44,7 +45,8 @@ export function ComboBoxField<T extends FieldValues>({
 	control,
 	options,
 	disabled = false,
-	hideLabel = false
+	hideLabel = false,
+	isRequired = false
 }: ComboBoxFieldProps<T>) {
 	// If control is not provided, try to get it from context
 	const methods = useFormContext<T>();
@@ -56,7 +58,12 @@ export function ComboBoxField<T extends FieldValues>({
 			name={name}
 			render={({ field }) => (
 				<FormItem className='flex-1'>
-					<FormLabel className={hideLabel ? 'sr-only' : ''}>{label}</FormLabel>
+					<FormLabel
+						className={hideLabel ? 'sr-only' : ''}
+						isRequired={isRequired}
+					>
+						{label}
+					</FormLabel>
 					<Popover>
 						<PopoverTrigger asChild>
 							<FormControl>

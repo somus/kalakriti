@@ -16,6 +16,7 @@ interface InputFieldProps<T extends FieldValues> {
 	control?: Control<T>;
 	type?: string;
 	description?: string;
+	isRequired?: boolean;
 }
 
 export function InputField<T extends FieldValues>({
@@ -24,6 +25,7 @@ export function InputField<T extends FieldValues>({
 	control,
 	type = 'text',
 	description,
+	isRequired = false,
 	...props
 }: InputFieldProps<T> & Omit<ComponentProps<typeof Input>, 'name' | 'type'>) {
 	// If control is not provided, try to get it from context
@@ -36,7 +38,7 @@ export function InputField<T extends FieldValues>({
 			name={name}
 			render={({ field }) => (
 				<FormItem>
-					<FormLabel>{label}</FormLabel>
+					<FormLabel isRequired={isRequired}>{label}</FormLabel>
 					<FormControl>
 						<Input
 							type={type}

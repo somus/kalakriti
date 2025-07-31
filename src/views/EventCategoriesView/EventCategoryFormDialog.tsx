@@ -85,7 +85,7 @@ export default function EventCategoryFormModal({
 				await zero.mutate.eventCategories.update({
 					id: eventCategory.id,
 					name: data.name,
-					coordinatorId: data.coordinatorId
+					coordinatorId: data.coordinatorId === '' ? null : data.coordinatorId
 				}).client;
 			}
 
@@ -129,7 +129,7 @@ export default function EventCategoryFormModal({
 					className='flex flex-col flex-1'
 				>
 					<ModalBody className='space-y-4'>
-						<InputField name='name' label='Name' />
+						<InputField name='name' label='Name' isRequired />
 						<ComboBoxField
 							name='coordinatorId'
 							label='Coordinator'

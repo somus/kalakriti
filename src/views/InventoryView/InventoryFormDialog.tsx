@@ -185,26 +185,27 @@ export default function InventoryFormModal({
 					className='flex flex-col flex-1'
 				>
 					<ModalBody className='space-y-4'>
-						<InputField name='name' label='Name' />
+						<InputField name='name' label='Name' isRequired />
 						<InputField
 							name='quantity'
 							type='number'
 							label='Quantity'
 							disabled={!!inventory}
+							isRequired
 						/>
-						<InputField name='unitPrice' type='number' label='Unit Price' />
-						<SelectField
-							name='eventId'
-							label='Event'
-							options={eventOptions}
-							showClear
+						<InputField
+							name='unitPrice'
+							type='number'
+							label='Unit Price'
+							isRequired
 						/>
+						<SelectField name='eventId' label='Event' options={eventOptions} />
 						<FormField
 							control={form.control}
 							name='photoPath'
 							render={({ field }) => (
 								<FormItem className='flex flex-col'>
-									<FormLabel showClear>Photo</FormLabel>
+									<FormLabel>Photo</FormLabel>
 									<FormControl>
 										{!field.value || field.value === '' ? (
 											<FileUploader

@@ -171,7 +171,7 @@ export default function ParticipantFormModal({
 					className='flex flex-col flex-1'
 				>
 					<ModalBody className='space-y-4'>
-						<InputField name='name' label='Name' />
+						<InputField name='name' label='Name' isRequired />
 						<div className='flex gap-2'>
 							<DateField
 								name='dob'
@@ -179,12 +179,14 @@ export default function ParticipantFormModal({
 								disabled={!!participant}
 								disabledDates={{ before: minDate, after: maxDate }}
 								defaultMonth={participant ? undefined : maxDate}
+								isRequired
 							/>
 							<SelectField
 								name='gender'
 								label='Gender'
 								options={genderOptions}
 								disabled={!!participant}
+								isRequired
 							/>
 						</div>
 						<ComboBoxField
@@ -192,6 +194,7 @@ export default function ParticipantFormModal({
 							label='Center'
 							options={centerOptions}
 							disabled={!!participant || user.role !== 'admin'}
+							isRequired
 						/>
 					</ModalBody>
 

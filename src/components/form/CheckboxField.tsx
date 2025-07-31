@@ -39,7 +39,7 @@ export function CheckboxField<T extends FieldValues>({
 						/>
 					</FormControl>
 					<div className='space-y-1 leading-none'>
-						<FormLabel>{label}</FormLabel>
+						<FormLabel showClear={false}>{label}</FormLabel>
 						<FormMessage />
 					</div>
 				</FormItem>

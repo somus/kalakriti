@@ -132,20 +132,42 @@ export default function ParticipantCategoryFormModal({
 					className='flex flex-col flex-1'
 				>
 					<ModalBody className='space-y-4'>
-						<InputField name='name' label='Name' />
-						<InputField name='minAge' label='Minimum Age' type='number' />
-						<InputField name='maxAge' label='Maximum Age' type='number' />
-						<InputField name='maxBoys' label='Maximum Boys' type='number' />
-						<InputField name='maxGirls' label='Maximum Girls' type='number' />
+						<InputField name='name' label='Name' isRequired />
+						<InputField
+							name='minAge'
+							label='Minimum Age'
+							type='number'
+							isRequired
+						/>
+						<InputField
+							name='maxAge'
+							label='Maximum Age'
+							type='number'
+							isRequired
+						/>
+						<InputField
+							name='maxBoys'
+							label='Maximum Boys'
+							type='number'
+							isRequired
+						/>
+						<InputField
+							name='maxGirls'
+							label='Maximum Girls'
+							type='number'
+							isRequired
+						/>
 						<InputField
 							name='totalEventsAllowed'
 							label='Total Events Allowed'
 							type='number'
+							isRequired
 						/>
 						<InputField
 							name='maxEventsPerCategory'
 							label='Maximum Events per Category'
 							type='number'
+							isRequired
 						/>
 					</ModalBody>
 

@@ -9,7 +9,6 @@ import {
 	Select,
 	SelectContent,
 	SelectItem,
-	SelectSeparator,
 	SelectTrigger,
 	SelectValue
 } from '@/components/ui/select';
@@ -28,7 +27,7 @@ interface SelectFieldProps<T extends FieldValues> {
 	placeholder?: string;
 	disabled?: boolean;
 	hideLabel?: boolean;
-	showClear?: boolean;
+	isRequired?: boolean;
 }
 
 export function SelectField<T extends FieldValues>({
@@ -39,7 +38,7 @@ export function SelectField<T extends FieldValues>({
 	placeholder = 'Select an option',
 	disabled = false,
 	hideLabel = false,
-	showClear = false
+	isRequired = false
 }: SelectFieldProps<T>) {
 	// If control is not provided, try to get it from context
 	const methods = useFormContext<T>();
@@ -51,7 +50,12 @@ export function SelectField<T extends FieldValues>({
 			name={name}
 			render={({ field }) => (
 				<FormItem className='flex-1'>
-					<FormLabel className={hideLabel ? 'sr-only' : ''}>{label}</FormLabel>
+					<FormLabel
+						className={hideLabel ? 'sr-only' : ''}
+						isRequired={isRequired}
+					>
+						{label}
+					</FormLabel>
 					<Select
 						onValueChange={field.onChange}
 						defaultValue={field.value}
@@ -69,19 +73,6 @@ export function SelectField<T extends FieldValues>({
 									{option.label}
 								</SelectItem>
 							))}
-							{field.value && showClear && (
-								<>
-									<SelectSeparator />
-
-									<SelectItem
-										key='clear'
-										// @ts-expect-error fix later
-										value={null}
-									>
-										Clear
-									</SelectItem>
-								</>
-							)}
 						</SelectContent>
 					</Select>
 					<FormMessage />

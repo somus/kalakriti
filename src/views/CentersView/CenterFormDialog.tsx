@@ -136,18 +136,20 @@ export default function CenterFormModal({
 					className='flex flex-col flex-1'
 				>
 					<ModalBody className='space-y-4'>
-						<InputField name='name' label='Name' />
+						<InputField name='name' label='Name' isRequired />
 						<MultiSelectField
 							name='liaisons'
 							label='Liaisons'
 							options={liaisonOptions}
 							placeholder='Select liaisons'
+							isRequired
 						/>
 						<MultiSelectField
 							name='guardians'
 							label='Guardians'
 							options={guardianOptions}
 							placeholder='Select guardians'
+							isRequired
 						/>
 					</ModalBody>
 

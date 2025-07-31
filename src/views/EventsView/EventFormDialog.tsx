@@ -336,15 +336,17 @@ export default function EventFormModal({
 					className='flex flex-col flex-1'
 				>
 					<ModalBody className='space-y-4'>
-						<InputField name='name' label='Name' />
+						<InputField name='name' label='Name' isRequired />
 						<FormItem className='flex flex-col gap-2'>
-							<FormLabel>Timings</FormLabel>
+							<FormLabel showClear={false}>Timings</FormLabel>
 							{Object.keys(defaultValues.timings).map(id => {
 								const category =
 									participantCategoryMap[defaultValues.timings[id].categoryId];
 								return (
 									<FormItem key={id}>
-										<FormLabel className='italic'>{category.name}</FormLabel>
+										<FormLabel className='italic' showClear={false}>
+											{category.name}
+										</FormLabel>
 										<div className='flex gap-4'>
 											<SelectField
 												name={`timings.${id}.startTime`}
@@ -367,16 +369,19 @@ export default function EventFormModal({
 							name='category'
 							label='Category'
 							options={eventCategoryOptions}
+							isRequired
 						/>
 						<SelectField
 							name='allowedGender'
 							label='Allowed Gender'
 							options={allowedGenderOptions}
+							isRequired
 						/>
 						<InputField
 							name='maxParticipants'
 							label='Maximum Participants'
 							type='number'
+							isRequired
 						/>
 						<CheckboxField name='isGroupEvent' label='Is Group Event?' />
 						{form.watch('isGroupEvent') && (
@@ -385,11 +390,13 @@ export default function EventFormModal({
 									name='minGroupSize'
 									label='Minimum Group Size'
 									type='number'
+									isRequired
 								/>
 								<InputField
 									name='maxGroupSize'
 									label='Maximum Group Size'
 									type='number'
+									isRequired
 								/>
 							</>
 						)}
