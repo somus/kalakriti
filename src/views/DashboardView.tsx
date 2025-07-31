@@ -98,7 +98,9 @@ export default function DashboardView() {
 			<div className='[&_[data-slot=card]]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4 grid grid-cols-1 gap-4 px-4 [&_[data-slot=card]]:bg-gradient-to-t [&_[data-slot=card]]:from-primary/5 [&_[data-slot=card]]:to-card dark:[&_[data-slot=card]]:bg-card'>
 				{role === 'admin' && (
 					<>
-						<Link to={`/users`}>
+						<Link
+							to={`/users?filters=%5B%7B%22columnId%22:%22role%22,%22type%22:%22option%22,%22operator%22:%22is%22,%22values%22:%5B%22volunteer%22%5D%7D%5D`}
+						>
 							<Card className='@container/card'>
 								<CardHeader className='relative'>
 									<CardDescription>Total Volunteers</CardDescription>
@@ -123,7 +125,9 @@ export default function DashboardView() {
 								</CardHeader>
 							</Card>
 						</Link>
-						<Link to={`/users`}>
+						<Link
+							to={`/users?filters=%5B%7B%22columnId%22:%22role%22,%22type%22:%22option%22,%22operator%22:%22is%22,%22values%22:%5B%22guardian%22%5D%7D%5D`}
+						>
 							<Card className='@container/card'>
 								<CardHeader className='relative'>
 									<CardDescription>Total Guardians</CardDescription>

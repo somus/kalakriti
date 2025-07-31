@@ -113,7 +113,9 @@ export function CenterPage({ center }: { center: Center }) {
 						</CardHeader>
 					</Card>
 				</Link>
-				<Link to={`/users`}>
+				<Link
+					to={`/centers/${center.id}/users?filters=%5B%7B%22columnId%22:%22role%22,%22type%22:%22option%22,%22operator%22:%22is%22,%22values%22:%5B%22guardian%22%5D%7D%5D`}
+				>
 					<Card className='@container/card'>
 						<CardHeader className='relative'>
 							<CardDescription>Total Guardians</CardDescription>
@@ -123,7 +125,9 @@ export function CenterPage({ center }: { center: Center }) {
 						</CardHeader>
 					</Card>
 				</Link>
-				<Link to={`/users`}>
+				<Link
+					to={`/centers/${center.id}/users?filters=%5B%7B%22columnId%22:%22role%22,%22type%22:%22option%22,%22operator%22:%22is%22,%22values%22:%5B%22volunteer%22%5D%7D%5D`}
+				>
 					<Card className='@container/card'>
 						<CardHeader className='relative'>
 							<CardDescription>Total Liasons</CardDescription>
