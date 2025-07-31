@@ -7,8 +7,6 @@ COPY . .
 
 RUN bun install --lockfile-only
 
-RUN bun run prod:api:build
-
 ARG PORT
 EXPOSE ${PORT:-3000}
 
