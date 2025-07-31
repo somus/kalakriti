@@ -362,7 +362,6 @@ export const inventory = pgTable('inventory', {
 	name: varchar('name').notNull(),
 	quantity: integer('quantity').notNull(),
 	unitPrice: integer('unit_price').notNull(),
-	photoPath: varchar('photo_path'),
 	eventId: varchar('event_id').references(() => events.id, {
 		onDelete: 'set null'
 	}),

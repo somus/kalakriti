@@ -4,7 +4,6 @@ USER bun
 WORKDIR /app
 
 COPY . .
-
 RUN bun install --lockfile-only
 
 ARG PORT

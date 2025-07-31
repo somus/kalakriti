@@ -27,8 +27,7 @@
 		"lint": "concurrently \"bun run-eslint\" \"bun run-stylelint\" \"bun typecheck\"",
 		"prepare": "husky",
 		"preview": "concurrently --kill-others \"bun zero-cache\" \"vite preview --open\" \"bun run api/index.ts\"",
-		"prod:api": "bun run prod:api:build && bun run api/build/index.js",
-		"prod:api:build": "bun build api/index.ts --outdir api/build --target=bun",
+		"prod:api": "bun run api/index.ts",
 		"run-eslint": "eslint --cache --fix .",
 		"run-stylelint": "stylelint --cache --fix --ignore-path .gitignore **/*.css",
 		"shadcn": "bunx shadcn@canary add",
@@ -51,8 +50,6 @@
 		"sharp-ico": "0.1.5"
 	},
 	"dependencies": {
-		"@aws-sdk/client-s3": "^3.855.0",
-		"@aws-sdk/s3-request-presigner": "^3.855.0",
 		"@clerk/backend": "^2.5.2",
 		"@clerk/clerk-react": "^5.36.0",
 		"@hono/clerk-auth": "^3.0.2",
@@ -76,18 +73,10 @@
 		"@rocicorp/zero": "^0.21.2025070200",
 		"@t3-oss/env-core": "^0.13.8",
 		"@tanstack/react-table": "^8.21.3",
-		"@uppy/aws-s3": "^4.3.1",
-		"@uppy/core": "^4.5.1",
-		"@uppy/dashboard": "^4.4.1",
-		"@uppy/drag-drop": "^4.2.1",
-		"@uppy/file-input": "^4.2.1",
-		"@uppy/progress-bar": "^4.3.1",
-		"@uppy/react": "^4.5.1",
 		"@yudiel/react-qr-scanner": "2.3.1",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"cmdk": "^1.1.1",
-		"crypto-hash": "^3.1.0",
 		"date-fns": "^4.1.0",
 		"drizzle-kit": "^0.31.4",
 		"drizzle-orm": "^0.44.3",
@@ -160,7 +149,6 @@
 		"@tailwindcss/oxide",
 		"esbuild",
 		"protobufjs",
-		"sharp",
-		"@smithy/core"
+		"sharp"
 	]
 }

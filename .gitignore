@@ -16,7 +16,6 @@ dev-dist
 .stylelintcache
 .env.*
 !.env.example
-api/build
 
 # Editor directories and files
 .vscode/*
