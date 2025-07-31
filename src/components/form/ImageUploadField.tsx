@@ -1,3 +1,4 @@
+import { env } from '@/env.client';
 import { GetToken } from '@clerk/types';
 import AwsS3, { type AwsS3UploadParameters } from '@uppy/aws-s3';
 import Uppy, { Body, Meta, type UploadResult, UppyFile } from '@uppy/core';
@@ -12,7 +13,7 @@ export async function getUploadParameters(
 	getToken: GetToken
 ) {
 	const token = await getToken();
-	const response = await fetch('http://localhost:3000/api/getSignedURL', {
+	const response = await fetch(`${env.VITE_API_SERVER}/getSignedURL`, {
 		method: 'POST',
 		headers: {
 			accept: 'application/json',

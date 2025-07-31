@@ -156,7 +156,7 @@ const Actions = ({ inventory }: { inventory: Inventory }) => {
 								if (inventory.photoPath) {
 									// Delete photo from R2 bucket
 									const token = await getToken();
-									await fetch('http://localhost:3000/api/deleteAsset', {
+									await fetch(`${env.VITE_API_SERVER}/deleteAsset`, {
 										method: 'DELETE',
 										headers: {
 											accept: 'application/json',
