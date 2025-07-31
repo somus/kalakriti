@@ -5,7 +5,7 @@ WORKDIR /app
 
 ENV NODE_ENV="production"
 
-FROM base as build
+FROM base AS build
 
 COPY --link bun.lock package.json ./
 RUN bun install --lockfile-only
