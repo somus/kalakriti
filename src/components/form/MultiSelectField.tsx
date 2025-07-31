@@ -57,7 +57,7 @@ export function MultiSelectField<T extends FieldValues>({
 								const option = options.find(opt => opt.value === id);
 								return option ?? { value: id, label: id };
 							})}
-							disabled={disabled}
+							disabled={disabled ? true : undefined}
 							onChange={options => {
 								methods.setValue(
 									name,
