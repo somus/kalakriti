@@ -1,3 +1,4 @@
+import { IdCard } from '@/components/IdCard';
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -16,13 +17,12 @@ import {
 import useZero from '@/hooks/useZero';
 import { cn } from '@/lib/utils';
 import { Row, createColumnHelper } from '@tanstack/react-table';
-import { CheckIcon, Ellipsis, QrCodeIcon, XIcon } from 'lucide-react';
+import { CheckIcon, Ellipsis, IdCardIcon, XIcon } from 'lucide-react';
 import { useState } from 'react';
-import QRCode from 'react-qr-code';
-import { User } from 'shared/db/schema.zero';
 import { toast } from 'sonner';
 
 import UserFormDialog from './UserFormDialog';
+import { User } from './UsersView';
 
 const columnHelper = createColumnHelper<User>();
 
@@ -178,17 +178,20 @@ export const columns = [
 		}
 	}),
 	{
-		id: 'view-qr-code',
+		id: 'view-id-card',
 		cell: ({ row }: { row: Row<User> }) => {
 			return (
 				<Dialog>
 					<DialogTrigger asChild>
 						<Button variant='ghost' size='icon' className='size-6'>
-							<QrCodeIcon className='size-4' aria-hidden='true' />
+							<IdCardIcon className='size-4' aria-hidden='true' />
 						</Button>
 					</DialogTrigger>
-					<DialogContent aria-describedby={undefined}>
-						<DialogTitle>QR Code</DialogTitle>
+					<DialogContent
+						className='border-0 bg-transparent p-0 shadow-none'
+						aria-describedby={undefined}
+					>
+						<DialogTitle className='hidden'>ID Card</DialogTitle>
 						<div
 							style={{
 								height: 'auto',
@@ -197,11 +200,17 @@ export const columns = [
 								width: '100%'
 							}}
 						>
-							<QRCode
-								size={256}
-								style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
-								value={JSON.stringify({ type: 'user', id: row.original.id })}
-								viewBox={`0 0 256 256`}
+							<IdCard
+								name={`${row.original.firstName} ${row.original.lastName}`}
+								role={getUserRoleText(row.original)}
+								type={
+									row.original.role === 'guardian' ? 'guardian' : 'volunteer'
+								}
+								qrCodeValue={JSON.stringify({
+									type:
+										row.original.role === 'guardian' ? 'guardian' : 'volunteer',
+									id: row.original.id
+								})}
 							/>
 						</div>
 					</DialogContent>
@@ -265,4 +274,23 @@ const Actions = ({ user }: { user: User }) => {
 			)}
 		</DropDrawer>
 	);
+};
+
+const getUserRoleText = (user: User) => {
+	if (user.role === 'guardian') {
+		return user.guardianCenters[0]?.center?.name ?? 'Guardian';
+	}
+	if (user.leading) {
+		return `${user.leading} Coordinator`;
+	}
+	if (user.liaisoningCenters.length > 0) {
+		return `${user.liaisoningCenters[0].center?.name} Liaison`;
+	}
+	if (user.volunteeringEvents.length > 0) {
+		return `${user.volunteeringEvents[0].event?.name} Volunteer`;
+	}
+	if (user.coordinatingEvents.length > 0) {
+		return `${user.coordinatingEvents[0].event?.name} Coordinator`;
+	}
+	return 'Volunteer';
 };

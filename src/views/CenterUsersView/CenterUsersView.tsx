@@ -21,14 +21,14 @@ export default function CenterUsersView() {
 			columns={columns.filter(
 				column =>
 					column.id &&
-					!['leading', 'canLogin', 'view-qr-code', 'actions'].includes(
+					!['leading', 'canLogin', 'view-id-card', 'actions'].includes(
 						column.id
 					)
 			)}
 			columnsConfig={columnsConfig.filter(
 				column =>
 					column.id &&
-					!['leading', 'canLogin', 'view-qr-code', 'actions'].includes(
+					!['leading', 'canLogin', 'view-id-card', 'actions'].includes(
 						column.id
 					)
 			)}

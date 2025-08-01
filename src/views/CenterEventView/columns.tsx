@@ -1,6 +1,13 @@
+import { IdCard } from '@/components/IdCard';
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+	Dialog,
+	DialogContent,
+	DialogTitle,
+	DialogTrigger
+} from '@/components/ui/dialog';
 import {
 	Tooltip,
 	TooltipContent,
@@ -11,7 +18,13 @@ import useZero from '@/hooks/useZero';
 import { CenterOutletContext } from '@/layout/CenterLayout';
 import { Row, createColumnHelper } from '@tanstack/react-table';
 import { formatDate } from 'date-fns';
-import { Calendar1Icon, CheckIcon, TrashIcon, XIcon } from 'lucide-react';
+import {
+	Calendar1Icon,
+	CheckIcon,
+	IdCardIcon,
+	TrashIcon,
+	XIcon
+} from 'lucide-react';
 import { useOutletContext } from 'react-router';
 import { toast } from 'sonner';
 
@@ -111,6 +124,47 @@ export const columns = [
 			displayName: 'Attended'
 		}
 	}),
+	{
+		id: 'view-id-card',
+		cell: ({ row }: { row: Row<SubEventParticipant> }) => {
+			if (!row.original.participant) return null;
+
+			return (
+				<Dialog>
+					<DialogTrigger asChild>
+						<Button variant='ghost' size='icon' className='size-6'>
+							<IdCardIcon className='size-4' aria-hidden='true' />
+						</Button>
+					</DialogTrigger>
+					<DialogContent
+						className='border-0 bg-transparent p-0 shadow-none'
+						aria-describedby={undefined}
+					>
+						<DialogTitle className='hidden'>ID Card</DialogTitle>
+						<div
+							style={{
+								height: 'auto',
+								margin: '0 auto',
+								maxWidth: 256,
+								width: '100%'
+							}}
+						>
+							<IdCard
+								name={row.original.participant.name}
+								role={row.original.participant.center?.name ?? 'Participant'}
+								type='participant'
+								qrCodeValue={JSON.stringify({
+									type: 'participant',
+									id: row.original.participant.id
+								})}
+							/>
+						</div>
+					</DialogContent>
+				</Dialog>
+			);
+		},
+		size: 32
+	},
 	{
 		id: 'actions',
 		cell: ({ row }: { row: Row<SubEventParticipant> }) => {
