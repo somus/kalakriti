@@ -34,7 +34,7 @@ export const ROLE_STYLES_MAP = {
 
 export const TEAMS_NAME_MAP = {
 	overall: 'Overall Lead',
-	events: 'Events',
+	events: 'Overall Events',
 	arts: 'Arts',
 	cultural: 'Cultural',
 	liaison: 'Liaison',
