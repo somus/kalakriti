@@ -22,11 +22,12 @@ import AddEventParticipantsDialog from './AddEventParticipantsDialog/AddEventPar
 import { columns } from './columns';
 import { columnsConfig } from './filters';
 
-function subEventQuery(z: Zero, eventId: string) {
+function subEventQuery(z: Zero, eventId: string, centerId: string) {
 	return z.query.subEvents
 		.where('id', eventId)
 		.related('participants', q =>
 			q
+				.whereExists('participant', q => q.where('centerId', centerId))
 				.related('participant', q => q.related('center'))
 				.orderBy('createdAt', 'desc')
 		)
@@ -58,7 +59,7 @@ export default function CenterEventView() {
 		user: { role }
 	} = useApp();
 	const eventId = z.cuid2().parse(params.eventId);
-	const [subEvent, status] = useQuery(subEventQuery(zero, eventId));
+	const [subEvent, status] = useQuery(subEventQuery(zero, eventId, center.id));
 
 	if (!eventId) {
 		return <Navigate to='/' />;
@@ -149,6 +150,7 @@ export default function CenterEventView() {
 						<AddEventParticipantsDialog
 							key='add-event-participants'
 							subEvent={subEvent}
+							centerId={center.id}
 							eventCategoryId={subEvent.event?.eventCategoryId ?? ''}
 							participantsToBeFiltered={subEvent.participants.map(
 								participant => participant.participantId

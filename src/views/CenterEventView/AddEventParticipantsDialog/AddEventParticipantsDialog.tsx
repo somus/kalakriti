@@ -28,12 +28,14 @@ export default function AddEventParticipantsDialog({
 	children,
 	subEvent: currentEvent,
 	eventCategoryId,
-	participantsToBeFiltered = []
+	participantsToBeFiltered = [],
+	centerId
 }: {
 	children: React.ReactNode;
 	subEvent: SubEvent;
 	eventCategoryId: string;
 	participantsToBeFiltered?: string[];
+	centerId: string;
 }) {
 	// 'use no memo';
 	const zero = useZero();
@@ -46,6 +48,7 @@ export default function AddEventParticipantsDialog({
 				'=',
 				currentEvent.participantCategory?.id ?? ''
 			)
+			.where('centerId', centerId)
 			.where('id', 'NOT IN', participantsToBeFiltered)
 			.related('subEvents', q => q.related('subEvent', q => q.related('event')))
 			.orderBy('createdAt', 'desc')

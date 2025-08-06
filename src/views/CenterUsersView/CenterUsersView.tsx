@@ -1,14 +1,24 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import useZero from '@/hooks/useZero';
+import { CenterOutletContext } from '@/layout/CenterLayout';
+import { User } from '@/views/UsersView/UsersView';
 import { columns } from '@/views/UsersView/columns';
 import { columnsConfig } from '@/views/UsersView/filters';
 import { useQuery } from '@rocicorp/zero/react';
-import { User } from 'shared/db/schema.zero';
+import { useOutletContext } from 'react-router';
 
 export default function CenterUsersView() {
+	const { center } = useOutletContext<CenterOutletContext>();
 	const zero = useZero();
 	const [users, status] = useQuery(
-		zero.query.users.orderBy('createdAt', 'desc')
+		zero.query.users
+			.where(({ or, exists }) =>
+				or(
+					exists('guardianCenters', q => q.where('centerId', center.id)),
+					exists('liaisoningCenters', q => q.where('centerId', center.id))
+				)
+			)
+			.orderBy('createdAt', 'desc')
 	);
 
 	if (status.type !== 'complete') {
