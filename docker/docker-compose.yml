@@ -38,6 +38,11 @@ services:
       - ZERO_PUSH_URL=http://api:3000
       - ZERO_REPLICA_FILE=/zero_data/zchat_replica.db
       - ZERO_PORT=4848
+      - 'OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}'
+      - 'OTEL_EXPORTER_OTLP_HEADERS=${OTEL_EXPORTER_OTLP_HEADERS}'
+      - 'OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES}'
+      - 'OTEL_NODE_RESOURCE_DETECTORS=${OTEL_NODE_RESOURCE_DETECTORS}'
+
     volumes:
       - 'replica:/zero_data'
   api:
@@ -60,6 +65,12 @@ services:
       - 'ZERO_UPSTREAM_DB=postgresql://${PG_USER}:${PG_PASSWORD}@postgres:5432/${PG_DB}'
       - 'CLERK_SECRET_KEY=${CLERK_SECRET_KEY}'
       - 'CLERK_PUBLISHABLE_KEY=${CLERK_PUBLISHABLE_KEY}'
+      - 'SENTRY_DSN=${SENTRY_DSN}'
+      - 'R2_ACCOUNT_ID=${R2_ACCOUNT_ID}'
+      - 'R2_ACCESS_KEY_ID=${R2_ACCESS_KEY_ID}'
+      - 'R2_SECRET_KEY_ID=${R2_SECRET_KEY_ID}'
+      - 'R2_BUCKET_NAME=${R2_BUCKET_NAME}'
+      - 'ASSET_FOLDER=${ASSET_FOLDER}'
 
 volumes:
   pgdata:

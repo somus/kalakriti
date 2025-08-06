@@ -1,4 +1,5 @@
 import eslintPlugin from '@nabla/vite-plugin-eslint';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import reactCompiler from 'babel-plugin-react-compiler';
@@ -48,10 +49,15 @@ export default defineConfig({
 				suppressWarnings: true,
 				type: 'module'
 			}
+		}),
+		sentryVitePlugin({
+			org: 'proud-indian',
+			project: 'javascript-react'
 		})
 	],
 	build: {
 		chunkSizeWarningLimit: 1600,
+
 		rollupOptions: {
 			output: {
 				manualChunks: {
@@ -61,7 +67,9 @@ export default defineConfig({
 					clerk: ['@clerk/clerk-react']
 				}
 			}
-		}
+		},
+
+		sourcemap: true
 	},
 	resolve: {
 		alias: {

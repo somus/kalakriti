@@ -5,6 +5,7 @@ import {
 	PushProcessor,
 	ZQLDatabase
 } from '@rocicorp/zero/pg';
+import * as Sentry from '@sentry/bun';
 import { createMutators } from '@shared/db/mutators';
 import { AuthData } from '@shared/db/schema.zero';
 import { schema } from '@shared/db/zero-schema.gen';
@@ -16,6 +17,20 @@ import postgres from 'postgres';
 import { z } from 'zod';
 
 import { env } from './env.server';
+
+if (env.SENTRY_DSN) {
+	Sentry.init({
+		dsn: env.SENTRY_DSN,
+		// Tracing
+		tracesSampleRate: 1.0, // Capture 100% of the transactions
+		// Send structured logs to Sentry
+		enableLogs: true,
+		integrations: [
+			// send console.log, console.error, and console.warn calls as logs to Sentry
+			Sentry.consoleLoggingIntegration({ levels: ['log', 'error', 'warn'] })
+		]
+	});
+}
 
 const fileSchema = z.object({
 	filename: z.string().min(1),

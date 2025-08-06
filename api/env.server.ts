@@ -10,7 +10,8 @@ export const env = createEnv({
 		R2_ACCESS_KEY_ID: z.string().min(1),
 		R2_SECRET_KEY_ID: z.string().min(1),
 		R2_BUCKET_NAME: z.string().min(1),
-		ASSET_FOLDER: z.string().min(1)
+		ASSET_FOLDER: z.string().min(1),
+		SENTRY_DSN: z.url().optional()
 	},
 	runtimeEnv: {
 		ZERO_UPSTREAM_DB: process.env.ZERO_UPSTREAM_DB,
@@ -20,7 +21,8 @@ export const env = createEnv({
 		R2_ACCESS_KEY_ID: process.env.R2_ACCESS_KEY_ID,
 		R2_SECRET_KEY_ID: process.env.R2_SECRET_KEY_ID,
 		R2_BUCKET_NAME: process.env.R2_BUCKET_NAME,
-		ASSET_FOLDER: process.env.ASSET_FOLDER
+		ASSET_FOLDER: process.env.ASSET_FOLDER,
+		SENTRY_DSN: process.env.SENTRY_DSN
 	},
 	skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 	emptyStringAsUndefined: true
