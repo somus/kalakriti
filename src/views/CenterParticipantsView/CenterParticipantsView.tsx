@@ -36,7 +36,7 @@ export default function CenterParticipantsView() {
 	);
 
 	if (status.type !== 'complete') {
-		return null;
+		return <p>Unable to load participants</p>;
 	}
 
 	return (

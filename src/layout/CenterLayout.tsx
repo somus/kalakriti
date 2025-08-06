@@ -31,7 +31,7 @@ export default function CenterLayout() {
 	}
 
 	if (status.type !== 'complete' || !center) {
-		return null;
+		return <p>Unable to load center details</p>;
 	}
 
 	return <Outlet context={{ center }} />;

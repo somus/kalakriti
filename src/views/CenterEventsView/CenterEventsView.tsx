@@ -40,7 +40,7 @@ export default function CenterEventsView() {
 	const { pathname } = useLocation();
 
 	if (status.type !== 'complete') {
-		return null;
+		return <p>Unable to load events</p>;
 	}
 
 	const eventRows = events.flatMap(event =>

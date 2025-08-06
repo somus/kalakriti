@@ -66,7 +66,7 @@ export default function CenterEventView() {
 	}
 
 	if (status.type !== 'complete' || !subEvent || !subEvent.event) {
-		return null;
+		return <p>Unable to load event</p>;
 	}
 	const {
 		isGroupEvent,

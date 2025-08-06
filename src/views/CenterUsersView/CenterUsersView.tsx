@@ -22,7 +22,7 @@ export default function CenterUsersView() {
 	);
 
 	if (status.type !== 'complete') {
-		return null;
+		return <p>Unable to load users</p>;
 	}
 
 	return (
