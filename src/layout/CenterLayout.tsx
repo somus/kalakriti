@@ -1,4 +1,5 @@
 import useZero, { Zero } from '@/hooks/useZero';
+import LoadingScreen from '@/views/general/LoadingScreen';
 import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 import { Navigate, Outlet, useParams } from 'react-router';
@@ -30,8 +31,18 @@ export default function CenterLayout() {
 		return <Navigate to='/' />;
 	}
 
-	if (status.type !== 'complete' || !center) {
-		return <p>Unable to load center details</p>;
+	if (status.type !== 'complete') {
+		return <LoadingScreen />;
+	}
+
+	if (!center) {
+		return (
+			<div className='flex h-screen w-full items-center justify-center'>
+				<p className='text-gray-500 dark:text-gray-400'>
+					<p>Unable to load center details</p>
+				</p>
+			</div>
+		);
 	}
 
 	return <Outlet context={{ center }} />;

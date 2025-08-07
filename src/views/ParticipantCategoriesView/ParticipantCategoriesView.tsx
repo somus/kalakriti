@@ -1,6 +1,7 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Button } from '@/components/ui/button';
 import useZero from '@/hooks/useZero';
+import LoadingScreen from '@/views/general/LoadingScreen';
 import { useQuery } from '@rocicorp/zero/react';
 import { ParticipantCategory } from 'shared/db/schema.zero';
 
@@ -17,7 +18,17 @@ export default function ParticipantCategoriesView() {
 	);
 
 	if (status.type !== 'complete') {
-		return null;
+		return <LoadingScreen />;
+	}
+
+	if (!participantCategories) {
+		return (
+			<div className='flex h-screen w-full items-center justify-center'>
+				<p className='text-gray-500 dark:text-gray-400'>
+					<p>Unable to load participant categories</p>
+				</p>
+			</div>
+		);
 	}
 
 	return (

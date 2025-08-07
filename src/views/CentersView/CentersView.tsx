@@ -2,6 +2,7 @@ import DataTableWrapper from '@/components/data-table-wrapper';
 import { Button } from '@/components/ui/button';
 import useZero from '@/hooks/useZero';
 import { Center } from '@/layout/CenterLayout';
+import LoadingScreen from '@/views/general/LoadingScreen';
 import { useQuery } from '@rocicorp/zero/react';
 
 import CenterFormDialog from './CenterFormDialog';
@@ -21,7 +22,17 @@ export default function CentersView() {
 	);
 
 	if (status.type !== 'complete') {
-		return null;
+		return <LoadingScreen />;
+	}
+
+	if (!centers) {
+		return (
+			<div className='flex h-screen w-full items-center justify-center'>
+				<p className='text-gray-500 dark:text-gray-400'>
+					<p>Unable to load centers</p>
+				</p>
+			</div>
+		);
 	}
 
 	return (

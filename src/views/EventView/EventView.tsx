@@ -2,6 +2,7 @@ import DataTableWrapper from '@/components/data-table-wrapper';
 import { Badge } from '@/components/ui/badge';
 import { H3 } from '@/components/ui/typography';
 import useZero, { Zero } from '@/hooks/useZero';
+import LoadingScreen from '@/views/general/LoadingScreen';
 import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 import { formatDate } from 'date-fns';
@@ -39,9 +40,20 @@ export default function EventView() {
 		return <Navigate to='/' />;
 	}
 
-	if (status.type !== 'complete' || !subEvent || !subEvent.event) {
-		return null;
+	if (status.type !== 'complete') {
+		return <LoadingScreen />;
 	}
+
+	if (!subEvent?.event) {
+		return (
+			<div className='flex h-screen w-full items-center justify-center'>
+				<p className='text-gray-500 dark:text-gray-400'>
+					<p>Unable to load event details</p>
+				</p>
+			</div>
+		);
+	}
+
 	const {
 		isGroupEvent,
 		maxParticipants,

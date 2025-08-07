@@ -1,6 +1,7 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Button } from '@/components/ui/button';
 import useZero, { Zero } from '@/hooks/useZero';
+import LoadingScreen from '@/views/general/LoadingScreen';
 import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 
@@ -35,7 +36,17 @@ export default function EventsView() {
 	const [events, status] = useQuery(eventsQuery(zero));
 
 	if (status.type !== 'complete') {
-		return null;
+		return <LoadingScreen />;
+	}
+
+	if (!events) {
+		return (
+			<div className='flex h-screen w-full items-center justify-center'>
+				<p className='text-gray-500 dark:text-gray-400'>
+					<p>Unable to load events</p>
+				</p>
+			</div>
+		);
 	}
 
 	const eventRows = events.flatMap(event =>

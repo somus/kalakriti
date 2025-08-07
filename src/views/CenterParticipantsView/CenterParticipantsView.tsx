@@ -11,6 +11,7 @@ import { CenterOutletContext } from '@/layout/CenterLayout';
 import ParticipantFormDialog from '@/views/ParticipantsView/ParticipantFormDialog';
 import { columns } from '@/views/ParticipantsView/columns';
 import { columnsConfig } from '@/views/ParticipantsView/filters';
+import LoadingScreen from '@/views/general/LoadingScreen';
 import { useQuery } from '@rocicorp/zero/react';
 import { useOutletContext } from 'react-router';
 
@@ -36,7 +37,17 @@ export default function CenterParticipantsView() {
 	);
 
 	if (status.type !== 'complete') {
-		return <p>Unable to load participants</p>;
+		return <LoadingScreen />;
+	}
+
+	if (!participants) {
+		return (
+			<div className='flex h-screen w-full items-center justify-center'>
+				<p className='text-gray-500 dark:text-gray-400'>
+					<p>Unable to load participants</p>
+				</p>
+			</div>
+		);
 	}
 
 	return (

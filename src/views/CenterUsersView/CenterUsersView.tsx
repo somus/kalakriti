@@ -4,6 +4,7 @@ import { CenterOutletContext } from '@/layout/CenterLayout';
 import { User } from '@/views/UsersView/UsersView';
 import { columns } from '@/views/UsersView/columns';
 import { columnsConfig } from '@/views/UsersView/filters';
+import LoadingScreen from '@/views/general/LoadingScreen';
 import { useQuery } from '@rocicorp/zero/react';
 import { useOutletContext } from 'react-router';
 
@@ -22,7 +23,17 @@ export default function CenterUsersView() {
 	);
 
 	if (status.type !== 'complete') {
-		return <p>Unable to load users</p>;
+		return <LoadingScreen />;
+	}
+
+	if (!users) {
+		return (
+			<div className='flex h-screen w-full items-center justify-center'>
+				<p className='text-gray-500 dark:text-gray-400'>
+					<p>Unable to load users</p>
+				</p>
+			</div>
+		);
 	}
 
 	return (

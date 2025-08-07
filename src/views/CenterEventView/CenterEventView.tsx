@@ -10,6 +10,7 @@ import { H3 } from '@/components/ui/typography';
 import { useApp } from '@/hooks/useApp';
 import useZero, { Zero } from '@/hooks/useZero';
 import { CenterOutletContext } from '@/layout/CenterLayout';
+import LoadingScreen from '@/views/general/LoadingScreen';
 import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 import { formatDate } from 'date-fns';
@@ -65,9 +66,20 @@ export default function CenterEventView() {
 		return <Navigate to='/' />;
 	}
 
-	if (status.type !== 'complete' || !subEvent || !subEvent.event) {
-		return <p>Unable to load event</p>;
+	if (status.type !== 'complete') {
+		return <LoadingScreen />;
 	}
+
+	if (!subEvent?.event) {
+		return (
+			<div className='flex h-screen w-full items-center justify-center'>
+				<p className='text-gray-500 dark:text-gray-400'>
+					<p>Unable to load event</p>
+				</p>
+			</div>
+		);
+	}
+
 	const {
 		isGroupEvent,
 		maxParticipants,

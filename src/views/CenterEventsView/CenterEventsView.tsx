@@ -1,6 +1,7 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import useZero, { Zero } from '@/hooks/useZero';
 import { CenterOutletContext } from '@/layout/CenterLayout';
+import LoadingScreen from '@/views/general/LoadingScreen';
 import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 import { useLocation, useOutletContext } from 'react-router';
@@ -40,7 +41,17 @@ export default function CenterEventsView() {
 	const { pathname } = useLocation();
 
 	if (status.type !== 'complete') {
-		return <p>Unable to load events</p>;
+		return <LoadingScreen />;
+	}
+
+	if (!events) {
+		return (
+			<div className='flex h-screen w-full items-center justify-center'>
+				<p className='text-gray-500 dark:text-gray-400'>
+					<p>Unable to load events</p>
+				</p>
+			</div>
+		);
 	}
 
 	const eventRows = events.flatMap(event =>
