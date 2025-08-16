@@ -40,22 +40,19 @@ const inventorySchema = z.object({
 	unitPrice: z.number().min(0),
 	quantity: z.number().min(0),
 	eventId: z.string().nullable().optional(),
-	photoPath: z
-		.string()
-		.check(ctx => {
-			if (
-				ctx.value &&
-				ctx.value !== '' &&
-				!ctx.value.startsWith(`${env.VITE_ASSET_FOLDER}/`)
-			) {
-				ctx.issues.push({
-					code: 'custom',
-					message: 'Invalid photo path',
-					input: ctx.value
-				});
-			}
-		})
-		.optional()
+	photoPath: z.string({ error: 'Photo is required' }).check(ctx => {
+		if (
+			ctx.value &&
+			ctx.value !== '' &&
+			!ctx.value.startsWith(`${env.VITE_ASSET_FOLDER}/`)
+		) {
+			ctx.issues.push({
+				code: 'custom',
+				message: 'Invalid photo path',
+				input: ctx.value
+			});
+		}
+	})
 });
 
 type InventoryFormData = z.infer<typeof inventorySchema>;
