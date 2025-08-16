@@ -19,6 +19,7 @@ import {
 	TooltipContent,
 	TooltipTrigger
 } from '@/components/ui/tooltip';
+import { useApp } from '@/hooks/useApp';
 import useZero from '@/hooks/useZero';
 import { CenterOutletContext } from '@/layout/CenterLayout';
 import { Row, createColumnHelper } from '@tanstack/react-table';
@@ -194,6 +195,9 @@ const Actions = ({ participant }: { participant: Participant }) => {
 	const context = useOutletContext<CenterOutletContext>();
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const z = useZero();
+	const {
+		user: { role }
+	} = useApp();
 
 	return (
 		<DropDrawer modal={false}>
@@ -209,13 +213,13 @@ const Actions = ({ participant }: { participant: Participant }) => {
 			<DropDrawerContent align='end'>
 				<DropDrawerItem
 					onSelect={() => setIsDialogOpen(true)}
-					disabled={context?.center.isLocked ?? false}
+					disabled={!!context?.center.isLocked && role !== 'admin'}
 				>
 					Edit
 				</DropDrawerItem>
 				<DropDrawerItem
 					variant='destructive'
-					disabled={context?.center.isLocked ?? false}
+					disabled={!!context?.center.isLocked && role !== 'admin'}
 					onSelect={() => {
 						z.mutate.participants
 							.delete({
