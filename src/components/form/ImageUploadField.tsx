@@ -2,9 +2,9 @@ import { env } from '@/env.client';
 import { GetToken } from '@clerk/types';
 import AwsS3, { type AwsS3UploadParameters } from '@uppy/aws-s3';
 import Uppy, { Body, Meta, type UploadResult, UppyFile } from '@uppy/core';
-import '@uppy/core/dist/style.min.css';
-import '@uppy/dashboard/dist/style.min.css';
-import { Dashboard } from '@uppy/react';
+import '@uppy/core/css/style.min.css';
+import '@uppy/dashboard/css/style.min.css';
+import Dashboard from '@uppy/react/dashboard';
 import React from 'react';
 
 // eslint-disable-next-line react-refresh/only-export-components
