@@ -339,6 +339,8 @@ export const subEventParticipants = pgTable('sub_event_participants', {
 		}),
 	groupId: varchar('group_id'),
 	attended: boolean('attended').notNull().default(false),
+	isWinner: boolean('is_winner').notNull().default(false),
+	isRunner: boolean('is_runner').notNull().default(false),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });

@@ -858,6 +858,26 @@ export const schema = {
             "attended"
           >,
         },
+        isWinner: {
+          type: "boolean",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "subEventParticipants",
+            "isWinner"
+          >,
+          serverName: "is_winner",
+        },
+        isRunner: {
+          type: "boolean",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "subEventParticipants",
+            "isRunner"
+          >,
+          serverName: "is_runner",
+        },
         createdAt: {
           type: "number",
           optional: true,

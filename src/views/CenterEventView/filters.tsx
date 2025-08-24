@@ -68,5 +68,43 @@ export const columnsConfig = [
 				icon: <XIcon className='text-destructive' />
 			}
 		])
+		.build(),
+	dtf
+		.option()
+		.id('isWinner')
+		.accessor(row => (row.isWinner ?? false).toString())
+		.displayName('Winner')
+		.icon(ListCheckIcon)
+		.options([
+			{
+				label: 'Yes',
+				value: 'true',
+				icon: <CheckIcon className='text-green-500' />
+			},
+			{
+				label: 'No',
+				value: 'false',
+				icon: <XIcon className='text-destructive' />
+			}
+		])
+		.build(),
+	dtf
+		.option()
+		.id('isRunner')
+		.accessor(row => (row.isRunner ?? false).toString())
+		.displayName('Runner up')
+		.icon(ListCheckIcon)
+		.options([
+			{
+				label: 'Yes',
+				value: 'true',
+				icon: <CheckIcon className='text-green-500' />
+			},
+			{
+				label: 'No',
+				value: 'false',
+				icon: <XIcon className='text-destructive' />
+			}
+		])
 		.build()
 ] as const;

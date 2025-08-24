@@ -9,6 +9,12 @@ import {
 	DialogTrigger
 } from '@/components/ui/dialog';
 import {
+	DropDrawer,
+	DropDrawerContent,
+	DropDrawerItem,
+	DropDrawerTrigger
+} from '@/components/ui/dropdrawer';
+import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger
@@ -21,8 +27,8 @@ import { formatDate } from 'date-fns';
 import {
 	Calendar1Icon,
 	CheckIcon,
+	Ellipsis,
 	IdCardIcon,
-	TrashIcon,
 	XIcon
 } from 'lucide-react';
 import { useOutletContext } from 'react-router';
@@ -124,10 +130,50 @@ export const columns = [
 			displayName: 'Attended'
 		}
 	}),
+	columnHelper.accessor(row => (row.isWinner ?? false).toString(), {
+		id: 'isWinner',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Winner' />
+		),
+		cell: ({ row }) => (
+			<div className='capitalize'>
+				{(
+					row.original.subRows
+						? row.original.subRows.every(row => row.isWinner === true)
+						: row.getValue('isWinner') === 'true'
+				) ? (
+					<CheckIcon className='size-5 text-green-500' />
+				) : null}
+			</div>
+		),
+		meta: {
+			displayName: 'Winner'
+		}
+	}),
+	columnHelper.accessor(row => (row.isRunner ?? false).toString(), {
+		id: 'isRunner',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Runner up' />
+		),
+		cell: ({ row }) => (
+			<div className='capitalize'>
+				{(
+					row.original.subRows
+						? row.original.subRows.every(row => row.isRunner === true)
+						: row.getValue('isRunner') === 'true'
+				) ? (
+					<CheckIcon className='size-5 text-green-500' />
+				) : null}
+			</div>
+		),
+		meta: {
+			displayName: 'Runner up'
+		}
+	}),
 	{
 		id: 'view-id-card',
 		cell: ({ row }: { row: Row<SubEventParticipant> }) => {
-			if (!row.original.participant) return null;
+			if ('subRows' in row.original || !row.original.participant) return null;
 
 			return (
 				<Dialog>
@@ -169,11 +215,7 @@ export const columns = [
 		id: 'actions',
 		cell: ({ row }: { row: Row<SubEventParticipant> }) => {
 			return (
-				<Actions
-					participantId={row.original.id}
-					isSubGroupItem={row.depth > 0}
-					groupId={row.original.groupId}
-				/>
+				<Actions participant={row.original} isSubGroupItem={row.depth > 0} />
 			);
 		},
 		size: 32
@@ -182,57 +224,142 @@ export const columns = [
 
 // eslint-disable-next-line react-refresh/only-export-components
 const Actions = ({
-	participantId,
-	isSubGroupItem,
-	groupId
+	participant: { id, groupId, attended, isWinner, isRunner },
+	isSubGroupItem
 }: {
-	participantId: string;
+	participant: SubEventParticipant;
 	isSubGroupItem: boolean;
-	groupId?: string | null;
 }) => {
 	const context = useOutletContext<CenterOutletContext>();
 	const z = useZero();
 	const {
-		user: { role, liaisoningCenters, guardianCenters }
+		user: { role, liaisoningCenters, guardianCenters, coordinatingEvents }
 	} = useApp();
-	const canDelete = liaisoningCenters.length > 0 || guardianCenters.length > 0;
+	const canDelete =
+		liaisoningCenters.length > 0 ||
+		guardianCenters.length > 0 ||
+		role === 'admin';
+	const canMarkAttendance = coordinatingEvents.length > 0 || role === 'admin';
+	const canMarkWinners = coordinatingEvents.length > 0 || role === 'admin';
 
-	if (isSubGroupItem || !canDelete) {
+	if (
+		!isSubGroupItem ||
+		(!canDelete && !canMarkAttendance && !canMarkWinners)
+	) {
 		return null;
 	}
 
 	return (
-		<Button
-			variant='ghost'
-			aria-label='Delete participant from event'
-			className='flex size-8 p-0 text-destructive hover:bg-destructive/10 hover:text-destructive *:[svg]:!text-destructive'
-			disabled={
-				(!!context?.center?.isLocked || !context?.center?.enableEventMapping) &&
-				role !== 'admin'
-			}
-			onClick={() => {
-				if (groupId) {
-					z.mutate.subEventParticipants
-						.deleteByGroupId({ groupId })
-						.client.catch((e: Error) => {
-							toast.error('Error deleting participant group from event', {
-								description: e.message || 'Something went wrong'
-							});
-						});
-				} else {
-					z.mutate.subEventParticipants
-						.delete({
-							id: participantId
-						})
-						.client.catch((e: Error) => {
-							toast.error('Error deleting participant from event', {
-								description: e.message || 'Something went wrong'
-							});
-						});
-				}
-			}}
-		>
-			<TrashIcon />
-		</Button>
+		<DropDrawer modal={false}>
+			<DropDrawerTrigger asChild>
+				<Button
+					aria-label='Open menu'
+					variant='ghost'
+					className='flex size-6 p-0 data-[state=open]:bg-muted'
+				>
+					<Ellipsis className='size-4' aria-hidden='true' />
+				</Button>
+			</DropDrawerTrigger>
+			<DropDrawerContent align='end'>
+				{canMarkAttendance && (
+					<DropDrawerItem
+						disabled={!!isWinner || !!isRunner}
+						onSelect={() => {
+							console.log(id, groupId);
+							z.mutate.subEventParticipants
+								.toggleAttendance({
+									id,
+									groupId: groupId ?? undefined
+								})
+								.client.catch((e: Error) => {
+									toast.error(
+										'Error toggling attendance for event participant',
+										{
+											description: e.message || 'Something went wrong'
+										}
+									);
+								});
+						}}
+					>
+						{attended ? 'Unmark' : 'Mark'} attendance
+					</DropDrawerItem>
+				)}
+				{canMarkWinners && (
+					<>
+						<DropDrawerItem
+							disabled={!attended || !!isRunner}
+							onSelect={() => {
+								z.mutate.subEventParticipants
+									.toggleWinner({
+										id,
+										groupId: groupId ?? undefined
+									})
+									.client.catch((e: Error) => {
+										toast.error('Error toggling event participant as winner', {
+											description: e.message || 'Something went wrong'
+										});
+									});
+							}}
+						>
+							{isWinner ? 'Unmark' : 'Mark'} as winner
+						</DropDrawerItem>
+						<DropDrawerItem
+							disabled={!attended || !!isWinner}
+							onSelect={() => {
+								z.mutate.subEventParticipants
+									.toggleRunnerUp({
+										id,
+										groupId: groupId ?? undefined
+									})
+									.client.catch((e: Error) => {
+										toast.error(
+											'Error toggling event participant as runner up',
+											{
+												description: e.message || 'Something went wrong'
+											}
+										);
+									});
+							}}
+						>
+							{isRunner ? 'Unmark' : 'Mark'} as runner up
+						</DropDrawerItem>
+					</>
+				)}
+				{canDelete && (
+					<DropDrawerItem
+						variant='destructive'
+						aria-label='Delete participant from event'
+						disabled={
+							(!!context?.center?.isLocked ||
+								!context?.center?.enableEventMapping) &&
+							role !== 'admin'
+						}
+						onSelect={() => {
+							if (groupId) {
+								z.mutate.subEventParticipants
+									.deleteByGroupId({ groupId })
+									.client.catch((e: Error) => {
+										toast.error('Error deleting participant group from event', {
+											description: e.message || 'Something went wrong'
+										});
+									});
+							} else {
+								z.mutate.subEventParticipants
+									.delete({
+										id
+									})
+									.client.catch((e: Error) => {
+										toast.error('Error deleting participant from event', {
+											description: e.message || 'Something went wrong'
+										});
+									});
+							}
+						}}
+					>
+						Delete
+					</DropDrawerItem>
+				)}
+			</DropDrawerContent>
+		</DropDrawer>
 	);
 };

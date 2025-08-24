@@ -1,13 +1,24 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
+import { QrScanDialog } from '@/components/qr-scan-dialog';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 import { H3 } from '@/components/ui/typography';
+import { useApp } from '@/hooks/useApp';
 import useZero, { Zero } from '@/hooks/useZero';
 import LoadingScreen from '@/views/general/LoadingScreen';
 import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 import { formatDate } from 'date-fns';
 import groupBy from 'lodash/groupBy';
+import { ScanQrCodeIcon } from 'lucide-react';
 import { Navigate, useParams } from 'react-router';
+import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { SubEventParticipant } from '../CenterEventView/CenterEventView';
@@ -33,6 +44,9 @@ export default function EventView() {
 
 	const params = useParams();
 	const zero = useZero();
+	const {
+		user: { role, coordinatingEvents }
+	} = useApp();
 	const eventId = z.cuid2().parse(params.eventId);
 	const [subEvent, status] = useQuery(eventQuery(zero, eventId));
 
@@ -113,6 +127,68 @@ export default function EventView() {
 				data={participants as SubEventParticipant[]}
 				columns={columns}
 				columnsConfig={columnsConfig}
+				additionalActions={[
+					(coordinatingEvents.length > 0 || role === 'admin') && (
+						<DropdownMenu key='scan-attendance'>
+							<DropdownMenuTrigger asChild>
+								<Button className='h-7'>
+									<ScanQrCodeIcon />
+									Scan
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent
+								className='w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg'
+								// side={isMobile ? 'bottom' : 'right'}
+								align='end'
+								sideOffset={4}
+							>
+								<QrScanDialog
+									title='Mark Participant Attendance'
+									onScan={async scanResult => {
+										if (scanResult.type !== 'participant') {
+											throw new Error('Not a participant');
+										}
+
+										const subEventParticipant =
+											await zero.query.subEventParticipants
+												.where('participantId', scanResult.id)
+												.whereExists('subEvent', q =>
+													q.where('id', subEvent.id)
+												)
+												.one();
+
+										if (!subEventParticipant) {
+											throw new Error('Participant not found');
+										}
+
+										zero.mutate.subEventParticipants
+											.toggleAttendance({
+												id: subEventParticipant.id,
+												groupId: subEventParticipant.groupId ?? undefined
+											})
+											.client.then(() => {
+												toast.success(
+													`Attendance ${subEventParticipant.attended ? 'unmarked' : 'marked'} successfully`
+												);
+											})
+											.catch((e: Error) => {
+												toast.error(
+													'Error toggling attendance for event participant',
+													{
+														description: e.message || 'Something went wrong'
+													}
+												);
+											});
+									}}
+								>
+									<DropdownMenuItem onSelect={e => e.preventDefault()}>
+										Toggle Attendance
+									</DropdownMenuItem>
+								</QrScanDialog>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					)
+				]}
 			/>
 		</div>
 	);

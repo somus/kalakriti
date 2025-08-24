@@ -1,0 +1,2 @@
+ALTER TABLE "sub_event_participants" ADD COLUMN "is_winner" boolean DEFAULT false NOT NULL;--> statement-breakpoint
+ALTER TABLE "sub_event_participants" ADD COLUMN "is_runner" boolean DEFAULT false NOT NULL;

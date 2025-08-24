@@ -115,3 +115,28 @@ export async function assertIsAdminOrGuardianOrLiasonOfSubEventParticipantGroup(
 		throw new Error('Unauthorized');
 	}
 }
+
+export async function assertIsEventCoordinatorOfSubEventParticipant(
+	tx: Transaction<Schema>,
+	authData: AuthData | undefined,
+	participantId: string,
+	groupId?: string
+) {
+	assertIsLoggedIn(authData);
+	const isAdmin = authData?.meta.role === 'admin';
+	const participant = await tx.query.subEventParticipants
+		.where('id', participantId)
+		.related('subEvent', q =>
+			q.related('event', q => q.related('coordinators'))
+		)
+		.one();
+	if (!participant || participant.groupId !== groupId) {
+		throw new Error('Invalid participant ID provided');
+	}
+	const isCoordinator = participant?.subEvent?.event?.coordinators.some(
+		g => g.userId === authData?.sub
+	);
+	if (!isAdmin && !isCoordinator) {
+		throw new Error('Unauthorized');
+	}
+}
