@@ -117,7 +117,7 @@ export const columns = [
 			<div className='capitalize'>
 				{(
 					row.original.subRows
-						? row.original.subRows.every(row => row.attended === true)
+						? row.original.subRows.some(row => row.attended === true)
 						: row.getValue('attended') === 'true'
 				) ? (
 					<CheckIcon className='size-5 text-green-500' />
@@ -139,7 +139,7 @@ export const columns = [
 			<div className='capitalize'>
 				{(
 					row.original.subRows
-						? row.original.subRows.every(row => row.isWinner === true)
+						? row.original.subRows.some(row => row.isWinner === true)
 						: row.getValue('isWinner') === 'true'
 				) ? (
 					<CheckIcon className='size-5 text-green-500' />
@@ -159,7 +159,7 @@ export const columns = [
 			<div className='capitalize'>
 				{(
 					row.original.subRows
-						? row.original.subRows.every(row => row.isRunner === true)
+						? row.original.subRows.some(row => row.isRunner === true)
 						: row.getValue('isRunner') === 'true'
 				) ? (
 					<CheckIcon className='size-5 text-green-500' />
@@ -224,10 +224,10 @@ export const columns = [
 
 // eslint-disable-next-line react-refresh/only-export-components
 const Actions = ({
-	participant: { id, groupId, attended, isWinner, isRunner },
+	participant: { id, groupId, attended, isWinner, isRunner, subRows },
 	isSubGroupItem
 }: {
-	participant: SubEventParticipant;
+	participant: SubEventParticipant & { subRows?: SubEventParticipant[] };
 	isSubGroupItem: boolean;
 }) => {
 	const context = useOutletContext<CenterOutletContext>();
@@ -242,12 +242,16 @@ const Actions = ({
 	const canMarkAttendance = coordinatingEvents.length > 0 || role === 'admin';
 	const canMarkWinners = coordinatingEvents.length > 0 || role === 'admin';
 
-	if (
-		!isSubGroupItem ||
-		(!canDelete && !canMarkAttendance && !canMarkWinners)
-	) {
+	if (!canDelete && !canMarkAttendance && !canMarkWinners) {
 		return null;
 	}
+
+	const isMarkedAttended =
+		attended === true || !!subRows?.some(row => row.attended === true);
+	const isMarkedAsWinner =
+		isWinner === true || !!subRows?.some(row => row.isWinner === true);
+	const isMarkedAsRunner =
+		isRunner === true || !!subRows?.some(row => row.isRunner === true);
 
 	return (
 		<DropDrawer modal={false}>
@@ -263,13 +267,12 @@ const Actions = ({
 			<DropDrawerContent align='end'>
 				{canMarkAttendance && (
 					<DropDrawerItem
-						disabled={!!isWinner || !!isRunner}
+						disabled={isMarkedAsWinner || isMarkedAsRunner}
 						onSelect={() => {
-							console.log(id, groupId);
 							z.mutate.subEventParticipants
 								.toggleAttendance({
 									id,
-									groupId: groupId ?? undefined
+									groupId: !isSubGroupItem ? (groupId ?? undefined) : undefined
 								})
 								.client.catch((e: Error) => {
 									toast.error(
@@ -281,13 +284,13 @@ const Actions = ({
 								});
 						}}
 					>
-						{attended ? 'Unmark' : 'Mark'} attendance
+						{isMarkedAttended ? 'Unmark' : 'Mark'} attendance
 					</DropDrawerItem>
 				)}
-				{canMarkWinners && (
+				{canMarkWinners && !isSubGroupItem && (
 					<>
 						<DropDrawerItem
-							disabled={!attended || !!isRunner}
+							disabled={!isMarkedAttended || isMarkedAsRunner}
 							onSelect={() => {
 								z.mutate.subEventParticipants
 									.toggleWinner({
@@ -301,10 +304,10 @@ const Actions = ({
 									});
 							}}
 						>
-							{isWinner ? 'Unmark' : 'Mark'} as winner
+							{isMarkedAsWinner ? 'Unmark' : 'Mark'} as winner
 						</DropDrawerItem>
 						<DropDrawerItem
-							disabled={!attended || !!isWinner}
+							disabled={!isMarkedAttended || isMarkedAsWinner}
 							onSelect={() => {
 								z.mutate.subEventParticipants
 									.toggleRunnerUp({
@@ -321,7 +324,7 @@ const Actions = ({
 									});
 							}}
 						>
-							{isRunner ? 'Unmark' : 'Mark'} as runner up
+							{isMarkedAsRunner ? 'Unmark' : 'Mark'} as runner up
 						</DropDrawerItem>
 					</>
 				)}

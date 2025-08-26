@@ -163,8 +163,7 @@ export default function EventView() {
 
 										zero.mutate.subEventParticipants
 											.toggleAttendance({
-												id: subEventParticipant.id,
-												groupId: subEventParticipant.groupId ?? undefined
+												id: subEventParticipant.id
 											})
 											.client.then(() => {
 												toast.success(

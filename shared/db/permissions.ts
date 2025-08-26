@@ -1,5 +1,6 @@
 import { Transaction } from '@rocicorp/zero';
 
+import { SubEventParticipant } from './mutators/subEventParticipants';
 import { AuthData, Schema } from './schema.zero';
 
 export function assertIsLoggedIn(authData: AuthData | undefined) {
@@ -119,23 +120,36 @@ export async function assertIsAdminOrGuardianOrLiasonOfSubEventParticipantGroup(
 export async function assertIsEventCoordinatorOfSubEventParticipant(
 	tx: Transaction<Schema>,
 	authData: AuthData | undefined,
-	participantId: string,
+	participantId?: string,
 	groupId?: string
 ) {
 	assertIsLoggedIn(authData);
 	const isAdmin = authData?.meta.role === 'admin';
-	const participant = await tx.query.subEventParticipants
-		.where('id', participantId)
-		.related('subEvent', q =>
-			q.related('event', q => q.related('coordinators'))
-		)
-		.one();
-	if (!participant || participant.groupId !== groupId) {
-		throw new Error('Invalid participant ID provided');
+	let participant: SubEventParticipant | undefined;
+
+	if (participantId) {
+		participant = await tx.query.subEventParticipants
+			.where('id', participantId)
+			.related('subEvent', q =>
+				q.related('event', q => q.related('coordinators'))
+			)
+			.one();
+	} else if (groupId) {
+		participant = await tx.query.subEventParticipants
+			.where('groupId', groupId)
+			.related('subEvent', q =>
+				q.related('event', q => q.related('coordinators'))
+			)
+			.one();
+	}
+
+	if (!participant) {
+		throw new Error('Invalid participant or Group ID provided');
 	}
 	const isCoordinator = participant?.subEvent?.event?.coordinators.some(
 		g => g.userId === authData?.sub
 	);
+
 	if (!isAdmin && !isCoordinator) {
 		throw new Error('Unauthorized');
 	}

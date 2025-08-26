@@ -1,6 +1,7 @@
 // mutators.ts
+import { Zero } from '@/hooks/useZero.ts';
 import { createId } from '@paralleldrive/cuid2';
-import { CustomMutatorDefs } from '@rocicorp/zero';
+import { CustomMutatorDefs, Row } from '@rocicorp/zero';
 
 import {
 	assertIsAdminOrGuardianOrLiasonOfParticipant,
@@ -15,6 +16,17 @@ export interface CreateBatchSubEventParticipantArgs {
 	subEventId: string;
 	groupId?: string;
 }
+
+export function subEventParticipantQuery(z: Zero) {
+	return z.query.subEventParticipants
+		.related('subEvent', q =>
+			q.related('event', q => q.related('coordinators'))
+		)
+		.one();
+}
+export type SubEventParticipant = NonNullable<
+	Row<ReturnType<typeof subEventParticipantQuery>>
+>;
 
 export function createSubEventParticipantMutators(
 	authData: AuthData | undefined
@@ -40,7 +52,7 @@ export function createSubEventParticipantMutators(
 		},
 		toggleAttendance: async (
 			tx,
-			{ id, groupId }: { id: string; groupId?: string }
+			{ id, groupId }: { id?: string; groupId?: string }
 		) => {
 			await assertIsEventCoordinatorOfSubEventParticipant(
 				tx,
@@ -48,12 +60,24 @@ export function createSubEventParticipantMutators(
 				id,
 				groupId
 			);
-			const participant = await tx.query.subEventParticipants
-				.where('id', id)
-				.related('subEvent', q => q.related('event'))
-				.one();
-			if (!participant || participant.groupId !== groupId) {
-				throw new Error('Invalid participant ID provided');
+			let participant: SubEventParticipant | undefined;
+			if (id) {
+				participant = await tx.query.subEventParticipants
+					.where('id', id)
+					.related('subEvent', q =>
+						q.related('event', q => q.related('coordinators'))
+					)
+					.one();
+			} else if (groupId) {
+				participant = await tx.query.subEventParticipants
+					.where('groupId', groupId)
+					.related('subEvent', q =>
+						q.related('event', q => q.related('coordinators'))
+					)
+					.one();
+			}
+			if (!participant) {
+				throw new Error('Invalid participant or group ID provided');
 			}
 
 			if (groupId) {
@@ -69,7 +93,7 @@ export function createSubEventParticipantMutators(
 						})
 					)
 				);
-			} else {
+			} else if (id) {
 				await tx.mutate.subEventParticipants.update({
 					id,
 					attended: !participant.attended
@@ -78,7 +102,7 @@ export function createSubEventParticipantMutators(
 		},
 		toggleWinner: async (
 			tx,
-			{ id, groupId }: { id: string; groupId?: string }
+			{ id, groupId }: { id?: string; groupId?: string }
 		) => {
 			await assertIsEventCoordinatorOfSubEventParticipant(
 				tx,
@@ -86,12 +110,26 @@ export function createSubEventParticipantMutators(
 				id,
 				groupId
 			);
-			const participant = await tx.query.subEventParticipants
-				.where('id', id)
-				.related('subEvent', q => q.related('event'))
-				.one();
-			if (!participant || participant.groupId !== groupId) {
-				throw new Error('Invalid participant ID provided');
+			let participant: SubEventParticipant | undefined;
+			if (id) {
+				participant = await tx.query.subEventParticipants
+					.where('id', id)
+					.where('attended', true)
+					.related('subEvent', q =>
+						q.related('event', q => q.related('coordinators'))
+					)
+					.one();
+			} else if (groupId) {
+				participant = await tx.query.subEventParticipants
+					.where('groupId', groupId)
+					.where('attended', true)
+					.related('subEvent', q =>
+						q.related('event', q => q.related('coordinators'))
+					)
+					.one();
+			}
+			if (!participant) {
+				throw new Error('Invalid participant or group ID provided');
 			}
 			if (!participant.isWinner) {
 				if (participant.isRunner) {
@@ -110,10 +148,12 @@ export function createSubEventParticipantMutators(
 			}
 
 			if (groupId) {
-				const groupParticipants = await tx.query.subEventParticipants.where(
-					'groupId',
-					groupId
-				);
+				const groupParticipants = await tx.query.subEventParticipants
+					.where('groupId', groupId)
+					// eslint-disable-next-line @typescript-eslint/unbound-method
+					.where(({ cmp, or }) =>
+						or(cmp('isWinner', true), cmp('attended', true))
+					);
 				await Promise.all(
 					groupParticipants.map(({ id }) =>
 						tx.mutate.subEventParticipants.update({
@@ -122,7 +162,7 @@ export function createSubEventParticipantMutators(
 						})
 					)
 				);
-			} else {
+			} else if (id) {
 				await tx.mutate.subEventParticipants.update({
 					id,
 					isWinner: !participant.isWinner
@@ -131,7 +171,7 @@ export function createSubEventParticipantMutators(
 		},
 		toggleRunnerUp: async (
 			tx,
-			{ id, groupId }: { id: string; groupId?: string }
+			{ id, groupId }: { id?: string; groupId?: string }
 		) => {
 			await assertIsEventCoordinatorOfSubEventParticipant(
 				tx,
@@ -139,12 +179,26 @@ export function createSubEventParticipantMutators(
 				id,
 				groupId
 			);
-			const participant = await tx.query.subEventParticipants
-				.where('id', id)
-				.related('subEvent', q => q.related('event'))
-				.one();
-			if (!participant || participant.groupId !== groupId) {
-				throw new Error('Invalid participant ID provided');
+			let participant: SubEventParticipant | undefined;
+			if (id) {
+				participant = await tx.query.subEventParticipants
+					.where('id', id)
+					.where('attended', true)
+					.related('subEvent', q =>
+						q.related('event', q => q.related('coordinators'))
+					)
+					.one();
+			} else if (groupId) {
+				participant = await tx.query.subEventParticipants
+					.where('groupId', groupId)
+					.where('attended', true)
+					.related('subEvent', q =>
+						q.related('event', q => q.related('coordinators'))
+					)
+					.one();
+			}
+			if (!participant) {
+				throw new Error('Invalid participant or group ID provided');
 			}
 			if (!participant.isRunner) {
 				if (participant.isWinner) {
@@ -163,10 +217,12 @@ export function createSubEventParticipantMutators(
 			}
 
 			if (groupId) {
-				const groupParticipants = await tx.query.subEventParticipants.where(
-					'groupId',
-					groupId
-				);
+				const groupParticipants = await tx.query.subEventParticipants
+					.where('groupId', groupId)
+					// eslint-disable-next-line @typescript-eslint/unbound-method
+					.where(({ cmp, or }) =>
+						or(cmp('isRunner', true), cmp('attended', true))
+					);
 				await Promise.all(
 					groupParticipants.map(({ id }) =>
 						tx.mutate.subEventParticipants.update({
@@ -175,7 +231,7 @@ export function createSubEventParticipantMutators(
 						})
 					)
 				);
-			} else {
+			} else if (id) {
 				await tx.mutate.subEventParticipants.update({
 					id,
 					isRunner: !participant.isRunner
