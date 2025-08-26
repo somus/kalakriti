@@ -101,13 +101,13 @@ export default function CenterEventView() {
 		: subEvent.participants;
 
 	return (
-		<div className='flex flex-col py-4 flex-1'>
+		<div className='flex flex-col pt-4 sm:py-4 flex-1'>
 			<div className='flex px-4 justify-between items-center'>
-				<div className='flex gap-4 items-end flex-wrap'>
-					<H3>
+				<div className='flex gap-2 sm:gap-4 items-end flex-wrap'>
+					<H3 className='text-xl sm:text-2xl'>
 						{subEvent.event.name} - {subEvent.participantCategory?.name}
 					</H3>
-					<p className='italic'>
+					<p className='italic text-sm sm:text-base'>
 						{formatDate(subEvent.startTime, 'p')} -{' '}
 						{formatDate(subEvent.endTime, 'p')}
 					</p>
