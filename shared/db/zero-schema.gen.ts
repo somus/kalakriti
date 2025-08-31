@@ -878,6 +878,16 @@ export const schema = {
           >,
           serverName: "is_runner",
         },
+        prizeAwarded: {
+          type: "boolean",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "subEventParticipants",
+            "prizeAwarded"
+          >,
+          serverName: "prize_awarded",
+        },
         createdAt: {
           type: "number",
           optional: true,

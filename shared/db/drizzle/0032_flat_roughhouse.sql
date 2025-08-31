@@ -1,0 +1,1 @@
+ALTER TABLE "sub_event_participants" ADD COLUMN "prize_awarded" boolean DEFAULT false NOT NULL;

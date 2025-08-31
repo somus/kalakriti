@@ -4,6 +4,7 @@ import { createId } from '@paralleldrive/cuid2';
 import { CustomMutatorDefs, Row } from '@rocicorp/zero';
 
 import {
+	assertIsAdminOrAwardsCoordinator,
 	assertIsAdminOrGuardianOrLiasonOfParticipant,
 	assertIsAdminOrGuardianOrLiasonOfSubEventParticipant,
 	assertIsAdminOrGuardianOrLiasonOfSubEventParticipantGroup,
@@ -235,6 +236,62 @@ export function createSubEventParticipantMutators(
 				await tx.mutate.subEventParticipants.update({
 					id,
 					isRunner: !participant.isRunner
+				});
+			}
+		},
+		togglePrizeAwarded: async (
+			tx,
+			{ id, groupId }: { id?: string; groupId?: string }
+		) => {
+			assertIsAdminOrAwardsCoordinator(authData);
+			let participant: SubEventParticipant | undefined;
+			if (id) {
+				participant = await tx.query.subEventParticipants
+					.where('id', id)
+					.where('attended', true)
+					.related('subEvent', q =>
+						q.related('event', q => q.related('coordinators'))
+					)
+					.one();
+			} else if (groupId) {
+				participant = await tx.query.subEventParticipants
+					.where('groupId', groupId)
+					.where('attended', true)
+					.related('subEvent', q =>
+						q.related('event', q => q.related('coordinators'))
+					)
+					.one();
+			}
+			if (!participant) {
+				throw new Error('Invalid participant or group ID provided');
+			}
+			if (!participant.prizeAwarded) {
+				if (!participant.isWinner && !participant.isRunner) {
+					throw new Error(
+						"Can't mark prize as awarded when the current participant is not marked as winner or runner up"
+					);
+				}
+			}
+
+			if (groupId) {
+				const groupParticipants = await tx.query.subEventParticipants
+					.where('groupId', groupId)
+					// eslint-disable-next-line @typescript-eslint/unbound-method
+					.where(({ cmp, or }) =>
+						or(cmp('isWinner', true), cmp('isRunner', true))
+					);
+				await Promise.all(
+					groupParticipants.map(({ id }) =>
+						tx.mutate.subEventParticipants.update({
+							id,
+							prizeAwarded: !participant.prizeAwarded
+						})
+					)
+				);
+			} else if (id) {
+				await tx.mutate.subEventParticipants.update({
+					id,
+					prizeAwarded: !participant.prizeAwarded
 				});
 			}
 		},

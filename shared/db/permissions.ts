@@ -28,6 +28,15 @@ export function assertIsAdminOrLogisticsCoordinator(
 	}
 }
 
+export function assertIsAdminOrAwardsCoordinator(
+	authData: AuthData | undefined
+) {
+	assertIsLoggedIn(authData);
+	if (authData?.meta.leading !== 'awards' && authData?.meta.role !== 'admin') {
+		throw new Error('Unauthorized');
+	}
+}
+
 export async function assertIsAdminOrGuardianOrLiasonOfCenter(
 	tx: Transaction<Schema>,
 	authData: AuthData | undefined,

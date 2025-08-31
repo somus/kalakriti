@@ -18,16 +18,21 @@ import { useApp } from '@/hooks/useApp';
 import useZero from '@/hooks/useZero';
 import { useQuery } from '@rocicorp/zero/react';
 import camelCase from 'lodash/camelCase';
+import { Suspense, lazy } from 'react';
 import { Link } from 'react-router';
 import { teamsEnum } from 'shared/db/schema';
 
 import { CenterPage, centerQuery } from './CenterView/CenterView';
 import { TEAMS_NAME_MAP } from './UsersView/columns';
+import LoadingScreen from './general/LoadingScreen';
+
+const AwardsView = lazy(() => import('@/views/AwardsView/AwardsView'));
 
 export default function DashboardView() {
 	const {
 		user: {
 			role,
+			leading,
 			liaisoningCenters,
 			coordinatingEventCategories,
 			coordinatingEvents,
@@ -42,6 +47,14 @@ export default function DashboardView() {
 	const [events] = useQuery(
 		zero.query.events.related('subEvents', q => q.related('participants'))
 	);
+
+	if (role === 'volunteer' && leading === 'awards') {
+		return (
+			<Suspense fallback={<LoadingScreen />}>
+				<AwardsView />
+			</Suspense>
+		);
+	}
 
 	if (
 		(role === 'guardian' && guardianCenters?.length === 1 && center) ||
