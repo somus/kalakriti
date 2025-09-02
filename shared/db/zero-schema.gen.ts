@@ -485,16 +485,6 @@ export const schema = {
           >,
           serverName: "photo_path",
         },
-        eventId: {
-          type: "string",
-          optional: true,
-          customType: null as unknown as ZeroCustomType<
-            typeof zeroSchema,
-            "inventory",
-            "eventId"
-          >,
-          serverName: "event_id",
-        },
         createdAt: {
           type: "number",
           optional: true,
@@ -633,16 +623,6 @@ export const schema = {
             "inventoryId"
           >,
           serverName: "inventory_id",
-        },
-        eventId: {
-          type: "string",
-          optional: true,
-          customType: null as unknown as ZeroCustomType<
-            typeof zeroSchema,
-            "inventoryTransactions",
-            "eventId"
-          >,
-          serverName: "event_id",
         },
         transactorId: {
           type: "string",
@@ -1335,11 +1315,19 @@ export const schema = {
           cardinality: "many",
         },
       ],
-      inventoryTransactions: [
+      inventoryEvents: [
         {
           sourceField: ["id"],
           destField: ["eventId"],
-          destSchema: "inventoryTransactions",
+          destSchema: "inventoryEvents",
+          cardinality: "many",
+        },
+      ],
+      inventoryTransactionEvents: [
+        {
+          sourceField: ["id"],
+          destField: ["eventId"],
+          destSchema: "inventoryTransactionEvents",
           cardinality: "many",
         },
       ],
@@ -1363,14 +1351,6 @@ export const schema = {
       ],
     },
     inventory: {
-      event: [
-        {
-          sourceField: ["eventId"],
-          destField: ["id"],
-          destSchema: "events",
-          cardinality: "one",
-        },
-      ],
       events: [
         {
           sourceField: ["id"],
@@ -1407,14 +1387,6 @@ export const schema = {
       ],
     },
     inventoryTransactions: {
-      event: [
-        {
-          sourceField: ["eventId"],
-          destField: ["id"],
-          destSchema: "events",
-          cardinality: "one",
-        },
-      ],
       events: [
         {
           sourceField: ["id"],

@@ -108,7 +108,8 @@ export const eventsRelations = relations(events, ({ one, many }) => ({
 		references: [eventCategories.id]
 	}),
 	subEvents: many(subEvents),
-	inventoryTransactions: many(inventoryTransactions)
+	inventoryEvents: many(inventoryEvents),
+	inventoryTransactionEvents: many(inventoryTransactionEvents)
 }));
 
 export const eventCoordinators = pgTable(
@@ -366,9 +367,6 @@ export const inventory = pgTable('inventory', {
 	quantity: integer('quantity').notNull(),
 	unitPrice: integer('unit_price').notNull(),
 	photoPath: varchar('photo_path'),
-	eventId: varchar('event_id').references(() => events.id, {
-		onDelete: 'set null'
-	}),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
@@ -406,11 +404,7 @@ export const inventoryEventRelations = relations(
 	})
 );
 
-export const inventoryRelations = relations(inventory, ({ one, many }) => ({
-	event: one(events, {
-		fields: [inventory.eventId],
-		references: [events.id]
-	}),
+export const inventoryRelations = relations(inventory, ({ many }) => ({
 	events: many(inventoryEvents),
 	transactions: many(inventoryTransactions)
 }));
@@ -422,9 +416,6 @@ export const inventoryTransactions = pgTable('inventory_transactions', {
 		.references(() => inventory.id, {
 			onDelete: 'cascade'
 		}),
-	eventId: varchar('event_id').references(() => events.id, {
-		onDelete: 'set null'
-	}),
 	transactorId: varchar('user_id').references(() => users.id, {
 		onDelete: 'set null'
 	}),
@@ -471,10 +462,6 @@ export const inventoryTransactionEventRelations = relations(
 export const inventoryTransactionsRelations = relations(
 	inventoryTransactions,
 	({ one, many }) => ({
-		event: one(events, {
-			fields: [inventoryTransactions.eventId],
-			references: [events.id]
-		}),
 		events: many(inventoryTransactionEvents),
 		inventory: one(inventory, {
 			fields: [inventoryTransactions.inventoryId],

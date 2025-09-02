@@ -239,6 +239,13 @@
       "when": 1756797881816,
       "tag": "0033_parched_groot",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1756810715575,
+      "tag": "0034_greedy_queen_noir",
+      "breakpoints": true
     }
   ]
 }
