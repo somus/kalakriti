@@ -1,10 +1,6 @@
-import {
-	FormLayout,
-	InputField,
-	SelectField,
-	SelectOption
-} from '@/components/form';
+import { FormLayout, InputField } from '@/components/form';
 import { FileUploader } from '@/components/form/ImageUploadField';
+import { MultiSelectField, Option } from '@/components/form/MultiSelectField';
 import { Button } from '@/components/ui/button';
 import {
 	Modal,
@@ -39,7 +35,7 @@ const inventorySchema = z.object({
 	name: z.string(),
 	unitPrice: z.number().min(0),
 	quantity: z.number().min(0),
-	eventId: z.string().nullable().optional(),
+	events: z.array(z.string()),
 	photoPath: z.string({ error: 'Photo is required' }).check(ctx => {
 		if (
 			ctx.value &&
@@ -80,20 +76,25 @@ export default function InventoryFormModal({
 		);
 	}
 
-	const eventOptions: SelectOption[] = events.map(event => ({
-		value: event.id,
-		label: event.name
-	}));
+	const eventOptions: Option[] = events
+		.sort((a, b) => a.name.localeCompare(b.name))
+		.map(event => ({
+			value: event.id,
+			label: event.name
+		}));
 
 	// Get inventory default values
 	const defaultValues = useMemo(() => {
-		if (!inventory) return {};
+		if (!inventory)
+			return {
+				events: []
+			};
 
 		return {
 			name: inventory.name,
 			quantity: inventory.quantity,
 			unitPrice: inventory.unitPrice,
-			eventId: inventory.event?.id ?? undefined,
+			events: inventory.events.map(event => event.eventId),
 			photoPath: inventory.photoPath ?? undefined
 		};
 	}, [inventory]);
@@ -110,8 +111,7 @@ export default function InventoryFormModal({
 			if (!inventory) {
 				// Create the inventory in db
 				await zero.mutate.inventory.create({
-					...data,
-					eventId: data.eventId ?? undefined
+					...data
 				}).client;
 			} else {
 				const oldPhotoPath = inventory.photoPath;
@@ -120,7 +120,6 @@ export default function InventoryFormModal({
 					.update({
 						id: inventory.id,
 						name: data.name,
-						eventId: data.eventId === '' ? null : data.eventId,
 						unitPrice: data.unitPrice,
 						photoPath: data.photoPath
 					})
@@ -196,7 +195,12 @@ export default function InventoryFormModal({
 							label='Unit Price'
 							isRequired
 						/>
-						<SelectField name='eventId' label='Event' options={eventOptions} />
+						<MultiSelectField
+							name='events'
+							label='Events'
+							options={eventOptions}
+							placeholder='Select events'
+						/>
 						<FormField
 							control={form.control}
 							name='photoPath'

@@ -47,15 +47,19 @@ export const columnsConfig = [
 		.icon(NotebookPenIcon)
 		.build(),
 	dtf
-		.option()
-		.accessor(row => row.event)
-		.id('event')
-		.displayName('Event')
+		.multiOption()
+		.accessor(row => row.events.map(event => event.event))
+		.id('events')
+		.displayName('Events')
 		.icon(TicketsIcon)
-		.transformOptionFn(c => ({
-			value: c.id,
-			label: c.name
-		}))
+		.transformOptionFn(data => {
+			const event =
+				data as unknown as InventoryTransaction['events'][number]['event'];
+			return {
+				value: event?.id ?? '',
+				label: event?.name ?? ''
+			};
+		})
 		.build(),
 	dtf
 		.option()

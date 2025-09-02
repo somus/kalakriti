@@ -15,7 +15,7 @@ export interface CreateInventoryTransactionArgs {
 		| 'event_return'
 		| 'event_dispatch';
 	notes?: string;
-	eventId?: string;
+	events: string[];
 	transactorId?: string;
 }
 
@@ -23,7 +23,7 @@ export function createInventoryTransactionMutators(
 	authData: AuthData | undefined
 ) {
 	return {
-		create: async (tx, data: CreateInventoryTransactionArgs) => {
+		create: async (tx, { events, ...data }: CreateInventoryTransactionArgs) => {
 			assertIsAdminOrLogisticsCoordinator(authData);
 			const inventory = await tx.query.inventory
 				.where('id', data.inventoryId)
@@ -37,15 +37,21 @@ export function createInventoryTransactionMutators(
 				throw new Error('Initial inventory cannot be created manually');
 			}
 
+			const inventoryTransactionId = createId();
 			await tx.mutate.inventoryTransactions.insert({
-				id: createId(),
+				id: inventoryTransactionId,
 				notes: data.notes,
 				inventoryId: inventory.id,
 				type: data.type,
 				quantity: data.quantity,
-				eventId: data.eventId,
 				transactorId: data.transactorId
 			});
+			for (const eventId of events) {
+				await tx.mutate.inventoryTransactionEvents.insert({
+					inventoryTransactionId: inventoryTransactionId,
+					eventId: eventId
+				});
+			}
 			let quantity = inventory.quantity;
 			if (data.type === 'event_dispatch') {
 				quantity -= data.quantity;

@@ -105,14 +105,24 @@ export const columns = [
 			<div className='pl-4'>₹{row.getValue('totalPrice')}.00</div>
 		)
 	}),
-	columnHelper.accessor(row => row.event, {
-		id: 'event',
+	columnHelper.accessor(row => row.events.map(event => event.event), {
+		id: 'events',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Event' />
+			<DataTableColumnHeader column={column} title='Events' />
 		),
 		cell: ({ row }) => {
-			const event = row.getValue<Inventory['event'] | undefined>('event');
-			return event ? <Badge variant='outline'>{event.name}</Badge> : null;
+			const events = row.getValue<
+				Inventory['events'][number]['event'][] | undefined
+			>('events');
+			return events
+				? events.map(event =>
+						event ? (
+							<Badge key={event.id} variant='outline'>
+								{event.name}
+							</Badge>
+						) : null
+					)
+				: null;
 		}
 	}),
 	{

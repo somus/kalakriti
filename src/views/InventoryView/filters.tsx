@@ -3,7 +3,7 @@ import {
 	ContainerIcon,
 	Heading1Icon,
 	IndianRupeeIcon,
-	ShieldUserIcon
+	TicketsIcon
 } from 'lucide-react';
 
 import { Inventory } from './InventoryView';
@@ -40,14 +40,17 @@ export const columnsConfig = [
 		.icon(IndianRupeeIcon)
 		.build(),
 	dtf
-		.option()
-		.accessor(row => row.event)
-		.id('event')
-		.displayName('Event')
-		.icon(ShieldUserIcon)
-		.transformOptionFn(c => ({
-			value: c.id,
-			label: c.name
-		}))
+		.multiOption()
+		.accessor(row => row.events.map(event => event.event))
+		.id('events')
+		.displayName('Events')
+		.icon(TicketsIcon)
+		.transformOptionFn(data => {
+			const event = data as unknown as Inventory['events'][number]['event'];
+			return {
+				value: event?.id ?? '',
+				label: event?.name ?? ''
+			};
+		})
 		.build()
 ] as const;

@@ -5,6 +5,7 @@ import {
 	SelectOption
 } from '@/components/form';
 import { ComboBoxField } from '@/components/form/ComboBoxField';
+import { MultiSelectField, Option } from '@/components/form/MultiSelectField';
 import { Button } from '@/components/ui/button';
 import {
 	Modal,
@@ -20,6 +21,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@rocicorp/zero/react';
 import keyBy from 'lodash/keyBy';
 import startCase from 'lodash/startCase';
+import uniqBy from 'lodash/uniqBy';
 import { LoaderCircle } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -30,7 +32,7 @@ const inventoryTransactionSchema = z.object({
 	inventoryId: z.string(),
 	type: z.enum(inventoryTransactionType.enumValues),
 	quantity: z.number().min(0),
-	eventId: z.string().optional(),
+	events: z.array(z.string()),
 	transactorId: z.string().optional(),
 	notes: z.string().min(1).max(255).optional()
 });
@@ -55,7 +57,9 @@ export default function InventoryTransactionFormModal({
 			.related('volunteers', q => q.related('user'))
 			.orderBy('name', 'asc')
 	);
-	const [inventories] = useQuery(zero.query.inventory.orderBy('name', 'asc'));
+	const [inventories] = useQuery(
+		zero.query.inventory.related('events').orderBy('name', 'asc')
+	);
 
 	if (!children && !(open !== undefined && onOpenChange)) {
 		throw new Error(
@@ -63,7 +67,7 @@ export default function InventoryTransactionFormModal({
 		);
 	}
 
-	const eventOptions: SelectOption[] = events.map(event => ({
+	const eventOptions: Option[] = events.map(event => ({
 		value: event.id,
 		label: event.name
 	}));
@@ -82,7 +86,9 @@ export default function InventoryTransactionFormModal({
 
 	// Get inventoryTransaction default values
 	const defaultValues = useMemo(() => {
-		return {};
+		return {
+			events: []
+		};
 	}, []);
 
 	const schemaWithLimits = inventoryTransactionSchema.check(ctx => {
@@ -100,13 +106,18 @@ export default function InventoryTransactionFormModal({
 		if (ctx.value.inventoryId) {
 			if (
 				inventoriesMap[ctx.value.inventoryId]?.eventId &&
-				ctx.value.eventId !== inventoriesMap[ctx.value.inventoryId]?.eventId
+				ctx.value.events.every(
+					eventId =>
+						!!inventoriesMap[ctx.value.inventoryId]?.events.find(
+							e => e.eventId === eventId
+						)
+				)
 			) {
 				ctx.issues.push({
 					code: 'custom',
 					message: 'Event does not match the event of the selected inventory',
 					path: ['eventId'],
-					input: ctx.value.eventId
+					input: ctx.value.events
 				});
 			}
 
@@ -142,20 +153,27 @@ export default function InventoryTransactionFormModal({
 		defaultValues
 	});
 	const { setValue, watch } = form;
-	const currentEventId = watch('eventId');
+	const currentEvents = watch('events');
 	const transactorOptions =
-		currentEventId &&
+		currentEvents.length > 0 &&
 		(watch('type') === 'event_dispatch' || watch('type') === 'event_return')
-			? [
-					...eventsMap[currentEventId].coordinators.map(coordinator => ({
-						label: `${coordinator.user?.firstName} ${coordinator.user?.lastName}`,
-						value: coordinator.userId
-					})),
-					...eventsMap[currentEventId].volunteers.map(volunteer => ({
-						label: `${volunteer.user?.firstName} ${volunteer.user?.lastName}`,
-						value: volunteer.userId
-					}))
-				].sort((a, b) => a.label.localeCompare(b.label))
+			? uniqBy(
+					[
+						...currentEvents.flatMap(eventId =>
+							eventsMap[eventId].coordinators.map(coordinator => ({
+								label: `${coordinator.user?.firstName} ${coordinator.user?.lastName}`,
+								value: coordinator.userId
+							}))
+						),
+						...currentEvents.flatMap(eventId =>
+							eventsMap[eventId].volunteers.map(volunteer => ({
+								label: `${volunteer.user?.firstName} ${volunteer.user?.lastName}`,
+								value: volunteer.userId
+							}))
+						)
+					],
+					'value'
+				).sort((a, b) => a.label.localeCompare(b.label))
 			: [];
 
 	const handleFormSubmit = async (data: InventoryTransactionFormData) => {
@@ -165,7 +183,6 @@ export default function InventoryTransactionFormModal({
 			// Create the inventoryTransaction in db
 			await zero.mutate.inventoryTransactions.create({
 				...data,
-				eventId: data.eventId === '' ? undefined : data.eventId,
 				transactorId: data.transactorId === '' ? undefined : data.transactorId
 			}).client;
 
@@ -189,12 +206,13 @@ export default function InventoryTransactionFormModal({
 	};
 
 	const selectedInventory = inventoriesMap[watch('inventoryId')];
-	const selectedInventoryId = selectedInventory?.eventId;
 	useEffect(() => {
-		if (selectedInventoryId) {
-			setValue('eventId', selectedInventoryId);
+		const selectedInventoryEventsId =
+			selectedInventory?.events.map(event => event.eventId) ?? [];
+		if (selectedInventoryEventsId) {
+			setValue('events', selectedInventoryEventsId);
 		}
-	}, [selectedInventoryId, setValue]);
+	}, [selectedInventory, setValue]);
 
 	return (
 		<Modal
@@ -236,11 +254,12 @@ export default function InventoryTransactionFormModal({
 							}
 							isRequired
 						/>
-						<SelectField
-							name='eventId'
-							label='Event'
+						<MultiSelectField
+							name='events'
+							label='Events'
 							options={eventOptions}
-							disabled={!!inventoriesMap[watch('inventoryId')]?.eventId}
+							placeholder='Select events'
+							disabled={inventoriesMap[watch('inventoryId')]?.events.length > 0}
 						/>
 						<SelectField
 							name='transactorId'

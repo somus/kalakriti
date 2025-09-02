@@ -349,7 +349,17 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 				select: [loggedInUserIsAdmin, inventoryPermission]
 			}
 		},
+		inventoryEvents: {
+			row: {
+				select: [loggedInUserIsAdmin, inventoryPermission]
+			}
+		},
 		inventoryTransactions: {
+			row: {
+				select: [loggedInUserIsAdmin, inventoryPermission]
+			}
+		},
+		inventoryTransactionEvents: {
 			row: {
 				select: [loggedInUserIsAdmin, inventoryPermission]
 			}

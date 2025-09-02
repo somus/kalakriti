@@ -373,11 +373,45 @@ export const inventory = pgTable('inventory', {
 	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
 
+export const inventoryEvents = pgTable(
+	'inventory_events',
+	{
+		inventoryId: varchar('inventory_id')
+			.notNull()
+			.references(() => inventory.id, {
+				onDelete: 'cascade'
+			}),
+		eventId: varchar('event_id')
+			.notNull()
+			.references(() => events.id, {
+				onDelete: 'cascade'
+			}),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		updatedAt: timestamp('updated_at').defaultNow().notNull()
+	},
+	t => [primaryKey({ columns: [t.inventoryId, t.eventId] })]
+);
+
+export const inventoryEventRelations = relations(
+	inventoryEvents,
+	({ one }) => ({
+		inventory: one(inventory, {
+			fields: [inventoryEvents.inventoryId],
+			references: [inventory.id]
+		}),
+		event: one(events, {
+			fields: [inventoryEvents.eventId],
+			references: [events.id]
+		})
+	})
+);
+
 export const inventoryRelations = relations(inventory, ({ one, many }) => ({
 	event: one(events, {
 		fields: [inventory.eventId],
 		references: [events.id]
 	}),
+	events: many(inventoryEvents),
 	transactions: many(inventoryTransactions)
 }));
 
@@ -401,13 +435,47 @@ export const inventoryTransactions = pgTable('inventory_transactions', {
 	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
 
+export const inventoryTransactionEvents = pgTable(
+	'inventory_transaction_events',
+	{
+		inventoryTransactionId: varchar('inventory_transaction_id')
+			.notNull()
+			.references(() => inventoryTransactions.id, {
+				onDelete: 'cascade'
+			}),
+		eventId: varchar('event_id')
+			.notNull()
+			.references(() => events.id, {
+				onDelete: 'cascade'
+			}),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		updatedAt: timestamp('updated_at').defaultNow().notNull()
+	},
+	t => [primaryKey({ columns: [t.inventoryTransactionId, t.eventId] })]
+);
+
+export const inventoryTransactionEventRelations = relations(
+	inventoryTransactionEvents,
+	({ one }) => ({
+		event: one(events, {
+			fields: [inventoryTransactionEvents.eventId],
+			references: [events.id]
+		}),
+		inventoryTransaction: one(inventoryTransactions, {
+			fields: [inventoryTransactionEvents.inventoryTransactionId],
+			references: [inventoryTransactions.id]
+		})
+	})
+);
+
 export const inventoryTransactionsRelations = relations(
 	inventoryTransactions,
-	({ one }) => ({
+	({ one, many }) => ({
 		event: one(events, {
 			fields: [inventoryTransactions.eventId],
 			references: [events.id]
 		}),
+		events: many(inventoryTransactionEvents),
 		inventory: one(inventory, {
 			fields: [inventoryTransactions.inventoryId],
 			references: [inventory.id]

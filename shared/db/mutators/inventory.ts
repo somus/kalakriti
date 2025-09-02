@@ -10,40 +10,89 @@ export interface CreateInventoryArgs {
 	name: string;
 	quantity: number;
 	unitPrice: number;
-	eventId?: string;
+	events: string[];
 	photoPath?: string;
 }
 
 export function createInventoryMutators(authData: AuthData | undefined) {
 	return {
-		create: async (tx, data: CreateInventoryArgs) => {
+		create: async (tx, { events, ...data }: CreateInventoryArgs) => {
 			assertIsAdminOrLogisticsCoordinator(authData);
 			const inventoryId = createId();
 			await tx.mutate.inventory.insert({ id: inventoryId, ...data });
+			for (const eventId of events) {
+				await tx.mutate.inventoryEvents.insert({
+					inventoryId: inventoryId,
+					eventId: eventId
+				});
+			}
+			const inventoryTransactionId = createId();
 			await tx.mutate.inventoryTransactions.insert({
-				id: createId(),
+				id: inventoryTransactionId,
 				inventoryId,
 				type: inventoryTransactionType.enumValues[0],
-				quantity: data.quantity,
-				eventId: data.eventId
+				quantity: data.quantity
 			});
+			for (const eventId of events) {
+				await tx.mutate.inventoryTransactionEvents.insert({
+					inventoryTransactionId: inventoryTransactionId,
+					eventId: eventId
+				});
+			}
 		},
 		update: async (
 			tx,
 			{
 				photoPath,
+				events,
 				...change
 			}: Omit<
 				UpdateValue<Schema['tables']['inventory']>,
-				'quantity' | 'createdAt'
-			>
+				'quantity' | 'eventId' | 'createdAt'
+			> &
+				Partial<Pick<CreateInventoryArgs, 'events'>>
 		) => {
 			assertIsAdminOrLogisticsCoordinator(authData);
+			const inventory = await tx.query.inventory
+				.where('id', change.id)
+				.related('events')
+				.one();
+
+			if (!inventory) {
+				throw new Error('Inventory not found');
+			}
+
 			await tx.mutate.inventory.update({
 				...change,
 				photoPath,
 				updatedAt: new Date().getTime()
 			});
+
+			if (events) {
+				const currentEventIds = inventory.events.map(event => event.eventId);
+
+				// Determine which events to remove and which to add
+				const eventsToRemove = currentEventIds.filter(
+					id => !events?.includes(id)
+				);
+				const eventsToAdd = events?.filter(id => !currentEventIds.includes(id));
+
+				// Remove deleted events
+				for (const eventId of eventsToRemove) {
+					await tx.mutate.inventoryEvents.delete({
+						inventoryId: inventory.id,
+						eventId
+					});
+				}
+
+				// Add new events
+				for (const eventId of eventsToAdd) {
+					await tx.mutate.inventoryEvents.insert({
+						inventoryId: inventory.id,
+						eventId
+					});
+				}
+			}
 		},
 		delete: async (tx, { id }: { id: string }) => {
 			assertIsAdminOrLogisticsCoordinator(authData);

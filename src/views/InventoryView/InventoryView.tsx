@@ -10,7 +10,9 @@ import { columns } from './columns';
 import { columnsConfig } from './filters';
 
 function inventoryQuery(z: Zero) {
-	return z.query.inventory.related('event').orderBy('createdAt', 'desc');
+	return z.query.inventory
+		.related('events', q => q.related('event'))
+		.orderBy('createdAt', 'desc');
 }
 
 export type Inventory = Row<ReturnType<typeof inventoryQuery>>;

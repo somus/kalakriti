@@ -52,16 +52,24 @@ export const columns = [
 		),
 		cell: ({ row }) => <div className='pl-4'>{row.getValue('notes')}</div>
 	}),
-	columnHelper.accessor(row => row.event, {
-		id: 'event',
+	columnHelper.accessor(row => row.events.map(event => event.event), {
+		id: 'events',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Event' />
+			<DataTableColumnHeader column={column} title='Events' />
 		),
 		cell: ({ row }) => {
-			const event = row.getValue<InventoryTransaction['event'] | undefined>(
-				'event'
-			);
-			return event ? <Badge variant='outline'>{event.name}</Badge> : null;
+			const events = row.getValue<
+				InventoryTransaction['events'][number]['event'][] | undefined
+			>('events');
+			return events
+				? events.map(event =>
+						event ? (
+							<Badge key={event.id} variant='outline'>
+								{event.name}
+							</Badge>
+						) : null
+					)
+				: null;
 		}
 	}),
 	columnHelper.accessor(row => row.transactor, {

@@ -11,7 +11,7 @@ import { columnsConfig } from './filters';
 
 function inventoryTransactionsQuery(z: Zero) {
 	return z.query.inventoryTransactions
-		.related('event')
+		.related('events', q => q.related('event'))
 		.related('inventory')
 		.related('transactor')
 		.orderBy('createdAt', 'desc');
