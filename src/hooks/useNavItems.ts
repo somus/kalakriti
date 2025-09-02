@@ -8,6 +8,7 @@ import {
 	PackageIcon,
 	SchoolIcon,
 	TicketsIcon,
+	TrophyIcon,
 	UsersIcon
 } from 'lucide-react';
 import { Center } from 'shared/db/schema.zero';
@@ -78,6 +79,11 @@ const getAdminNavItems = (centers: Center[], events: Event[]): NavItem[] => [
 				url: '/inventory/transactions'
 			}
 		]
+	},
+	{
+		title: 'Awards',
+		url: '/awards',
+		icon: TrophyIcon
 	}
 	// {
 	// 	title: 'Settings',
