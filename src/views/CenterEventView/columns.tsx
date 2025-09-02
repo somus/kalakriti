@@ -233,14 +233,30 @@ const Actions = ({
 	const context = useOutletContext<CenterOutletContext>();
 	const z = useZero();
 	const {
-		user: { role, liaisoningCenters, guardianCenters, coordinatingEvents }
+		user: {
+			role,
+			leading,
+			liaisoningCenters,
+			guardianCenters,
+			coordinatingEvents
+		}
 	} = useApp();
 	const canDelete =
 		liaisoningCenters.length > 0 ||
 		guardianCenters.length > 0 ||
-		role === 'admin';
-	const canMarkAttendance = coordinatingEvents.length > 0 || role === 'admin';
-	const canMarkWinners = coordinatingEvents.length > 0 || role === 'admin';
+		role === 'admin' ||
+		leading === 'cultural' ||
+		leading === 'arts';
+	const canMarkAttendance =
+		coordinatingEvents.length > 0 ||
+		role === 'admin' ||
+		leading === 'cultural' ||
+		leading === 'arts';
+	const canMarkWinners =
+		coordinatingEvents.length > 0 ||
+		role === 'admin' ||
+		leading === 'cultural' ||
+		leading === 'arts';
 
 	if (!canDelete && !canMarkAttendance && !canMarkWinners) {
 		return null;

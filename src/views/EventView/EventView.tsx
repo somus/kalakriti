@@ -45,7 +45,7 @@ export default function EventView() {
 	const params = useParams();
 	const zero = useZero();
 	const {
-		user: { role, coordinatingEvents }
+		user: { role, leading, coordinatingEvents }
 	} = useApp();
 	const eventId = z.cuid2().parse(params.eventId);
 	const [subEvent, status] = useQuery(eventQuery(zero, eventId));
@@ -128,7 +128,10 @@ export default function EventView() {
 				columns={columns}
 				columnsConfig={columnsConfig}
 				additionalActions={[
-					(coordinatingEvents.length > 0 || role === 'admin') && (
+					(coordinatingEvents.length > 0 ||
+						role === 'admin' ||
+						leading === 'arts' ||
+						leading === 'cultural') && (
 						<DropdownMenu key='scan-attendance'>
 							<DropdownMenuTrigger asChild>
 								<Button className='h-7'>
