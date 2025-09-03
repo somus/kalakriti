@@ -1,4 +1,11 @@
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import KalakritiLogo from '@/assets/kalakriti-logo.svg?react';
+import ProudIndianLogo from '@/assets/proud-indian-logo.svg?react';
+import {
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader
+} from '@/components/ui/card';
 import { QRCodeSVG } from 'qrcode.react';
 
 interface IdCardProps {
@@ -8,54 +15,49 @@ interface IdCardProps {
 	type: 'volunteer' | 'guardian' | 'participant';
 }
 
-const backgroundColors = {
-	volunteer: 'from-blue-300 to-cyan-500',
-	guardian: 'from-lime-300 to-green-500',
-	participant: 'from-pink-400 to-purple-500'
-};
-
-const nameTextColors = {
-	volunteer: 'from-blue-900 to-cyan-900',
-	guardian: 'from-indigo-900 to-blue-950',
-	participant: 'from-gray-900 to-blue-950'
-};
-
-const roleTextColors = {
-	volunteer: 'from-indigo-900 to-blue-900',
-	guardian: 'from-gray-900 to-gray-950',
-	participant: 'from-gray-800 to-indigo-950'
+const borderColor = {
+	volunteer: 'border-red-500',
+	guardian: 'border-green-500',
+	participant: 'border-[#4FC2F8]'
 };
 
 export function IdCard({ name, role, qrCodeValue, type }: IdCardProps) {
 	return (
-		<Card
-			className={`w-[325px] h-[523px] overflow-hidden rounded-xl shadow-2xl
-                 bg-gradient-to-br ${backgroundColors[type]}
-                 text-black border-2 border-white/50 flex flex-col items-center justify-start p-5 gap-5`}
-		>
-			<CardHeader className='flex flex-col items-center justify-center p-0 w-full'>
-				<img
-					src='/kalakriti-logo.png'
-					alt='Kalakriti Logo'
-					className='h-24 object-contain'
-				/>
+		<Card className='w-[308px] h-[482px] flex flex-col shadow-xl rounded-xl overflow-auto items-center justify-start p-0'>
+			<CardHeader
+				className={`relative w-full bg-[#4D4C4A] border-b-[15px] ${borderColor[type]} text-white flex items-center justify-between p-2.5`}
+				style={{ height: '100px' }}
+			>
+				<ProudIndianLogo className='max-h-[37px] basis-1/3 self-end mb-3.5' />
+				<span className='text-base italic font-serif basis-1/3 text-center'>
+					Presents
+				</span>
+				<KalakritiLogo className='max-h-[37px] basis-1/3 self-end mb-3.5' />
 			</CardHeader>
-			<CardContent className='flex flex-col items-center justify-center p-0 text-center flex-grow'>
-				<div className='rounded-lg bg-white p-3 shadow-xl border border-gray-100 mb-6'>
-					<QRCodeSVG value={qrCodeValue} size={220} level='H' />{' '}
-					{/* Slightly smaller QR */}
+
+			<CardContent className='flex-grow flex flex-col items-center justify-center px-4 gap-5 bg-white'>
+				<h1 className='text-xl font-bold text-gray-800 capitalize'>
+					{type} ID card
+				</h1>
+
+				<div className='flex-grow flex items-center justify-center'>
+					<QRCodeSVG value={qrCodeValue} size={150} level='H' />{' '}
 				</div>
-				<h2
-					className={`text-2xl font-extrabold mb-1 bg-gradient-to-br ${nameTextColors[type]} text-transparent bg-clip-text`}
-				>
-					{name}
-				</h2>
-				<p
-					className={`text-lg font-semibold capitalize bg-gradient-to-br ${roleTextColors[type]} text-transparent bg-clip-text`}
-				>
-					{role}
-				</p>
+
+				<div className='flex flex-col gap-1 items-center'>
+					<p className='text-base font-bold text-gray-700'>{name}</p>
+					<p className='text-sm font-normal text-gray-500'>{role}</p>
+				</div>
 			</CardContent>
+
+			<CardFooter className='w-full bg-[#4D4C4A] text-white text-center p-2 flex flex-col items-center h-[80px]'>
+				<p className='text-xs font-light'>
+					Art and Cultural festival for under-resourced communities
+				</p>
+				<p className='text-xs font-bold'>
+					Emergency Contact Number -- +91 99864 31321
+				</p>
+			</CardFooter>
 		</Card>
 	);
 }

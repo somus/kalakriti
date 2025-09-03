@@ -196,7 +196,7 @@ export const columns = [
 							style={{
 								height: 'auto',
 								margin: '0 auto',
-								maxWidth: 256,
+								maxWidth: 308,
 								width: '100%'
 							}}
 						>
@@ -276,7 +276,7 @@ const Actions = ({ user }: { user: User }) => {
 	);
 };
 
-const getUserRoleText = (user: User) => {
+export const getUserRoleText = (user: User) => {
 	if (user.role === 'guardian') {
 		return user.guardianCenters[0]?.center?.name ?? 'Guardian';
 	}
