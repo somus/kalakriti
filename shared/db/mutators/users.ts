@@ -46,7 +46,7 @@ export function createUserMutators(
 			}
 
 			if (tx.location === 'client' || !data.canLogin) {
-				await tx.mutate.users.insert({ id: data.id ?? createId(), ...data });
+				await tx.mutate.users.insert({ ...data, id: data.id ?? createId() });
 			} else {
 				if (!clerkClient) {
 					throw new Error('Clerk client is required');
