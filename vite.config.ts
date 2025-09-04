@@ -1,3 +1,4 @@
+import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
 import eslintPlugin from '@nabla/vite-plugin-eslint';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
@@ -70,6 +71,18 @@ export default defineConfig({
 		},
 
 		sourcemap: true
+	},
+	optimizeDeps: {
+		esbuildOptions: {
+			define: {
+				global: 'globalThis' // added for Buffer
+			},
+			plugins: [
+				NodeGlobalsPolyfillPlugin({
+					buffer: true
+				})
+			]
+		}
 	},
 	resolve: {
 		alias: {

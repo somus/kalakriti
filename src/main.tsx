@@ -1,5 +1,6 @@
 import { ClerkProvider } from '@clerk/clerk-react';
 import * as Sentry from '@sentry/react';
+import { Buffer } from 'buffer';
 import { NuqsAdapter } from 'nuqs/adapters/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -7,6 +8,8 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import { env } from './env.client';
 import './index.css';
+
+globalThis.Buffer = Buffer;
 
 // Import your Publishable Key
 const PUBLISHABLE_KEY = env.VITE_CLERK_PUBLISHABLE_KEY;
