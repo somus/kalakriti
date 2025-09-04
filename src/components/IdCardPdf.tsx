@@ -30,23 +30,19 @@ interface IdCardPdfProps {
 
 // Register fonts
 Font.register({
-	family: 'Geist Mono',
+	family: 'Poppins',
 	fonts: [
 		{
-			src: 'https://fonts.gstatic.com/s/geistmono/v3/or3yQ6H-1_WfwkMZI_qYPLs1a-t7PU0AbeFjKJ5T.ttf',
+			src: 'https://raw.githubusercontent.com/google/fonts/main/ofl/poppins/Poppins-Light.ttf',
 			fontWeight: 300
 		},
 		{
-			src: 'https://fonts.gstatic.com/s/geistmono/v3/or3yQ6H-1_WfwkMZI_qYPLs1a-t7PU0AbeE9KJ5T.ttf',
+			src: 'https://raw.githubusercontent.com/google/fonts/main/ofl/poppins/Poppins-Regular.ttf',
 			fontWeight: 400
 		},
 		{
-			src: 'https://fonts.gstatic.com/s/geistmono/v3/or3yQ6H-1_WfwkMZI_qYPLs1a-t7PU0AbeHaL55T.ttf',
+			src: 'https://raw.githubusercontent.com/google/fonts/main/ofl/poppins/Poppins-Bold.ttf',
 			fontWeight: 700
-		},
-		{
-			src: 'https://fonts.gstatic.com/s/geistmono/v3/or3yQ6H-1_WfwkMZI_qYPLs1a-t7PU0AbeFjKJ5T.ttf',
-			fontStyle: 'italic'
 		}
 	]
 });
@@ -76,7 +72,7 @@ const cardStyles = StyleSheet.create({
 		overflow: 'hidden',
 		alignItems: 'center',
 		justifyContent: 'flex-start',
-		fontFamily: 'Geist Mono',
+		fontFamily: 'Poppins',
 		backgroundColor: 'white',
 		border: '1px solid #EEE'
 	},
@@ -96,7 +92,6 @@ const cardStyles = StyleSheet.create({
 	},
 	headerText: {
 		fontSize: 11,
-		fontStyle: 'italic',
 		flexBasis: '33.33%',
 		textAlign: 'center',
 		color: 'white'
@@ -133,17 +128,19 @@ const cardStyles = StyleSheet.create({
 		display: 'flex',
 		flexDirection: 'column',
 		gap: 2,
-		alignItems: 'center'
+		alignItems: 'center',
+		paddingHorizontal: 8
 	},
 	name: {
-		fontSize: 14,
+		fontSize: 12,
 		color: '#4a5568',
 		fontWeight: 700
 	},
 	role: {
-		fontSize: 12,
+		fontSize: 10,
 		color: '#718096',
-		fontWeight: 400
+		fontWeight: 400,
+		textAlign: 'center'
 	},
 	footer: {
 		width: '100%',
