@@ -1,5 +1,3 @@
-import KalakritiLogo from '@/assets/kalakriti-logo.svg?react';
-import ProudIndianLogo from '@/assets/proud-indian-logo.svg?react';
 import {
 	Card,
 	CardContent,
@@ -23,16 +21,12 @@ const borderColor = {
 
 export function IdCard({ name, role, qrCodeValue, type }: IdCardProps) {
 	return (
-		<Card className='w-[308px] h-[482px] flex flex-col shadow-xl rounded-xl overflow-auto items-center justify-start p-0'>
+		<Card className='w-[308px] h-[494px] flex flex-col shadow-xl rounded-xl overflow-auto items-center justify-start p-0'>
 			<CardHeader
-				className={`relative w-full bg-[#4D4C4A] border-b-[15px] ${borderColor[type]} text-white flex items-center justify-between p-2.5`}
+				className={`relative w-full bg-[#4D4C4A] border-b-[15px] ${borderColor[type]} flex items-center h-[100px]`}
 				style={{ height: '100px' }}
 			>
-				<ProudIndianLogo className='max-h-[37px] basis-1/3 self-end mb-3.5' />
-				<span className='text-base italic font-serif basis-1/3 text-center'>
-					Presents
-				</span>
-				<KalakritiLogo className='max-h-[37px] basis-1/3 self-end mb-3.5' />
+				<img src='/participant-id-card-header.jpg' alt='Id Card Header' />
 			</CardHeader>
 
 			<CardContent className='flex-grow flex flex-col items-center justify-center px-4 gap-5 bg-white'>

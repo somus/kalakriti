@@ -82,19 +82,11 @@ const cardStyles = StyleSheet.create({
 		backgroundColor: '#4D4C4A',
 		borderBottomWidth: 14,
 		borderBottomColor: '#4FC2F8',
-		color: 'white',
 		display: 'flex',
 		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent: 'space-between',
-		padding: 16,
+		paddingHorizontal: 12,
 		height: 94
-	},
-	headerText: {
-		fontSize: 11,
-		flexBasis: '33.33%',
-		textAlign: 'center',
-		color: 'white'
 	},
 	logo: {
 		maxHeight: 50,
@@ -200,9 +192,7 @@ function IdCard({ name, role, type, qrCodeValue }: IdCardData) {
 					borderBottomColor: borderColor[type]
 				}}
 			>
-				<Image src='/proud-indian-ID-logo.png' style={cardStyles.logo} />
-				<Text style={cardStyles.headerText}>Presents</Text>
-				<Image src='/kalakriti-ID-logo.png' style={cardStyles.logo} />
+				<Image src='/participant-id-card-header.jpg' />
 			</View>
 			<View style={cardStyles.content}>
 				<Text style={cardStyles.title}>{capitalize(type)} ID card</Text>
