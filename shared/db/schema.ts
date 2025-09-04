@@ -56,7 +56,9 @@ export const users = pgTable('users', {
 	email: varchar('email'),
 	canLogin: boolean('can_login').default(false).notNull(),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
-	updatedAt: timestamp('updated_at').defaultNow().notNull()
+	updatedAt: timestamp('updated_at').defaultNow().notNull(),
+	hadBreakfast: boolean('had_breakfast').default(false).notNull(),
+	hadLunch: boolean('had_lunch').default(false).notNull()
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -313,6 +315,8 @@ export const participants = pgTable('participants', {
 		.references(() => participantCategories.id, {
 			onDelete: 'cascade'
 		}),
+	hadBreakfast: boolean('had_breakfast').default(false).notNull(),
+	hadLunch: boolean('had_lunch').default(false).notNull(),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });

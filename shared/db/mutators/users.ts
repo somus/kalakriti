@@ -5,7 +5,10 @@ import { createId } from '@paralleldrive/cuid2';
 import { CustomMutatorDefs, UpdateValue } from '@rocicorp/zero';
 import isObject from 'lodash/isObject';
 
-import { assertIsAdmin } from '../permissions.ts';
+import {
+	assertIsAdmin,
+	assertIsAdminOrFoodCoordinator
+} from '../permissions.ts';
 import { AuthData, Schema } from '../schema.zero.ts';
 
 export interface CreateUserArgs {
@@ -111,6 +114,34 @@ export function createUserMutators(
 
 			await tx.mutate.users.update({
 				...change,
+				updatedAt: new Date().getTime()
+			});
+		},
+		toggleHadBreakfast: async (tx, id: string) => {
+			assertIsAdminOrFoodCoordinator(authData);
+
+			const user = await tx.query.users.where('id', id).one();
+			if (!user) {
+				throw new Error('User not found');
+			}
+
+			await tx.mutate.users.update({
+				id,
+				hadBreakfast: !user.hadBreakfast,
+				updatedAt: new Date().getTime()
+			});
+		},
+		toggleHadLunch: async (tx, id: string) => {
+			assertIsAdminOrFoodCoordinator(authData);
+
+			const user = await tx.query.users.where('id', id).one();
+			if (!user) {
+				throw new Error('User not found');
+			}
+
+			await tx.mutate.users.update({
+				id,
+				hadLunch: !user.hadLunch,
 				updatedAt: new Date().getTime()
 			});
 		},

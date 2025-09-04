@@ -114,7 +114,7 @@ export const columns = [
 						className={cn(
 							'flex items-center gap-1 py-1 px-2 rounded-full text-[11px] tracking-[-0.01em] shadow-xs',
 							ROLE_STYLES_MAP[role],
-							'border-none text-white font-medium'
+							'border-none text-white font-medium capitalize'
 						)}
 					>
 						{role}

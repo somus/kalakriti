@@ -3,7 +3,10 @@ import { createId } from '@paralleldrive/cuid2';
 import { CustomMutatorDefs, UpdateValue } from '@rocicorp/zero';
 import { differenceInYears } from 'date-fns';
 
-import { assertIsAdminOrGuardianOrLiasonOfCenter } from '../permissions.ts';
+import {
+	assertIsAdminOrFoodCoordinator,
+	assertIsAdminOrGuardianOrLiasonOfCenter
+} from '../permissions.ts';
 import { AuthData, Schema } from '../schema.zero.ts';
 
 export interface CreateParticipantArgs {
@@ -74,6 +77,34 @@ export function createParticipantMutators(authData: AuthData | undefined) {
 			);
 			await tx.mutate.participants.update({
 				...change,
+				updatedAt: new Date().getTime()
+			});
+		},
+		toggleHadBreakfast: async (tx, id: string) => {
+			assertIsAdminOrFoodCoordinator(authData);
+
+			const participant = await tx.query.participants.where('id', id).one();
+			if (!participant) {
+				throw new Error('Participant not found');
+			}
+
+			await tx.mutate.participants.update({
+				id,
+				hadBreakfast: !participant.hadBreakfast,
+				updatedAt: new Date().getTime()
+			});
+		},
+		toggleHadLunch: async (tx, id: string) => {
+			assertIsAdminOrFoodCoordinator(authData);
+
+			const participant = await tx.query.participants.where('id', id).one();
+			if (!participant) {
+				throw new Error('Participant not found');
+			}
+
+			await tx.mutate.participants.update({
+				id,
+				hadLunch: !participant.hadLunch,
 				updatedAt: new Date().getTime()
 			});
 		},

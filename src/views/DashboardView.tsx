@@ -27,6 +27,7 @@ import { TEAMS_NAME_MAP } from './UsersView/columns';
 import LoadingScreen from './general/LoadingScreen';
 
 const AwardsView = lazy(() => import('@/views/AwardsView/AwardsView'));
+const FoodView = lazy(() => import('@/views/FoodView/FoodView'));
 
 export default function DashboardView() {
 	const {
@@ -52,6 +53,14 @@ export default function DashboardView() {
 		return (
 			<Suspense fallback={<LoadingScreen />}>
 				<AwardsView />
+			</Suspense>
+		);
+	}
+
+	if (role === 'volunteer' && leading === 'food') {
+		return (
+			<Suspense fallback={<LoadingScreen />}>
+				<FoodView />
 			</Suspense>
 		);
 	}

@@ -858,6 +858,26 @@ export const schema = {
           >,
           serverName: "participant_category_id",
         },
+        hadBreakfast: {
+          type: "boolean",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participants",
+            "hadBreakfast"
+          >,
+          serverName: "had_breakfast",
+        },
+        hadLunch: {
+          type: "boolean",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participants",
+            "hadLunch"
+          >,
+          serverName: "had_lunch",
+        },
         createdAt: {
           type: "number",
           optional: true,
@@ -1160,6 +1180,26 @@ export const schema = {
             "updatedAt"
           >,
           serverName: "updated_at",
+        },
+        hadBreakfast: {
+          type: "boolean",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "users",
+            "hadBreakfast"
+          >,
+          serverName: "had_breakfast",
+        },
+        hadLunch: {
+          type: "boolean",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "users",
+            "hadLunch"
+          >,
+          serverName: "had_lunch",
         },
       },
       primaryKey: ["id"],

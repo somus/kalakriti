@@ -41,6 +41,7 @@ const InventoryTransactionsView = lazy(
 	() => import('@/views/InventoryTransactionsView/InventoryTransactionsView')
 );
 const AwardsView = lazy(() => import('@/views/AwardsView/AwardsView'));
+const FoodView = lazy(() => import('@/views/FoodView/FoodView'));
 
 function App() {
 	return (
@@ -154,6 +155,14 @@ function App() {
 								element={
 									<Suspense fallback={<LoadingScreen />}>
 										<AwardsView />
+									</Suspense>
+								}
+							/>
+							<Route
+								path='food'
+								element={
+									<Suspense fallback={<LoadingScreen />}>
+										<FoodView />
 									</Suspense>
 								}
 							/>

@@ -4,6 +4,7 @@ import useZero, { Zero } from '@/hooks/useZero';
 import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 import {
+	CookieIcon,
 	HomeIcon,
 	PackageIcon,
 	SchoolIcon,
@@ -84,6 +85,11 @@ const getAdminNavItems = (centers: Center[], events: Event[]): NavItem[] => [
 		title: 'Awards',
 		url: '/awards',
 		icon: TrophyIcon
+	},
+	{
+		title: 'Food',
+		url: '/food',
+		icon: CookieIcon
 	}
 	// {
 	// 	title: 'Settings',

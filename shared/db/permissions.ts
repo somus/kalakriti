@@ -16,6 +16,13 @@ export function assertIsAdmin(authData: AuthData | undefined) {
 	}
 }
 
+export function assertIsAdminOrFoodCoordinator(authData: AuthData | undefined) {
+	assertIsLoggedIn(authData);
+	if (authData?.meta.leading !== 'food' && authData?.meta.role !== 'admin') {
+		throw new Error('Unauthorized');
+	}
+}
+
 export function assertIsAdminOrLogisticsCoordinator(
 	authData: AuthData | undefined
 ) {
