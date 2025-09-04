@@ -45,50 +45,61 @@ export default function UsersView() {
 		);
 	}
 
-	const idData = users
-		.map(user => ({
-			name: `${user.firstName} ${user.lastName}`,
-			role: getUserRoleText(user),
-			qrCodeValue: JSON.stringify({
-				type: user.role === 'guardian' ? 'guardian' : 'volunteer',
-				id: user.id
-			}),
-			type: user.role === 'guardian' ? 'guardian' : 'volunteer'
-		}))
-		.sort((a, b) => a.type.localeCompare(b.type)) as IdCardData[];
-
 	return (
-		<DataTableWrapper
-			data={users as User[]}
-			columns={columns}
-			columnsConfig={columnsConfig}
-			additionalActions={[
-				<Button
-					className='h-7'
-					key='download-ids'
-					variant='outline'
-					onClick={() => {
-						if (!prepareDownload) {
-							setPrepareDownload(true);
-						}
-					}}
-				>
-					<DownloadCloudIcon />
-					{!prepareDownload ? (
-						'Prepare IDs'
-					) : (
-						<PDFDownloadLink
-							document={<IdCardPdf idCards={idData} />}
-							fileName='user-ids.pdf'
+		<div className='relative flex flex-1'>
+			<DataTableWrapper
+				data={users as User[]}
+				columns={columns}
+				columnsConfig={columnsConfig}
+				additionalActions={[
+					<UserFormDialog key='create-user'>
+						<Button className='h-7'>Create User</Button>
+					</UserFormDialog>
+				]}
+			>
+				{table => {
+					const idData = table
+						.getRowModel()
+						.rows.map(row => ({
+							name: `${row.original.firstName} ${row.original.lastName}`,
+							role: getUserRoleText(row.original),
+							qrCodeValue: JSON.stringify({
+								type:
+									row.original.role === 'guardian' ? 'guardian' : 'volunteer',
+								id: row.original.id
+							}),
+							type: row.original.role === 'guardian' ? 'guardian' : 'volunteer'
+						}))
+						.sort((a, b) => a.type.localeCompare(b.type)) as IdCardData[];
+
+					return (
+						<Button
+							className='h-7 absolute top-4 right-[256px]'
+							key='download-ids'
+							variant='outline'
+							onClick={() => {
+								if (!prepareDownload) {
+									setPrepareDownload(true);
+								}
+							}}
 						>
-							{({ loading }) => (loading ? 'Loading IDs...' : 'Download IDs')}
-						</PDFDownloadLink>
-					)}
-				</Button>,
-				<UserFormDialog key='create-user'>
-					<Button className='h-7'>Create User</Button>
-				</UserFormDialog>
-			]}
-		/>
+							<DownloadCloudIcon />
+							{!prepareDownload ? (
+								'Prepare IDs'
+							) : (
+								<PDFDownloadLink
+									document={<IdCardPdf idCards={idData} />}
+									fileName='user-ids.pdf'
+								>
+									{({ loading }) =>
+										loading ? 'Loading IDs...' : 'Download IDs'
+									}
+								</PDFDownloadLink>
+							)}
+						</Button>
+					);
+				}}
+			</DataTableWrapper>
+		</div>
 	);
 }

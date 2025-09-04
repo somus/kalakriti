@@ -49,48 +49,56 @@ export default function ParticipantsView() {
 		);
 	}
 
-	const idData = participants.map(participant => ({
-		name: participant.name,
-		role: `${participant.center?.name ?? 'Participant'} - ${participant.participantCategory?.name ?? 'No Category'}`,
-		qrCodeValue: JSON.stringify({
-			type: 'participant',
-			id: participant.id
-		}),
-		type: 'participant'
-	})) as IdCardData[];
-
 	return (
-		<DataTableWrapper
-			data={participants as Participant[]}
-			columns={columns}
-			columnsConfig={columnsConfig}
-			additionalActions={[
-				<Button
-					className='h-7'
-					key='download-ids'
-					variant='outline'
-					onClick={() => {
-						if (!prepareDownload) {
-							setPrepareDownload(true);
-						}
-					}}
-				>
-					<DownloadCloudIcon />
-					{!prepareDownload ? (
-						'Prepare IDs'
-					) : (
-						<PDFDownloadLink
-							document={<IdCardPdf idCards={idData} />}
-							fileName='participant-ids.pdf'
+		<div className='relative flex flex-1'>
+			<DataTableWrapper
+				data={participants as Participant[]}
+				columns={columns}
+				columnsConfig={columnsConfig}
+				additionalActions={[
+					<ParticipantFormDialog key='create-participant'>
+						<Button className='h-7'>Create Participant</Button>
+					</ParticipantFormDialog>
+				]}
+			>
+				{table => {
+					const idData = table.getRowModel().rows.map(row => ({
+						name: row.original.name,
+						role: `${row.original.center?.name ?? 'Participant'} - ${row.original.participantCategory?.name ?? 'No Category'}`,
+						qrCodeValue: JSON.stringify({
+							type: 'participant',
+							id: row.original.id
+						}),
+						type: 'participant'
+					})) as IdCardData[];
+					return (
+						<Button
+							className='h-7 absolute top-4 right-[316px]'
+							key='download-ids'
+							variant='outline'
+							onClick={() => {
+								if (!prepareDownload) {
+									setPrepareDownload(true);
+								}
+							}}
 						>
-							{({ loading }) => (loading ? 'Loading IDs...' : 'Download IDs')}
-						</PDFDownloadLink>
-					)}
-				</Button>,
-				<ParticipantFormDialog key='create-participant'>
-					<Button className='h-7'>Create Participant</Button>
-				</ParticipantFormDialog>
-			]}
-		/>
+							<DownloadCloudIcon />
+							{!prepareDownload ? (
+								'Prepare IDs'
+							) : (
+								<PDFDownloadLink
+									document={<IdCardPdf idCards={idData} />}
+									fileName='participant-ids.pdf'
+								>
+									{({ loading }) =>
+										loading ? 'Loading IDs...' : 'Download IDs'
+									}
+								</PDFDownloadLink>
+							)}
+						</Button>
+					);
+				}}
+			</DataTableWrapper>
+		</div>
 	);
 }
