@@ -10,13 +10,15 @@ interface IdCardProps {
 	name: string;
 	role: string;
 	qrCodeValue: string;
-	type: 'volunteer' | 'guardian' | 'participant';
+	type: 'volunteer' | 'guardian' | 'participant' | 'guest' | 'judge';
 }
 
 const borderColor = {
 	volunteer: 'border-red-500',
 	guardian: 'border-green-500',
-	participant: 'border-[#4FC2F8]'
+	participant: 'border-[#4FC2F8]',
+	guest: 'border-yellow-500',
+	judge: 'border-purple-500'
 };
 
 export function IdCard({ name, role, qrCodeValue, type }: IdCardProps) {

@@ -61,7 +61,7 @@ export default function UsersView() {
 					const idData = table
 						.getRowModel()
 						.rows.map(row => ({
-							name: `${row.original.firstName} ${row.original.lastName}`,
+							name: `${row.original.firstName} ${row.original.lastName ?? ''}`,
 							role: getUserRoleText(row.original),
 							qrCodeValue: JSON.stringify({
 								type:
@@ -71,6 +71,30 @@ export default function UsersView() {
 							type: row.original.role === 'guardian' ? 'guardian' : 'volunteer'
 						}))
 						.sort((a, b) => a.type.localeCompare(b.type)) as IdCardData[];
+					// const volunteerData = Array.from({ length: 60 }, () => ({
+					// 	qrCodeValue: JSON.stringify({
+					// 		type: 'volunteer',
+					// 		id: createId(),
+					// 		isNewUser: true
+					// 	}),
+					// 	type: 'volunteer'
+					// }));
+					// const guestData = Array.from({ length: 24 }, () => ({
+					// 	qrCodeValue: JSON.stringify({
+					// 		type: 'guest',
+					// 		id: createId(),
+					// 		isNewUser: true
+					// 	}),
+					// 	type: 'guest'
+					// }));
+					// const judgeData = Array.from({ length: 60 }, () => ({
+					// 	qrCodeValue: JSON.stringify({
+					// 		type: 'judge',
+					// 		id: createId(),
+					// 		isNewUser: true
+					// 	}),
+					// 	type: 'judge'
+					// }));
 
 					return (
 						<Button

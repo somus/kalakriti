@@ -18,9 +18,9 @@ const chunk = <T,>(arr: T[], size: number): T[][] =>
 	);
 
 export interface IdCardData {
-	name: string;
-	role: string;
-	type: 'volunteer' | 'guardian' | 'participant';
+	name?: string;
+	role?: string;
+	type: 'volunteer' | 'guardian' | 'participant' | 'guest' | 'judge';
 	qrCodeValue: string;
 }
 
@@ -119,20 +119,29 @@ const cardStyles = StyleSheet.create({
 	participantInfo: {
 		display: 'flex',
 		flexDirection: 'column',
-		gap: 2,
-		alignItems: 'center',
-		paddingHorizontal: 8
+		gap: 4,
+		alignItems: 'stretch',
+		paddingHorizontal: 16,
+		width: '80%',
+		marginHorizontal: 'auto'
 	},
 	name: {
 		fontSize: 12,
 		color: '#4a5568',
-		fontWeight: 700
+		fontWeight: 700,
+		minHeight: 14,
+		textAlign: 'center'
 	},
 	role: {
 		fontSize: 10,
 		color: '#718096',
 		fontWeight: 400,
-		textAlign: 'center'
+		textAlign: 'center',
+		minHeight: 12
+	},
+	placeholder: {
+		borderBottomWidth: 1,
+		borderBottomColor: '#4a5568'
 	},
 	footer: {
 		width: '100%',
@@ -180,7 +189,9 @@ function QRCodeImage({ value, size }: { value: string; size: number }) {
 const borderColor = {
 	volunteer: '#FB2C37',
 	guardian: '#00C950',
-	participant: '#4FC2F8'
+	participant: '#4FC2F8',
+	guest: '#F0B100',
+	judge: '#AD47FF'
 };
 
 function IdCard({ name, role, type, qrCodeValue }: IdCardData) {
@@ -199,9 +210,28 @@ function IdCard({ name, role, type, qrCodeValue }: IdCardData) {
 				<View style={cardStyles.qrCodeContainer}>
 					<QRCodeImage value={qrCodeValue} size={180} />
 				</View>
-				<View style={cardStyles.participantInfo}>
-					<Text style={cardStyles.name}>{name}</Text>
-					<Text style={cardStyles.role}>{role}</Text>
+				<View
+					style={{
+						...cardStyles.participantInfo,
+						...(!name ? { gap: 10 } : {})
+					}}
+				>
+					<Text
+						style={{
+							...cardStyles.name,
+							...(!name ? cardStyles.placeholder : {})
+						}}
+					>
+						{name}
+					</Text>
+					<Text
+						style={{
+							...cardStyles.role,
+							...(!role ? cardStyles.placeholder : {})
+						}}
+					>
+						{role}
+					</Text>
 				</View>
 			</View>
 			<View style={cardStyles.footer}>

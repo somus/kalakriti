@@ -17,6 +17,7 @@ import {
 import useZero from '@/hooks/useZero';
 import { cn } from '@/lib/utils';
 import { Row, createColumnHelper } from '@tanstack/react-table';
+import capitalize from 'lodash/capitalize';
 import { CheckIcon, Ellipsis, IdCardIcon, XIcon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -290,7 +291,7 @@ export const getUserRoleText = (user: User) => {
 		return `${user.volunteeringEvents[0].event?.name} Volunteer`;
 	}
 	if (user.coordinatingEvents.length > 0) {
-		return `${user.coordinatingEvents[0].event?.name} Coordinator`;
+		return `${capitalize(user.coordinatingEvents[0].event?.name)} Coordinator`;
 	}
 	return 'Volunteer';
 };
