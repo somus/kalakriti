@@ -11,8 +11,9 @@ import { toast } from 'sonner';
 import * as z from 'zod';
 
 const scanResultSchema = z.object({
-	type: z.enum(['user', 'participant']),
-	id: z.string()
+	type: z.enum(['guardian', 'participant', 'volunteer', 'judge', 'guest']),
+	id: z.string(),
+	isNewUser: z.boolean().optional()
 });
 
 type ScanResult = z.infer<typeof scanResultSchema>;

@@ -4,6 +4,7 @@ import {
 	InputField,
 	SelectField
 } from '@/components/form';
+import { QrScanDialog } from '@/components/qr-scan-dialog';
 import { Button } from '@/components/ui/button';
 import {
 	Modal,
@@ -17,11 +18,12 @@ import {
 import useZero from '@/hooks/useZero';
 import { zodResolver } from '@hookform/resolvers/zod';
 import get from 'lodash/get';
-import { LoaderCircle } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { LoaderCircle, ScanQrCodeIcon } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { rolesEnum, teamsEnum } from 'shared/db/schema';
 import { User } from 'shared/db/schema.zero';
+import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { TEAMS_NAME_MAP } from './columns';
@@ -86,6 +88,10 @@ export default function UserFormModal({
 	const zero = useZero();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [qrScanResult, setQrScanResult] = useState<{
+		id: string;
+		type: NonNullable<User['role']>;
+	} | null>(null);
 
 	// Format user data for form
 	const defaultValues = useMemo(() => {
@@ -109,6 +115,7 @@ export default function UserFormModal({
 		resolver: zodResolver(userSchema),
 		defaultValues
 	});
+	const { setValue } = form;
 
 	// Form submission handler
 	const handleFormSubmit = async (data: UserFormData) => {
@@ -120,6 +127,7 @@ export default function UserFormModal({
 				// Create user
 				await zero.mutate.users.create({
 					...data,
+					id: qrScanResult?.id,
 					role: data.role ?? 'volunteer',
 					leading:
 						(data.role === 'admin' || data.role === 'volunteer') &&
@@ -147,6 +155,7 @@ export default function UserFormModal({
 			if (!user) {
 				// Reset form values after creation
 				form.reset();
+				setQrScanResult(null);
 			}
 			if (onOpenChange) {
 				onOpenChange(false);
@@ -183,6 +192,12 @@ export default function UserFormModal({
 		label: TEAMS_NAME_MAP[team]
 	}));
 
+	useEffect(() => {
+		if (qrScanResult) {
+			setValue('role', qrScanResult.type);
+		}
+	}, [qrScanResult, setValue]);
+
 	return (
 		<Modal
 			open={open ?? isModalOpen}
@@ -199,6 +214,40 @@ export default function UserFormModal({
 					className='flex flex-col flex-1'
 				>
 					<ModalBody className='space-y-4'>
+						{!qrScanResult && !user && (
+							<QrScanDialog
+								onScan={async scanResult => {
+									if (
+										!['volunteer', 'guest', 'judge'].includes(
+											scanResult.type
+										) ||
+										!scanResult.isNewUser
+									) {
+										toast.error('Invalid QR code');
+										return;
+									}
+
+									const user = await zero.query.users
+										.where('id', scanResult.id)
+										.one();
+
+									if (user && !!scanResult.isNewUser) {
+										toast.error('User already exists');
+										return;
+									}
+
+									setQrScanResult({
+										id: scanResult.id,
+										type: scanResult.type as NonNullable<User['role']>
+									});
+								}}
+							>
+								<Button>
+									<ScanQrCodeIcon />
+									Scan QR Code
+								</Button>
+							</QrScanDialog>
+						)}
 						<InputField name='firstName' label='First Name' isRequired />
 						<InputField name='lastName' label='Last Name' />
 						<InputField
@@ -213,9 +262,9 @@ export default function UserFormModal({
 							label='Role'
 							options={roleOptions}
 							isRequired
+							disabled={!!qrScanResult}
 						/>
-						{(form.watch('role') !== 'admin' ||
-							form.watch('role') !== 'volunteer') && (
+						{form.watch('role') === 'volunteer' && (
 							<SelectField
 								name='leading'
 								label='Leading'

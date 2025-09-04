@@ -10,7 +10,13 @@ import {
 	varchar
 } from 'drizzle-orm/pg-core';
 
-export const rolesEnum = pgEnum('roles', ['guardian', 'admin', 'volunteer']);
+export const rolesEnum = pgEnum('roles', [
+	'guardian',
+	'admin',
+	'volunteer',
+	'guest',
+	'judge'
+]);
 export const teamsEnum = pgEnum('teams', [
 	'overall',
 	'events',

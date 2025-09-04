@@ -30,7 +30,9 @@ const columnHelper = createColumnHelper<User>();
 export const ROLE_STYLES_MAP = {
 	admin: 'bg-red-500 border-red-500',
 	volunteer: 'bg-teal-500 border-teal-500',
-	guardian: 'bg-blue-500 border-blue-500'
+	guardian: 'bg-blue-500 border-blue-500',
+	guest: 'bg-yellow-500 border-yellow-500',
+	judge: 'bg-purple-500 border-purple-500'
 } as const;
 
 export const TEAMS_NAME_MAP = {
@@ -282,7 +284,7 @@ export const getUserRoleText = (user: User) => {
 		return user.guardianCenters[0]?.center?.name ?? 'Guardian';
 	}
 	if (user.leading) {
-		return `${user.leading} Coordinator`;
+		return `${capitalize(user.leading)} Coordinator`;
 	}
 	if (user.liaisoningCenters.length > 0) {
 		return `${user.liaisoningCenters[0].center?.name} Liaison`;
@@ -291,7 +293,7 @@ export const getUserRoleText = (user: User) => {
 		return `${user.volunteeringEvents[0].event?.name} Volunteer`;
 	}
 	if (user.coordinatingEvents.length > 0) {
-		return `${capitalize(user.coordinatingEvents[0].event?.name)} Coordinator`;
+		return `${user.coordinatingEvents[0].event?.name.replace(' (M)', '').replace(' (F)', '')} Coordinator`;
 	}
 	return 'Volunteer';
 };

@@ -9,12 +9,13 @@ import { assertIsAdmin } from '../permissions.ts';
 import { AuthData, Schema } from '../schema.zero.ts';
 
 export interface CreateUserArgs {
+	id?: string;
 	firstName: string;
 	lastName?: string;
 	email?: string;
 	phoneNumber: string;
 	password?: string;
-	role: 'admin' | 'volunteer' | 'guardian';
+	role: 'admin' | 'volunteer' | 'guardian' | 'guest' | 'judge';
 	leading?:
 		| 'overall'
 		| 'events'
@@ -45,7 +46,7 @@ export function createUserMutators(
 			}
 
 			if (tx.location === 'client' || !data.canLogin) {
-				await tx.mutate.users.insert({ id: createId(), ...data });
+				await tx.mutate.users.insert({ id: data.id ?? createId(), ...data });
 			} else {
 				if (!clerkClient) {
 					throw new Error('Clerk client is required');

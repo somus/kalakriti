@@ -246,6 +246,13 @@
       "when": 1756810715575,
       "tag": "0034_greedy_queen_noir",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1756984923970,
+      "tag": "0035_organic_rhino",
+      "breakpoints": true
     }
   ]
 }

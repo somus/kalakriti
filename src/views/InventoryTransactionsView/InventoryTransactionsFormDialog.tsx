@@ -105,7 +105,7 @@ export default function InventoryTransactionFormModal({
 		}
 		if (ctx.value.inventoryId) {
 			if (
-				inventoriesMap[ctx.value.inventoryId]?.eventId &&
+				inventoriesMap[ctx.value.inventoryId]?.events &&
 				ctx.value.events.every(
 					eventId =>
 						!!inventoriesMap[ctx.value.inventoryId]?.events.find(
