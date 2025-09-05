@@ -353,6 +353,7 @@ export const subEventParticipants = pgTable('sub_event_participants', {
 	isWinner: boolean('is_winner').notNull().default(false),
 	isRunner: boolean('is_runner').notNull().default(false),
 	prizeAwarded: boolean('prize_awarded').notNull().default(false),
+	submissionPhoto: varchar('submission_photo'),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });

@@ -19,9 +19,11 @@ import {
 	TooltipContent,
 	TooltipTrigger
 } from '@/components/ui/tooltip';
+import { env } from '@/env.client';
 import { useApp } from '@/hooks/useApp';
 import useZero from '@/hooks/useZero';
 import { CenterOutletContext } from '@/layout/CenterLayout';
+import { useAuth } from '@clerk/clerk-react';
 import { Row, createColumnHelper } from '@tanstack/react-table';
 import { formatDate } from 'date-fns';
 import {
@@ -31,10 +33,12 @@ import {
 	IdCardIcon,
 	XIcon
 } from 'lucide-react';
+import { useState } from 'react';
 import { useOutletContext } from 'react-router';
 import { toast } from 'sonner';
 
 import { SubEventParticipant } from './CenterEventView';
+import SubmissionPhotoFormDialog from './SubmissionPhotoFormDialog';
 
 const columnHelper = createColumnHelper<
 	SubEventParticipant & { subRows?: SubEventParticipant[] }
@@ -130,6 +134,42 @@ export const columns = [
 			displayName: 'Attended'
 		}
 	}),
+	columnHelper.accessor(row => row.submissionPhoto, {
+		id: 'submissionPhoto',
+		header: ({ column }) => (
+			<DataTableColumnHeader
+				className='ml-2'
+				column={column}
+				title='Submission Photo'
+			/>
+		),
+		cell: ({ row }) => (
+			<div className='pl-4'>
+				{row.getValue<string>('submissionPhoto') && (
+					<Dialog>
+						<DialogTrigger asChild>
+							<img
+								src={`${import.meta.env.DEV ? 'https://kalakriti.proudindian.ngo' : ''}/cdn-cgi/image/height=80,quality=75/${env.VITE_IMAGE_CDN}/${row.getValue<string>('submissionPhoto')}`}
+								className='h-7 object-contain cursor-pointer'
+							/>
+						</DialogTrigger>
+						<DialogTitle className='hidden'>{row.getValue('name')}</DialogTitle>
+						<DialogContent
+							className='max-w-7xl! border-0 bg-transparent p-0 shadow-none'
+							aria-describedby={undefined}
+						>
+							<div className='relative h-[calc(100vh-220px)] w-full overflow-clip rounded-md bg-transparent'>
+								<img
+									src={`${import.meta.env.DEV ? 'https://kalakriti.proudindian.ngo' : ''}/cdn-cgi/image/height=800,quality=75/${env.VITE_IMAGE_CDN}/${row.getValue<string>('submissionPhoto')}`}
+									className='h-full w-full object-contain'
+								/>
+							</div>
+						</DialogContent>
+					</Dialog>
+				)}
+			</div>
+		)
+	}),
 	columnHelper.accessor(row => (row.isWinner ?? false).toString(), {
 		id: 'isWinner',
 		header: ({ column }) => (
@@ -224,12 +264,21 @@ export const columns = [
 
 // eslint-disable-next-line react-refresh/only-export-components
 const Actions = ({
-	participant: { id, groupId, attended, isWinner, isRunner, subRows },
+	participant,
 	isSubGroupItem
 }: {
 	participant: SubEventParticipant & { subRows?: SubEventParticipant[] };
 	isSubGroupItem: boolean;
 }) => {
+	const {
+		id,
+		groupId,
+		attended,
+		isWinner,
+		isRunner,
+		subRows,
+		submissionPhoto
+	} = participant;
 	const context = useOutletContext<CenterOutletContext>();
 	const z = useZero();
 	const {
@@ -241,6 +290,8 @@ const Actions = ({
 			coordinatingEvents
 		}
 	} = useApp();
+	const { getToken } = useAuth();
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const canDelete =
 		liaisoningCenters.length > 0 ||
 		guardianCenters.length > 0 ||
@@ -253,6 +304,11 @@ const Actions = ({
 		leading === 'cultural' ||
 		leading === 'arts';
 	const canMarkWinners =
+		coordinatingEvents.length > 0 ||
+		role === 'admin' ||
+		leading === 'cultural' ||
+		leading === 'arts';
+	const canUpdateSubmissionPhoto =
 		coordinatingEvents.length > 0 ||
 		role === 'admin' ||
 		leading === 'cultural' ||
@@ -344,6 +400,46 @@ const Actions = ({
 						</DropDrawerItem>
 					</>
 				)}
+				{canUpdateSubmissionPhoto && !isSubGroupItem && (
+					<DropDrawerItem onSelect={() => setIsDialogOpen(true)}>
+						{!submissionPhoto
+							? 'Add submission photo'
+							: 'Update submission photo'}
+					</DropDrawerItem>
+				)}
+				{canUpdateSubmissionPhoto && !isSubGroupItem && !!submissionPhoto && (
+					<DropDrawerItem
+						variant='destructive'
+						onSelect={() => {
+							z.mutate.subEventParticipants
+								.updateSubmissionPhoto({
+									id: participant.id,
+									submissionPhoto: null
+								})
+								.client.then(async () => {
+									// Delete photo from R2 bucket
+									const token = await getToken();
+									await fetch(`${env.VITE_API_SERVER}/deleteAsset`, {
+										method: 'DELETE',
+										headers: {
+											accept: 'application/json',
+											Authorization: `Bearer ${token}`
+										},
+										body: JSON.stringify({
+											filePath: submissionPhoto
+										})
+									});
+								})
+								.catch((e: Error) => {
+									toast.error('Error deleting inventory', {
+										description: e.message || 'Something went wrong'
+									});
+								});
+						}}
+					>
+						Delete submission photo
+					</DropDrawerItem>
+				)}
 				{canDelete && (
 					<DropDrawerItem
 						variant='destructive'
@@ -379,6 +475,13 @@ const Actions = ({
 					</DropDrawerItem>
 				)}
 			</DropDrawerContent>
+			{isDialogOpen && (
+				<SubmissionPhotoFormDialog
+					participant={participant}
+					open={isDialogOpen}
+					onOpenChange={setIsDialogOpen}
+				/>
+			)}
 		</DropDrawer>
 	);
 };

@@ -982,6 +982,16 @@ export const schema = {
           >,
           serverName: "prize_awarded",
         },
+        submissionPhoto: {
+          type: "string",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "subEventParticipants",
+            "submissionPhoto"
+          >,
+          serverName: "submission_photo",
+        },
         createdAt: {
           type: "number",
           optional: true,

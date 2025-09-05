@@ -1,0 +1,1 @@
+ALTER TABLE "sub_event_participants" ADD COLUMN "submission_photo" varchar;

@@ -295,6 +295,29 @@ export function createSubEventParticipantMutators(
 				});
 			}
 		},
+		updateSubmissionPhoto: async (
+			tx,
+			{ id, submissionPhoto }: { id: string; submissionPhoto: string | null }
+		) => {
+			await assertIsAdminOrGuardianOrLiasonOfSubEventParticipant(
+				tx,
+				authData,
+				id
+			);
+
+			const subEventParticipant = await tx.query.subEventParticipants
+				.where('id', id)
+				.one();
+
+			if (!subEventParticipant) {
+				throw new Error('Participant not found');
+			}
+
+			await tx.mutate.subEventParticipants.update({
+				id,
+				submissionPhoto
+			});
+		},
 		delete: async (tx, { id }: { id: string }) => {
 			await assertIsAdminOrGuardianOrLiasonOfSubEventParticipant(
 				tx,
