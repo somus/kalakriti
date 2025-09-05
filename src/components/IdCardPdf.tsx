@@ -126,14 +126,14 @@ const cardStyles = StyleSheet.create({
 		marginHorizontal: 'auto'
 	},
 	name: {
-		fontSize: 12,
+		fontSize: 14,
 		color: '#4a5568',
 		fontWeight: 700,
 		minHeight: 14,
 		textAlign: 'center'
 	},
 	role: {
-		fontSize: 10,
+		fontSize: 12,
 		color: '#718096',
 		fontWeight: 400,
 		textAlign: 'center',
@@ -208,7 +208,7 @@ function IdCard({ name, role, type, qrCodeValue }: IdCardData) {
 			<View style={cardStyles.content}>
 				<Text style={cardStyles.title}>{capitalize(type)} ID card</Text>
 				<View style={cardStyles.qrCodeContainer}>
-					<QRCodeImage value={qrCodeValue} size={180} />
+					<QRCodeImage value={qrCodeValue} size={160} />
 				</View>
 				<View
 					style={{
