@@ -101,7 +101,8 @@ const getAdminNavItems = (centers: Center[], events: Event[]): NavItem[] => [
 
 const getGuardianAndLiasonNavItems = (
 	centers: Center[],
-	events: Event[]
+	events: Event[],
+	hideEvents?: boolean
 ): NavItem[] =>
 	centers.length === 1
 		? [
@@ -124,7 +125,7 @@ const getGuardianAndLiasonNavItems = (
 						)
 						.sort((a, b) => a.title.localeCompare(b.title))
 				}
-			]
+			].filter(item => item.title !== 'Events' || !hideEvents)
 		: [
 				homeNavItem,
 				...centers
@@ -142,7 +143,7 @@ const getGuardianAndLiasonNavItems = (
 									title: 'Events',
 									url: `/centers/${center.id}/events`
 								}
-							]
+							].filter(item => item.title !== 'Events' || !hideEvents)
 						}
 					])
 					.sort((a, b) => a.title.localeCompare(b.title))
@@ -204,9 +205,15 @@ export const useNavItems = () => {
 
 	if (
 		user.role === 'guardian' ||
-		(user.role === 'volunteer' && user.liaisoningCenters?.length > 0)
+		(user.role === 'volunteer' && user.liaisoningCenters?.length > 0) ||
+		user.leading === 'liaison' ||
+		user.leading === 'transport'
 	) {
-		return getGuardianAndLiasonNavItems(centers, events);
+		return getGuardianAndLiasonNavItems(
+			centers,
+			events,
+			user.leading === 'transport'
+		);
 	}
 
 	if (

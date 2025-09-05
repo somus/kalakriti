@@ -66,8 +66,11 @@ export default function DashboardView() {
 	}
 
 	if (
-		(role === 'guardian' && guardianCenters?.length === 1 && center) ||
-		(role === 'volunteer' && liaisoningCenters?.length === 1 && center)
+		center &&
+		((role === 'guardian' && guardianCenters?.length === 1) ||
+			(role === 'volunteer' && liaisoningCenters?.length === 1) ||
+			(role === 'volunteer' && leading === 'liaison') ||
+			(role === 'volunteer' && leading === 'transport'))
 	) {
 		return <CenterPage center={center} />;
 	}

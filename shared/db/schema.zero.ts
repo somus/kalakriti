@@ -60,6 +60,8 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 			allowIfLoggedIn(authData, eb),
 			eb.or(
 				eb.cmpLit(authData.meta.leading ?? '', '=', 'awards'),
+				eb.cmpLit(authData.meta.leading ?? '', '=', 'liaison'),
+				eb.cmpLit(authData.meta.leading ?? '', '=', 'transport'),
 				eb.exists('guardians', q => q.where('userId', authData.sub)),
 				eb.exists('liaisons', q => q.where('userId', authData.sub)),
 				eb.exists('participants', q =>
@@ -95,6 +97,8 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 			allowIfLoggedIn(authData, eb),
 			eb.or(
 				eb.cmpLit(authData.meta.leading ?? '', '=', 'awards'),
+				eb.cmpLit(authData.meta.leading ?? '', '=', 'liaison'),
+				eb.cmpLit(authData.meta.leading ?? '', '=', 'transport'),
 				eb.cmpLit(authData.meta.leading ?? '', '=', 'food'),
 				eb.exists('center', q =>
 					q.whereExists('guardians', q => q.where('userId', authData.sub))
@@ -131,6 +135,8 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 			allowIfLoggedIn(authData, eb),
 			eb.or(
 				eb.cmpLit(authData.meta.leading ?? '', '=', 'awards'),
+				eb.cmpLit(authData.meta.leading ?? '', '=', 'liaison'),
+				eb.cmpLit(authData.meta.leading ?? '', '=', 'transport'),
 				eb.exists('participant', q =>
 					q.whereExists('center', q =>
 						q.whereExists('guardians', q => q.where('userId', authData.sub))
@@ -162,6 +168,8 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 	) =>
 		eb.and(
 			allowIfLoggedIn(authData, eb),
+			eb.cmpLit(authData.meta.leading ?? '', '=', 'liaison'),
+			eb.cmpLit(authData.meta.leading ?? '', '=', 'transport'),
 			eb.or(
 				eb.exists('center', q =>
 					q.whereExists('guardians', q => q.where('userId', authData.sub))
@@ -178,6 +186,8 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 	) =>
 		eb.and(
 			allowIfLoggedIn(authData, eb),
+			eb.cmpLit(authData.meta.leading ?? '', '=', 'liaison'),
+			eb.cmpLit(authData.meta.leading ?? '', '=', 'transport'),
 			eb.or(
 				eb.exists('center', q =>
 					q.whereExists('guardians', q => q.where('userId', authData.sub))
@@ -231,6 +241,8 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 				eb.cmpLit(authData.meta.leading ?? '', '=', 'logistics'),
 				eb.cmpLit(authData.meta.leading ?? '', '=', 'food'),
 				eb.cmpLit(authData.meta.leading ?? '', '=', 'awards'),
+				eb.cmpLit(authData.meta.leading ?? '', '=', 'liaison'),
+				eb.cmpLit(authData.meta.leading ?? '', '=', 'transport'),
 				eb.exists('liaisoningCenters', q =>
 					q.whereExists('center', q =>
 						q.whereExists('guardians', q => q.where('userId', authData.sub))

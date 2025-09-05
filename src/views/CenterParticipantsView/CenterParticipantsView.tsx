@@ -21,7 +21,7 @@ export default function CenterParticipantsView() {
 	const { center } = useOutletContext<CenterOutletContext>();
 	const zero = useZero();
 	const {
-		user: { role }
+		user: { role, leading }
 	} = useApp();
 	const [participants, status] = useQuery(
 		zero.query.participants
@@ -53,29 +53,35 @@ export default function CenterParticipantsView() {
 	return (
 		<DataTableWrapper
 			data={participants as Participant[]}
-			columns={columns}
+			columns={columns.filter(
+				column => column.id !== 'actions' || leading !== 'transport'
+			)}
 			columnsConfig={columnsConfig}
 			columnsToHide={['center']}
-			additionalActions={[
-				center?.isLocked && role !== 'admin' ? (
-					<Tooltip key='create-participant'>
-						<TooltipTrigger asChild>
-							<span>
-								<Button className='h-7' disabled>
-									Create Participant
-								</Button>
-							</span>
-						</TooltipTrigger>
-						<TooltipContent>
-							<p>Editing is locked. Please contact your liason.</p>
-						</TooltipContent>
-					</Tooltip>
-				) : (
-					<ParticipantFormDialog key='create-participant'>
-						<Button className='h-7'>Create Participant</Button>
-					</ParticipantFormDialog>
-				)
-			]}
+			additionalActions={
+				leading === 'transport'
+					? []
+					: [
+							center?.isLocked && role !== 'admin' ? (
+								<Tooltip key='create-participant'>
+									<TooltipTrigger asChild>
+										<span>
+											<Button className='h-7' disabled>
+												Create Participant
+											</Button>
+										</span>
+									</TooltipTrigger>
+									<TooltipContent>
+										<p>Editing is locked. Please contact your liason.</p>
+									</TooltipContent>
+								</Tooltip>
+							) : (
+								<ParticipantFormDialog key='create-participant'>
+									<Button className='h-7'>Create Participant</Button>
+								</ParticipantFormDialog>
+							)
+						]
+			}
 		/>
 	);
 }
