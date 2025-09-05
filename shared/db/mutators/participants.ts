@@ -5,7 +5,8 @@ import { differenceInYears } from 'date-fns';
 
 import {
 	assertIsAdminOrFoodCoordinator,
-	assertIsAdminOrGuardianOrLiasonOfCenter
+	assertIsAdminOrGuardianOrLiasonOfCenter,
+	assertIsAdminOrLiasonOfCenter
 } from '../permissions.ts';
 import { AuthData, Schema } from '../schema.zero.ts';
 
@@ -77,6 +78,62 @@ export function createParticipantMutators(authData: AuthData | undefined) {
 			);
 			await tx.mutate.participants.update({
 				...change,
+				updatedAt: new Date().getTime()
+			});
+		},
+		togglePickedUp: async (tx, id: string) => {
+			const participant = await tx.query.participants.where('id', id).one();
+			if (!participant) {
+				throw new Error('Participant not found');
+			}
+
+			await assertIsAdminOrLiasonOfCenter(tx, authData, participant?.centerId);
+
+			await tx.mutate.participants.update({
+				id,
+				pickedUp: !participant.pickedUp,
+				updatedAt: new Date().getTime()
+			});
+		},
+		toggleReachedVenue: async (tx, id: string) => {
+			const participant = await tx.query.participants.where('id', id).one();
+			if (!participant) {
+				throw new Error('Participant not found');
+			}
+
+			await assertIsAdminOrLiasonOfCenter(tx, authData, participant?.centerId);
+
+			await tx.mutate.participants.update({
+				id,
+				reachedVenue: !participant.reachedVenue,
+				updatedAt: new Date().getTime()
+			});
+		},
+		toggleLeftVenue: async (tx, id: string) => {
+			const participant = await tx.query.participants.where('id', id).one();
+			if (!participant) {
+				throw new Error('Participant not found');
+			}
+
+			await assertIsAdminOrLiasonOfCenter(tx, authData, participant?.centerId);
+
+			await tx.mutate.participants.update({
+				id,
+				leftVenue: !participant.leftVenue,
+				updatedAt: new Date().getTime()
+			});
+		},
+		toggleDroppedOff: async (tx, id: string) => {
+			const participant = await tx.query.participants.where('id', id).one();
+			if (!participant) {
+				throw new Error('Participant not found');
+			}
+
+			await assertIsAdminOrLiasonOfCenter(tx, authData, participant?.centerId);
+
+			await tx.mutate.participants.update({
+				id,
+				droppedOff: !participant.droppedOff,
 				updatedAt: new Date().getTime()
 			});
 		},

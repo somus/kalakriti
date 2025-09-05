@@ -44,6 +44,24 @@ export function assertIsAdminOrAwardsCoordinator(
 	}
 }
 
+export async function assertIsAdminOrLiasonOfCenter(
+	tx: Transaction<Schema>,
+	authData: AuthData | undefined,
+	centerId: string
+) {
+	assertIsLoggedIn(authData);
+	const isAdmin = authData?.meta.role === 'admin';
+	const isLiaisonCoordinator = authData?.meta.leading === 'liaison';
+	const center = await tx.query.centers
+		.related('liaisons')
+		.where('id', centerId)
+		.one();
+	const isLiason = center?.liaisons.some(l => l.userId === authData?.sub);
+	if (!isAdmin && !isLiaisonCoordinator && !isLiason) {
+		throw new Error('Unauthorized');
+	}
+}
+
 export async function assertIsAdminOrGuardianOrLiasonOfCenter(
 	tx: Transaction<Schema>,
 	authData: AuthData | undefined,

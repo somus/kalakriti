@@ -317,6 +317,10 @@ export const participants = pgTable('participants', {
 		}),
 	hadBreakfast: boolean('had_breakfast').default(false).notNull(),
 	hadLunch: boolean('had_lunch').default(false).notNull(),
+	pickedUp: boolean('picked_up').default(false).notNull(),
+	reachedVenue: boolean('reached_venue').default(false).notNull(),
+	leftVenue: boolean('left_venue').default(false).notNull(),
+	droppedOff: boolean('dropped_off').default(false).notNull(),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });

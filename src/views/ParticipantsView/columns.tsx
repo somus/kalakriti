@@ -24,7 +24,13 @@ import useZero from '@/hooks/useZero';
 import { CenterOutletContext } from '@/layout/CenterLayout';
 import { Row, createColumnHelper } from '@tanstack/react-table';
 import { formatDate } from 'date-fns';
-import { Calendar1Icon, Ellipsis, IdCardIcon } from 'lucide-react';
+import {
+	Calendar1Icon,
+	CheckIcon,
+	Ellipsis,
+	IdCardIcon,
+	XIcon
+} from 'lucide-react';
 import { useState } from 'react';
 import { useOutletContext } from 'react-router';
 import { toast } from 'sonner';
@@ -142,6 +148,78 @@ export const columns = [
 			}
 		}
 	),
+	columnHelper.accessor(row => (row.pickedUp ?? false).toString(), {
+		id: 'pickedUp',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Picked Up' />
+		),
+		cell: ({ row }) => (
+			<div className='capitalize'>
+				{row.getValue('pickedUp') === 'true' ? (
+					<CheckIcon className='size-5 text-green-500' />
+				) : (
+					<XIcon className='size-5 text-destructive' />
+				)}
+			</div>
+		),
+		meta: {
+			displayName: 'Picked Up'
+		}
+	}),
+	columnHelper.accessor(row => (row.reachedVenue ?? false).toString(), {
+		id: 'reachedVenue',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Reached Venue' />
+		),
+		cell: ({ row }) => (
+			<div className='capitalize'>
+				{row.getValue('reachedVenue') === 'true' ? (
+					<CheckIcon className='size-5 text-green-500' />
+				) : (
+					<XIcon className='size-5 text-destructive' />
+				)}
+			</div>
+		),
+		meta: {
+			displayName: 'Reached Venue'
+		}
+	}),
+	columnHelper.accessor(row => (row.leftVenue ?? false).toString(), {
+		id: 'leftVenue',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Left Venue' />
+		),
+		cell: ({ row }) => (
+			<div className='capitalize'>
+				{row.getValue('leftVenue') === 'true' ? (
+					<CheckIcon className='size-5 text-green-500' />
+				) : (
+					<XIcon className='size-5 text-destructive' />
+				)}
+			</div>
+		),
+		meta: {
+			displayName: 'Left Venue'
+		}
+	}),
+	columnHelper.accessor(row => (row.droppedOff ?? false).toString(), {
+		id: 'droppedOff',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Dropped Off' />
+		),
+		cell: ({ row }) => (
+			<div className='capitalize'>
+				{row.getValue('droppedOff') === 'true' ? (
+					<CheckIcon className='size-5 text-green-500' />
+				) : (
+					<XIcon className='size-5 text-destructive' />
+				)}
+			</div>
+		),
+		meta: {
+			displayName: 'Dropped Off'
+		}
+	}),
 	{
 		id: 'view-id-card',
 		cell: ({ row }: { row: Row<Participant> }) => {
@@ -196,8 +274,12 @@ const Actions = ({ participant }: { participant: Participant }) => {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const z = useZero();
 	const {
-		user: { role }
+		user: { role, leading, liaisoningCenters }
 	} = useApp();
+	const canMarkAttendance =
+		(role === 'volunteer' && liaisoningCenters.length > 0) ||
+		role === 'admin' ||
+		leading === 'liaison';
 
 	return (
 		<DropDrawer modal={false}>
@@ -217,6 +299,70 @@ const Actions = ({ participant }: { participant: Participant }) => {
 				>
 					Edit
 				</DropDrawerItem>
+				{canMarkAttendance && (
+					<DropDrawerItem
+						disabled={!!participant.reachedVenue}
+						onSelect={() => {
+							z.mutate.participants
+								.togglePickedUp(participant.id)
+								.client.catch((e: Error) => {
+									toast.error('Error toggling picked up for participant', {
+										description: e.message || 'Something went wrong'
+									});
+								});
+						}}
+					>
+						{participant.pickedUp ? 'Unmark' : 'Mark'} picked up
+					</DropDrawerItem>
+				)}
+				{canMarkAttendance && (
+					<DropDrawerItem
+						disabled={!participant.pickedUp || !!participant.leftVenue}
+						onSelect={() => {
+							z.mutate.participants
+								.toggleReachedVenue(participant.id)
+								.client.catch((e: Error) => {
+									toast.error('Error toggling reached venue for participant', {
+										description: e.message || 'Something went wrong'
+									});
+								});
+						}}
+					>
+						{participant.reachedVenue ? 'Unmark' : 'Mark'} reached venue
+					</DropDrawerItem>
+				)}
+				{canMarkAttendance && (
+					<DropDrawerItem
+						disabled={!participant.reachedVenue || !!participant.droppedOff}
+						onSelect={() => {
+							z.mutate.participants
+								.toggleLeftVenue(participant.id)
+								.client.catch((e: Error) => {
+									toast.error('Error toggling left venue for participant', {
+										description: e.message || 'Something went wrong'
+									});
+								});
+						}}
+					>
+						{participant.leftVenue ? 'Unmark' : 'Mark'} left venue
+					</DropDrawerItem>
+				)}
+				{canMarkAttendance && (
+					<DropDrawerItem
+						disabled={!participant.leftVenue}
+						onSelect={() => {
+							z.mutate.participants
+								.toggleDroppedOff(participant.id)
+								.client.catch((e: Error) => {
+									toast.error('Error toggling dropped off for participant', {
+										description: e.message || 'Something went wrong'
+									});
+								});
+						}}
+					>
+						{participant.droppedOff ? 'Unmark' : 'Mark'} dropped off
+					</DropDrawerItem>
+				)}
 				<DropDrawerItem
 					variant='destructive'
 					disabled={!!context?.center.isLocked && role !== 'admin'}

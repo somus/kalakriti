@@ -878,6 +878,46 @@ export const schema = {
           >,
           serverName: "had_lunch",
         },
+        pickedUp: {
+          type: "boolean",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participants",
+            "pickedUp"
+          >,
+          serverName: "picked_up",
+        },
+        reachedVenue: {
+          type: "boolean",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participants",
+            "reachedVenue"
+          >,
+          serverName: "reached_venue",
+        },
+        leftVenue: {
+          type: "boolean",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participants",
+            "leftVenue"
+          >,
+          serverName: "left_venue",
+        },
+        droppedOff: {
+          type: "boolean",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "participants",
+            "droppedOff"
+          >,
+          serverName: "dropped_off",
+        },
         createdAt: {
           type: "number",
           optional: true,
