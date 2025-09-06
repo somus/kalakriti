@@ -168,9 +168,9 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 	) =>
 		eb.and(
 			allowIfLoggedIn(authData, eb),
-			eb.cmpLit(authData.meta.leading ?? '', '=', 'liaison'),
-			eb.cmpLit(authData.meta.leading ?? '', '=', 'transport'),
 			eb.or(
+				eb.cmpLit(authData.meta.leading ?? '', '=', 'liaison'),
+				eb.cmpLit(authData.meta.leading ?? '', '=', 'transport'),
 				eb.exists('center', q =>
 					q.whereExists('guardians', q => q.where('userId', authData.sub))
 				),
@@ -186,9 +186,9 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 	) =>
 		eb.and(
 			allowIfLoggedIn(authData, eb),
-			eb.cmpLit(authData.meta.leading ?? '', '=', 'liaison'),
-			eb.cmpLit(authData.meta.leading ?? '', '=', 'transport'),
 			eb.or(
+				eb.cmpLit(authData.meta.leading ?? '', '=', 'liaison'),
+				eb.cmpLit(authData.meta.leading ?? '', '=', 'transport'),
 				eb.exists('center', q =>
 					q.whereExists('guardians', q => q.where('userId', authData.sub))
 				),
