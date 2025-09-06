@@ -44,6 +44,17 @@ export const columnsConfig = [
 		.build(),
 	dtf
 		.option()
+		.accessor(row => row.team)
+		.id('team')
+		.displayName('Team')
+		.icon(ShieldUserIcon)
+		.transformOptionFn(r => ({
+			value: r,
+			label: TEAMS_NAME_MAP[r]
+		}))
+		.build(),
+	dtf
+		.option()
 		.accessor(row => row.leading)
 		.id('leading')
 		.displayName('Leading')

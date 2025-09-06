@@ -126,6 +126,22 @@ export const columns = [
 			displayName: 'Role'
 		}
 	}),
+	columnHelper.accessor(row => row.team, {
+		id: 'team',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Team' />
+		),
+		cell: ({ row }) => {
+			const team = row.getValue<User['team']>('team');
+
+			if (!team) return null;
+
+			return <Badge variant='outline'>{TEAMS_NAME_MAP[team]}</Badge>;
+		},
+		meta: {
+			displayName: 'Team'
+		}
+	}),
 	columnHelper.accessor(row => row.leading, {
 		id: 'leading',
 		header: ({ column }) => (
@@ -204,7 +220,7 @@ export const columns = [
 							}}
 						>
 							<IdCard
-								name={`${row.original.firstName} ${row.original.lastName}`}
+								name={`${row.original.firstName} ${row.original.lastName ?? ''}`}
 								role={getUserRoleText(row.original)}
 								type={
 									row.original.role === 'guardian' ? 'guardian' : 'volunteer'
@@ -294,6 +310,9 @@ export const getUserRoleText = (user: User) => {
 	}
 	if (user.coordinatingEvents.length > 0) {
 		return `${user.coordinatingEvents[0].event?.name.replace(' (M)', '').replace(' (F)', '')} Coordinator`;
+	}
+	if (user.team) {
+		return `${capitalize(user.team)} Volunteer`;
 	}
 	return 'Volunteer';
 };

@@ -52,6 +52,7 @@ export const users = pgTable('users', {
 	lastName: varchar('last_name'),
 	role: rolesEnum().default('volunteer').notNull(),
 	leading: teamsEnum(),
+	team: teamsEnum(),
 	phoneNumber: varchar('phone_number').notNull(),
 	email: varchar('email'),
 	canLogin: boolean('can_login').default(false).notNull(),

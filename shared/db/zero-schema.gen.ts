@@ -1182,6 +1182,15 @@ export const schema = {
             "leading"
           >,
         },
+        team: {
+          type: "string",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "users",
+            "team"
+          >,
+        },
         phoneNumber: {
           type: "string",
           optional: false,

@@ -33,6 +33,20 @@ export interface CreateUserArgs {
 		| 'hospitality'
 		| 'media'
 		| 'fundraising';
+	team?:
+		| 'overall'
+		| 'events'
+		| 'arts'
+		| 'cultural'
+		| 'liaison'
+		| 'transport'
+		| 'venue'
+		| 'food'
+		| 'logistics'
+		| 'awards'
+		| 'hospitality'
+		| 'media'
+		| 'fundraising';
 	canLogin: boolean;
 }
 
@@ -67,7 +81,8 @@ export function createUserMutators(
 						skipPasswordChecks: true,
 						publicMetadata: {
 							role: data.role,
-							leading: data.leading
+							leading: data.leading,
+							team: data.team
 						}
 					});
 					await tx.mutate.users.insert({ id: clerkUser.id, ...data });
@@ -106,7 +121,8 @@ export function createUserMutators(
 					publicMetadata: change.role
 						? {
 								role: change.role,
-								leading: change.leading
+								leading: change.leading,
+								team: change.team
 							}
 						: undefined
 				});

@@ -274,6 +274,13 @@
       "when": 1757086879658,
       "tag": "0038_lonely_mikhail_rasputin",
       "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1757186913037,
+      "tag": "0039_mature_lord_tyger",
+      "breakpoints": true
     }
   ]
 }

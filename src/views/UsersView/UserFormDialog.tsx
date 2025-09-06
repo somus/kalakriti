@@ -39,6 +39,15 @@ const userSchema = z
 			.enum([...teamsEnum.enumValues, ''])
 			.default('')
 			.optional(),
+		team: z
+			.enum([
+				...teamsEnum.enumValues.filter(
+					team => !['overall', 'events'].includes(team)
+				),
+				''
+			])
+			.default('')
+			.optional(),
 		canLogin: z.boolean().optional(),
 		phoneNumber: z
 			.string()
@@ -134,6 +143,11 @@ export default function UserFormModal({
 						data.leading !== ''
 							? data.leading
 							: undefined,
+					team:
+						(data.role === 'admin' || data.role === 'volunteer') &&
+						data.team !== ''
+							? data.team
+							: undefined,
 					canLogin: data.role === 'admin' || data.canLogin ? true : false
 				}).server;
 			} else {
@@ -141,6 +155,12 @@ export default function UserFormModal({
 				await zero.mutate.users.update({
 					id: user.id,
 					...data,
+					team:
+						data.role === 'admin' || data.role === 'volunteer'
+							? data.team === ''
+								? null
+								: data.team
+							: undefined,
 					leading:
 						data.role === 'admin' || data.role === 'volunteer'
 							? data.leading === ''
@@ -197,6 +217,17 @@ export default function UserFormModal({
 			setValue('role', qrScanResult.type);
 		}
 	}, [qrScanResult, setValue]);
+
+	const selectedLeading = form.watch('leading');
+	const selectedTeam = form.watch('team');
+	useEffect(() => {
+		if (selectedLeading !== undefined && selectedLeading !== '') {
+			setValue('team', '');
+		}
+		if (selectedTeam !== undefined && selectedTeam !== '') {
+			setValue('leading', '');
+		}
+	}, [selectedLeading, selectedTeam, setValue]);
 
 	return (
 		<Modal
@@ -269,6 +300,22 @@ export default function UserFormModal({
 								name='leading'
 								label='Leading'
 								options={teamOptions}
+								disabled={
+									form.watch('team') !== undefined && form.watch('team') !== ''
+								}
+							/>
+						)}
+						{form.watch('role') === 'volunteer' && (
+							<SelectField
+								name='team'
+								label='Team'
+								options={teamOptions.filter(
+									team => !['overall', 'events'].includes(team.value)
+								)}
+								disabled={
+									form.watch('leading') !== undefined &&
+									form.watch('leading') !== ''
+								}
 							/>
 						)}
 						{!user && form.watch('role') !== 'admin' && (
