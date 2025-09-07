@@ -116,6 +116,7 @@ export default function UserFormModal({
 			email: user.email ?? undefined,
 			phoneNumber: user.phoneNumber,
 			role: user.role ?? 'volunteer',
+			team: user.team ?? undefined,
 			leading: user.leading ?? ('' as UserFormData['leading'])
 		};
 	}, [user]);

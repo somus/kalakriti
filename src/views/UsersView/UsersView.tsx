@@ -1,6 +1,7 @@
 import { IdCardData, IdCardPdf } from '@/components/IdCardPdf';
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Button } from '@/components/ui/button';
+import { useApp } from '@/hooks/useApp';
 import useZero, { Zero } from '@/hooks/useZero';
 import LoadingScreen from '@/views/general/LoadingScreen';
 import { PDFDownloadLink } from '@react-pdf/renderer';
@@ -30,6 +31,10 @@ export default function UsersView() {
 	const z = useZero();
 	const [users, status] = useQuery(usersQuery(z));
 	const [prepareDownload, setPrepareDownload] = useState(false);
+	const {
+		user: { role }
+	} = useApp();
+	const isAdmin = role === 'admin';
 
 	if (status.type !== 'complete') {
 		return <LoadingScreen />;
@@ -51,13 +56,21 @@ export default function UsersView() {
 				data={users as User[]}
 				columns={columns}
 				columnsConfig={columnsConfig}
-				additionalActions={[
-					<UserFormDialog key='create-user'>
-						<Button className='h-7'>Create User</Button>
-					</UserFormDialog>
-				]}
+				additionalActions={
+					isAdmin
+						? [
+								<UserFormDialog key='create-user'>
+									<Button className='h-7'>Create User</Button>
+								</UserFormDialog>
+							]
+						: []
+				}
 			>
 				{table => {
+					if (!isAdmin) {
+						return null;
+					}
+
 					const idData = table
 						.getRowModel()
 						.rows.map(row => ({

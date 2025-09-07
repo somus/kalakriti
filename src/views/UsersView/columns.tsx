@@ -14,6 +14,7 @@ import {
 	DropDrawerItem,
 	DropDrawerTrigger
 } from '@/components/ui/dropdrawer';
+import { useApp } from '@/hooks/useApp';
 import useZero from '@/hooks/useZero';
 import { cn } from '@/lib/utils';
 import { Row, createColumnHelper } from '@tanstack/react-table';
@@ -251,6 +252,13 @@ export const columns = [
 const Actions = ({ user }: { user: User }) => {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const z = useZero();
+	const {
+		user: { role }
+	} = useApp();
+
+	if (role !== 'admin') {
+		return null;
+	}
 
 	return (
 		<DropDrawer modal={false}>

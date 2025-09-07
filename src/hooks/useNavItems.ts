@@ -19,14 +19,15 @@ const homeNavItem: NavItem = {
 	url: '/',
 	icon: HomeIcon
 };
+const userNavItem: NavItem = {
+	title: 'Users',
+	url: '/users',
+	icon: UsersIcon
+};
 
 const getAdminNavItems = (centers: Center[], events: Event[]): NavItem[] => [
 	homeNavItem,
-	{
-		title: 'Users',
-		url: '/users',
-		icon: UsersIcon
-	},
+	userNavItem,
 	{
 		title: 'Events',
 		url: '/events',
@@ -102,9 +103,16 @@ const getAdminNavItems = (centers: Center[], events: Event[]): NavItem[] => [
 const getGuardianAndLiasonNavItems = (
 	centers: Center[],
 	events: Event[],
-	hideEvents?: boolean
-): NavItem[] =>
-	centers.length === 1
+	isTransportCoordinator?: boolean
+): NavItem[] => {
+	const userNavItem = {
+		title: isTransportCoordinator ? 'Volunteers' : 'Users',
+		url: isTransportCoordinator
+			? '/users?filters=[{"columnId":"role","type":"option","operator":"is","values":["volunteer"]},{"columnId":"team","type":"option","operator":"is","values":["transport"]}]'
+			: '/users',
+		icon: UsersIcon
+	};
+	return centers.length === 1
 		? [
 				homeNavItem,
 				{
@@ -124,8 +132,9 @@ const getGuardianAndLiasonNavItems = (
 							}))
 						)
 						.sort((a, b) => a.title.localeCompare(b.title))
-				}
-			].filter(item => item.title !== 'Events' || !hideEvents)
+				},
+				userNavItem
+			].filter(item => item.title !== 'Events' || !isTransportCoordinator)
 		: [
 				homeNavItem,
 				...centers
@@ -143,11 +152,15 @@ const getGuardianAndLiasonNavItems = (
 									title: 'Events',
 									url: `/centers/${center.id}/events`
 								}
-							].filter(item => item.title !== 'Events' || !hideEvents)
+							].filter(
+								item => item.title !== 'Events' || !isTransportCoordinator
+							)
 						}
 					])
-					.sort((a, b) => a.title.localeCompare(b.title))
+					.sort((a, b) => a.title.localeCompare(b.title)),
+				userNavItem
 			];
+};
 
 const getEventVolunteerNavItems = (events: Event[]): NavItem[] => [
 	homeNavItem,
@@ -159,7 +172,8 @@ const getEventVolunteerNavItems = (events: Event[]): NavItem[] => [
 				icon: TicketsIcon
 			}))
 		)
-		.sort((a, b) => a.title.localeCompare(b.title))
+		.sort((a, b) => a.title.localeCompare(b.title)),
+	userNavItem
 ];
 
 const getLogisticsCoordinatorNavItems = (): NavItem[] => [
@@ -174,6 +188,11 @@ const getLogisticsCoordinatorNavItems = (): NavItem[] => [
 				url: '/inventory/transactions'
 			}
 		]
+	},
+	{
+		title: 'Volunteers',
+		url: '/users?filters=[{"columnId":"role","type":"option","operator":"is","values":["volunteer"]},{"columnId":"team","type":"option","operator":"is","values":["logistics"]}]',
+		icon: UsersIcon
 	}
 ];
 
@@ -201,6 +220,28 @@ export const useNavItems = () => {
 
 	if (user.role === 'volunteer' && user.leading === 'logistics') {
 		return getLogisticsCoordinatorNavItems();
+	}
+
+	if (user.role === 'volunteer' && user.leading === 'food') {
+		return [
+			homeNavItem,
+			{
+				title: 'Volunteers',
+				url: '/users?filters=[{"columnId":"role","type":"option","operator":"is","values":["volunteer"]},{"columnId":"team","type":"option","operator":"is","values":["food"]}]',
+				icon: UsersIcon
+			}
+		];
+	}
+
+	if (user.role === 'volunteer' && user.leading === 'awards') {
+		return [
+			homeNavItem,
+			{
+				title: 'Volunteers',
+				url: '/users?filters=[{"columnId":"role","type":"option","operator":"is","values":["volunteer"]},{"columnId":"team","type":"option","operator":"is","values":["awards"]}]',
+				icon: UsersIcon
+			}
+		];
 	}
 
 	if (
@@ -234,5 +275,5 @@ export const useNavItems = () => {
 		);
 	}
 
-	return [homeNavItem];
+	return [homeNavItem, userNavItem];
 };

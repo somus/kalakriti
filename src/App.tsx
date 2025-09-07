@@ -78,6 +78,14 @@ function App() {
 							element={<ProtectedRoute allowedRoles={['admin', 'volunteer']} />}
 						>
 							<Route
+								path='/users'
+								element={
+									<Suspense fallback={<LoadingScreen />}>
+										<UsersView />
+									</Suspense>
+								}
+							/>
+							<Route
 								path='/events/:eventId'
 								element={
 									<Suspense fallback={<LoadingScreen />}>
@@ -105,15 +113,6 @@ function App() {
 
 						{/* Admin Routes */}
 						<Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-							<Route
-								path='/users'
-								element={
-									<Suspense fallback={<LoadingScreen />}>
-										<UsersView />
-									</Suspense>
-								}
-							/>
-
 							<Route path='/events'>
 								<Route
 									index
