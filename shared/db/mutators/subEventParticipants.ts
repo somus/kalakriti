@@ -21,7 +21,7 @@ export interface CreateBatchSubEventParticipantArgs {
 export function subEventParticipantQuery(z: Zero) {
 	return z.query.subEventParticipants
 		.related('subEvent', q =>
-			q.related('event', q => q.related('coordinators'))
+			q.related('event', q => q.related('coordinators').related('category'))
 		)
 		.one();
 }

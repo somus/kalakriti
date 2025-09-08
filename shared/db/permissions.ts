@@ -169,14 +169,14 @@ export async function assertIsEventCoordinatorOfSubEventParticipant(
 		participant = await tx.query.subEventParticipants
 			.where('id', participantId)
 			.related('subEvent', q =>
-				q.related('event', q => q.related('coordinators'))
+				q.related('event', q => q.related('coordinators').related('category'))
 			)
 			.one();
 	} else if (groupId) {
 		participant = await tx.query.subEventParticipants
 			.where('groupId', groupId)
 			.related('subEvent', q =>
-				q.related('event', q => q.related('coordinators'))
+				q.related('event', q => q.related('coordinators').related('category'))
 			)
 			.one();
 	}
@@ -187,8 +187,10 @@ export async function assertIsEventCoordinatorOfSubEventParticipant(
 	const isCoordinator = participant?.subEvent?.event?.coordinators.some(
 		g => g.userId === authData?.sub
 	);
+	const isEventCategoryCoordinator =
+		participant?.subEvent?.event?.category?.coordinatorId === authData?.sub;
 
-	if (!isAdmin && !isCoordinator) {
+	if (!isAdmin && !isCoordinator && !isEventCategoryCoordinator) {
 		throw new Error('Unauthorized');
 	}
 }
