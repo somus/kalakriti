@@ -67,7 +67,8 @@ export function FileUploader({
 					getUploadParameters(file, getToken)
 			})
 			.use(Webcam, {
-				modes: ['picture']
+				modes: ['picture'],
+				mobileNativeCamera: true
 			});
 		return uppy;
 	}, [getToken]);
