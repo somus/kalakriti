@@ -68,9 +68,7 @@ export default function DashboardView() {
 	if (
 		center &&
 		((role === 'guardian' && guardianCenters?.length === 1) ||
-			(role === 'volunteer' && liaisoningCenters?.length === 1) ||
-			(role === 'volunteer' && leading === 'liaison') ||
-			(role === 'volunteer' && leading === 'transport'))
+			(role === 'volunteer' && liaisoningCenters?.length === 1))
 	) {
 		return <CenterPage center={center} />;
 	}
@@ -174,26 +172,28 @@ export default function DashboardView() {
 						</Link>
 					</>
 				)}
-				{(role === 'volunteer' || role === 'guardian') &&
-					centers.length > 1 && (
-						<>
-							{/* Liason and guardian dashboard for liasons & guardians with multiple centers */}
-							{centers.map(center => (
-								<Link to={`/centers/${center.id}`} key={center.id}>
-									<Card className='@container/card'>
-										<CardHeader className='relative'>
-											<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
-												{center.name}
-											</CardTitle>
-											<CardDescription>
-												{center.participants.length} participants
-											</CardDescription>
-										</CardHeader>
-									</Card>
-								</Link>
-							))}
-						</>
-					)}
+				{(((role === 'volunteer' || role === 'guardian') &&
+					centers.length > 1) ||
+					(role === 'volunteer' && leading === 'liaison') ||
+					(role === 'volunteer' && leading === 'transport')) && (
+					<>
+						{/* Liason and guardian dashboard for liasons & guardians with multiple centers */}
+						{centers.map(center => (
+							<Link to={`/centers/${center.id}`} key={center.id}>
+								<Card className='@container/card'>
+									<CardHeader className='relative'>
+										<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
+											{center.name}
+										</CardTitle>
+										<CardDescription>
+											{center.participants.length} participants
+										</CardDescription>
+									</CardHeader>
+								</Card>
+							</Link>
+						))}
+					</>
+				)}
 			</div>
 			{(role === 'admin' ||
 				coordinatingEvents.length > 0 ||
