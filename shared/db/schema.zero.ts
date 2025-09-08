@@ -62,6 +62,7 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 				eb.cmpLit(authData.meta.leading ?? '', '=', 'awards'),
 				eb.cmpLit(authData.meta.leading ?? '', '=', 'liaison'),
 				eb.cmpLit(authData.meta.leading ?? '', '=', 'transport'),
+				eb.cmpLit(authData.meta.leading ?? '', '=', 'food'),
 				eb.exists('guardians', q => q.where('userId', authData.sub)),
 				eb.exists('liaisons', q => q.where('userId', authData.sub)),
 				eb.exists('participants', q =>
