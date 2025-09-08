@@ -5,6 +5,8 @@ import Uppy, { Body, Meta, type UploadResult, UppyFile } from '@uppy/core';
 import '@uppy/core/css/style.min.css';
 import '@uppy/dashboard/css/style.min.css';
 import Dashboard from '@uppy/react/dashboard';
+import Webcam from '@uppy/webcam';
+import '@uppy/webcam/css/style.min.css';
 import React from 'react';
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -57,12 +59,16 @@ export function FileUploader({
 				maxNumberOfFiles: 1,
 				allowedFileTypes: ['image/*']
 			}
-		}).use(AwsS3, {
-			id: 'AwsS3',
-			shouldUseMultipart: false,
-			getUploadParameters: (file: UppyFile<Meta, Body>) =>
-				getUploadParameters(file, getToken)
-		});
+		})
+			.use(AwsS3, {
+				id: 'AwsS3',
+				shouldUseMultipart: false,
+				getUploadParameters: (file: UppyFile<Meta, Body>) =>
+					getUploadParameters(file, getToken)
+			})
+			.use(Webcam, {
+				modes: ['picture']
+			});
 		return uppy;
 	}, [getToken]);
 	uppy.on('complete', result => {
