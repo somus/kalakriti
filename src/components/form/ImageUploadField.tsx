@@ -68,6 +68,9 @@ export function FileUploader({
 			})
 			.use(Webcam, {
 				modes: ['picture'],
+				videoConstraints: {
+					facingMode: 'environment'
+				},
 				mobileNativeCamera: true
 			});
 		return uppy;
