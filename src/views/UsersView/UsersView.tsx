@@ -84,7 +84,7 @@ export default function UsersView() {
 							type: row.original.role === 'guardian' ? 'guardian' : 'volunteer'
 						}))
 						.sort((a, b) => a.type.localeCompare(b.type)) as IdCardData[];
-					// const volunteerData = Array.from({ length: 60 }, () => ({
+					// const volunteerData = Array.from({ length: 120 }, () => ({
 					// 	qrCodeValue: JSON.stringify({
 					// 		type: 'volunteer',
 					// 		id: createId(),
@@ -92,7 +92,7 @@ export default function UsersView() {
 					// 	}),
 					// 	type: 'volunteer'
 					// }));
-					// const guestData = Array.from({ length: 24 }, () => ({
+					// const guestData = Array.from({ length: 20 }, () => ({
 					// 	qrCodeValue: JSON.stringify({
 					// 		type: 'guest',
 					// 		id: createId(),
