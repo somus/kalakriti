@@ -224,11 +224,15 @@ export const columns = [
 								name={`${row.original.firstName} ${row.original.lastName ?? ''}`}
 								role={getUserRoleText(row.original)}
 								type={
-									row.original.role === 'guardian' ? 'guardian' : 'volunteer'
+									row.original.role === 'admin'
+										? 'volunteer'
+										: row.original.role!
 								}
 								qrCodeValue={JSON.stringify({
 									type:
-										row.original.role === 'guardian' ? 'guardian' : 'volunteer',
+										row.original.role === 'admin'
+											? 'volunteer'
+											: row.original.role!,
 									id: row.original.id
 								})}
 							/>
@@ -304,6 +308,9 @@ const Actions = ({ user }: { user: User }) => {
 };
 
 export const getUserRoleText = (user: User) => {
+	if (user.role === 'guest') {
+		return 'Guest';
+	}
 	if (user.role === 'guardian') {
 		return user.guardianCenters[0]?.center?.name ?? 'Guardian';
 	}

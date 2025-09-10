@@ -78,10 +78,13 @@ export default function UsersView() {
 							role: getUserRoleText(row.original),
 							qrCodeValue: JSON.stringify({
 								type:
-									row.original.role === 'guardian' ? 'guardian' : 'volunteer',
+									row.original.role === 'admin'
+										? 'volunteer'
+										: row.original.role!,
 								id: row.original.id
 							}),
-							type: row.original.role === 'guardian' ? 'guardian' : 'volunteer'
+							type:
+								row.original.role === 'admin' ? 'volunteer' : row.original.role!
 						}))
 						.sort((a, b) => a.type.localeCompare(b.type)) as IdCardData[];
 					// const volunteerData = Array.from({ length: 120 }, () => ({
