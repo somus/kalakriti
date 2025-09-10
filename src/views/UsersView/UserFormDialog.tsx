@@ -156,6 +156,7 @@ export default function UserFormModal({
 				await zero.mutate.users.update({
 					id: user.id,
 					...data,
+					lastName: data.lastName === '' ? null : data.lastName,
 					team:
 						data.role === 'admin' || data.role === 'volunteer'
 							? data.team === ''

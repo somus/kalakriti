@@ -66,14 +66,18 @@ export function createSubEventParticipantMutators(
 				participant = await tx.query.subEventParticipants
 					.where('id', id)
 					.related('subEvent', q =>
-						q.related('event', q => q.related('coordinators'))
+						q.related('event', q =>
+							q.related('coordinators').related('category')
+						)
 					)
 					.one();
 			} else if (groupId) {
 				participant = await tx.query.subEventParticipants
 					.where('groupId', groupId)
 					.related('subEvent', q =>
-						q.related('event', q => q.related('coordinators'))
+						q.related('event', q =>
+							q.related('coordinators').related('category')
+						)
 					)
 					.one();
 			}
@@ -117,7 +121,9 @@ export function createSubEventParticipantMutators(
 					.where('id', id)
 					.where('attended', true)
 					.related('subEvent', q =>
-						q.related('event', q => q.related('coordinators'))
+						q.related('event', q =>
+							q.related('coordinators').related('category')
+						)
 					)
 					.one();
 			} else if (groupId) {
@@ -125,7 +131,9 @@ export function createSubEventParticipantMutators(
 					.where('groupId', groupId)
 					.where('attended', true)
 					.related('subEvent', q =>
-						q.related('event', q => q.related('coordinators'))
+						q.related('event', q =>
+							q.related('coordinators').related('category')
+						)
 					)
 					.one();
 			}
@@ -186,7 +194,9 @@ export function createSubEventParticipantMutators(
 					.where('id', id)
 					.where('attended', true)
 					.related('subEvent', q =>
-						q.related('event', q => q.related('coordinators'))
+						q.related('event', q =>
+							q.related('coordinators').related('category')
+						)
 					)
 					.one();
 			} else if (groupId) {
@@ -194,7 +204,9 @@ export function createSubEventParticipantMutators(
 					.where('groupId', groupId)
 					.where('attended', true)
 					.related('subEvent', q =>
-						q.related('event', q => q.related('coordinators'))
+						q.related('event', q =>
+							q.related('coordinators').related('category')
+						)
 					)
 					.one();
 			}
@@ -250,7 +262,9 @@ export function createSubEventParticipantMutators(
 					.where('id', id)
 					.where('attended', true)
 					.related('subEvent', q =>
-						q.related('event', q => q.related('coordinators'))
+						q.related('event', q =>
+							q.related('coordinators').related('category')
+						)
 					)
 					.one();
 			} else if (groupId) {
@@ -258,7 +272,9 @@ export function createSubEventParticipantMutators(
 					.where('groupId', groupId)
 					.where('attended', true)
 					.related('subEvent', q =>
-						q.related('event', q => q.related('coordinators'))
+						q.related('event', q =>
+							q.related('coordinators').related('category')
+						)
 					)
 					.one();
 			}
@@ -299,11 +315,7 @@ export function createSubEventParticipantMutators(
 			tx,
 			{ id, submissionPhoto }: { id: string; submissionPhoto: string | null }
 		) => {
-			await assertIsAdminOrGuardianOrLiasonOfSubEventParticipant(
-				tx,
-				authData,
-				id
-			);
+			await assertIsEventCoordinatorOfSubEventParticipant(tx, authData, id);
 
 			const subEventParticipant = await tx.query.subEventParticipants
 				.where('id', id)

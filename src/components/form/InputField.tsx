@@ -38,7 +38,9 @@ export function InputField<T extends FieldValues>({
 			name={name}
 			render={({ field }) => (
 				<FormItem>
-					<FormLabel isRequired={isRequired}>{label}</FormLabel>
+					<FormLabel isRequired={isRequired} showClear={!props.disabled}>
+						{label}
+					</FormLabel>
 					<FormControl>
 						<Input
 							type={type}

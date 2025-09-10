@@ -400,14 +400,14 @@ const Actions = ({
 						</DropDrawerItem>
 					</>
 				)}
-				{canUpdateSubmissionPhoto && !isSubGroupItem && (
+				{canUpdateSubmissionPhoto && isSubGroupItem && (
 					<DropDrawerItem onSelect={() => setIsDialogOpen(true)}>
 						{!submissionPhoto
 							? 'Add submission photo'
 							: 'Update submission photo'}
 					</DropDrawerItem>
 				)}
-				{canUpdateSubmissionPhoto && !isSubGroupItem && !!submissionPhoto && (
+				{canUpdateSubmissionPhoto && isSubGroupItem && !!submissionPhoto && (
 					<DropDrawerItem
 						variant='destructive'
 						onSelect={() => {
