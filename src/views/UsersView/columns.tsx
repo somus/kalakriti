@@ -314,7 +314,7 @@ export const getUserRoleText = (user: User) => {
 		return `${user.liaisoningCenters[0].center?.name} Liaison`;
 	}
 	if (user.volunteeringEvents.length > 0) {
-		return `${user.volunteeringEvents[0].event?.name} Volunteer`;
+		return `${user.volunteeringEvents[0].event?.name.replace(' (M)', '').replace(' (F)', '')} Volunteer`;
 	}
 	if (user.coordinatingEvents.length > 0) {
 		return `${user.coordinatingEvents[0].event?.name.replace(' (M)', '').replace(' (F)', '')} Coordinator`;
