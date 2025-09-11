@@ -57,6 +57,9 @@ export default function InventoryTransactionFormModal({
 			.related('volunteers', q => q.related('user'))
 			.orderBy('name', 'asc')
 	);
+	const [volunteers] = useQuery(
+		zero.query.users.where('role', 'volunteer').orderBy('firstName', 'asc')
+	);
 	const [inventories] = useQuery(
 		zero.query.inventory.related('events').orderBy('name', 'asc')
 	);
@@ -161,20 +164,23 @@ export default function InventoryTransactionFormModal({
 					[
 						...currentEvents.flatMap(eventId =>
 							eventsMap[eventId].coordinators.map(coordinator => ({
-								label: `${coordinator.user?.firstName} ${coordinator.user?.lastName}`,
+								label: `${coordinator.user?.firstName} ${coordinator.user?.lastName ?? ''}`,
 								value: coordinator.userId
 							}))
 						),
 						...currentEvents.flatMap(eventId =>
 							eventsMap[eventId].volunteers.map(volunteer => ({
-								label: `${volunteer.user?.firstName} ${volunteer.user?.lastName}`,
+								label: `${volunteer.user?.firstName} ${volunteer.user?.lastName ?? ''}`,
 								value: volunteer.userId
 							}))
 						)
 					],
 					'value'
 				).sort((a, b) => a.label.localeCompare(b.label))
-			: [];
+			: volunteers.map(volunteer => ({
+					label: `${volunteer?.firstName} ${volunteer?.lastName ?? ''}`,
+					value: volunteer.id
+				}));
 
 	const handleFormSubmit = async (data: InventoryTransactionFormData) => {
 		setIsSubmitting(true);
@@ -261,7 +267,7 @@ export default function InventoryTransactionFormModal({
 							placeholder='Select events'
 							disabled={inventoriesMap[watch('inventoryId')]?.events.length > 0}
 						/>
-						<SelectField
+						<ComboBoxField
 							name='transactorId'
 							label='Volunteer'
 							options={transactorOptions}
