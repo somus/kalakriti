@@ -281,6 +281,13 @@
       "when": 1757186913037,
       "tag": "0039_mature_lord_tyger",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1757602832157,
+      "tag": "0040_gifted_yellowjacket",
+      "breakpoints": true
     }
   ]
 }

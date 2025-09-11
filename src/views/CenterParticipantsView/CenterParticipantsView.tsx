@@ -96,12 +96,9 @@ export default function CenterParticipantsView() {
 													throw new Error('Participant not found');
 												}
 
-												if (
-													!!participant.reachedVenue &&
-													!!participant.pickedUp
-												) {
+												if (!!participant.leftVenue && !!participant.pickedUp) {
 													throw new Error(
-														'Participant already reached venue, so cannot toggle picked up'
+														'Participant already left venue, so cannot toggle picked up'
 													);
 												}
 
@@ -124,56 +121,6 @@ export default function CenterParticipantsView() {
 											</DropdownMenuItem>
 										</QrScanDialog>
 										<QrScanDialog
-											title='Toggle Reached Venue'
-											onScan={async scanResult => {
-												const participant = await zero.query.participants
-													.where('id', scanResult.id)
-													.one();
-
-												if (!participant) {
-													throw new Error('Participant not found');
-												}
-
-												if (
-													!participant.pickedUp &&
-													!participant.reachedVenue
-												) {
-													throw new Error(
-														'Participant has not been picked up, so cannot toggle reached venue'
-													);
-												}
-
-												if (
-													!!participant.leftVenue &&
-													!!participant.reachedVenue
-												) {
-													throw new Error(
-														'Participant already left venue, so cannot toggle reached venue'
-													);
-												}
-
-												await zero.mutate.participants
-													.toggleReachedVenue(participant.id)
-													.client.then(() => {
-														toast.success(
-															`Reached venue ${participant.reachedVenue ? 'unmarked' : 'marked'} successfully`
-														);
-													})
-													.catch((e: Error) => {
-														toast.error(
-															`Error toggling reached venue for user`,
-															{
-																description: e.message || 'Something went wrong'
-															}
-														);
-													});
-											}}
-										>
-											<DropdownMenuItem onSelect={e => e.preventDefault()}>
-												Toggle Reached Venue
-											</DropdownMenuItem>
-										</QrScanDialog>
-										<QrScanDialog
 											title='Toggle Left Venue'
 											onScan={async scanResult => {
 												const participant = await zero.query.participants
@@ -184,12 +131,9 @@ export default function CenterParticipantsView() {
 													throw new Error('Participant not found');
 												}
 
-												if (
-													!participant.reachedVenue &&
-													!participant.leftVenue
-												) {
+												if (!participant.pickedUp && !participant.leftVenue) {
 													throw new Error(
-														'Participant has not reached venue, so cannot toggle left venue'
+														'Participant has not been picked up, so cannot toggle left venue'
 													);
 												}
 

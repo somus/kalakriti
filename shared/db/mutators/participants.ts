@@ -95,20 +95,6 @@ export function createParticipantMutators(authData: AuthData | undefined) {
 				updatedAt: new Date().getTime()
 			});
 		},
-		toggleReachedVenue: async (tx, id: string) => {
-			const participant = await tx.query.participants.where('id', id).one();
-			if (!participant) {
-				throw new Error('Participant not found');
-			}
-
-			await assertIsAdminOrLiasonOfCenter(tx, authData, participant?.centerId);
-
-			await tx.mutate.participants.update({
-				id,
-				reachedVenue: !participant.reachedVenue,
-				updatedAt: new Date().getTime()
-			});
-		},
 		toggleLeftVenue: async (tx, id: string) => {
 			const participant = await tx.query.participants.where('id', id).one();
 			if (!participant) {

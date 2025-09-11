@@ -166,24 +166,6 @@ export const columns = [
 			displayName: 'Picked Up'
 		}
 	}),
-	columnHelper.accessor(row => (row.reachedVenue ?? false).toString(), {
-		id: 'reachedVenue',
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title='Reached Venue' />
-		),
-		cell: ({ row }) => (
-			<div className='capitalize'>
-				{row.getValue('reachedVenue') === 'true' ? (
-					<CheckIcon className='size-5 text-green-500' />
-				) : (
-					<XIcon className='size-5 text-destructive' />
-				)}
-			</div>
-		),
-		meta: {
-			displayName: 'Reached Venue'
-		}
-	}),
 	columnHelper.accessor(row => (row.leftVenue ?? false).toString(), {
 		id: 'leftVenue',
 		header: ({ column }) => (
@@ -301,7 +283,7 @@ const Actions = ({ participant }: { participant: Participant }) => {
 				</DropDrawerItem>
 				{canMarkAttendance && (
 					<DropDrawerItem
-						disabled={!!participant.reachedVenue}
+						disabled={!!participant.leftVenue}
 						onSelect={() => {
 							z.mutate.participants
 								.togglePickedUp(participant.id)
@@ -317,23 +299,7 @@ const Actions = ({ participant }: { participant: Participant }) => {
 				)}
 				{canMarkAttendance && (
 					<DropDrawerItem
-						disabled={!participant.pickedUp || !!participant.leftVenue}
-						onSelect={() => {
-							z.mutate.participants
-								.toggleReachedVenue(participant.id)
-								.client.catch((e: Error) => {
-									toast.error('Error toggling reached venue for participant', {
-										description: e.message || 'Something went wrong'
-									});
-								});
-						}}
-					>
-						{participant.reachedVenue ? 'Unmark' : 'Mark'} reached venue
-					</DropDrawerItem>
-				)}
-				{canMarkAttendance && (
-					<DropDrawerItem
-						disabled={!participant.reachedVenue || !!participant.droppedOff}
+						disabled={!participant.pickedUp || !!participant.droppedOff}
 						onSelect={() => {
 							z.mutate.participants
 								.toggleLeftVenue(participant.id)

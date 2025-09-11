@@ -94,25 +94,6 @@ export const columnsConfig = [
 		.build(),
 	dtf
 		.option()
-		.id('reachedVenue')
-		.accessor(row => (row.reachedVenue ?? false).toString())
-		.displayName('Reached Venue?')
-		.icon(ListCheckIcon)
-		.options([
-			{
-				label: 'Yes',
-				value: 'true',
-				icon: <CheckIcon className='text-green-500' />
-			},
-			{
-				label: 'No',
-				value: 'false',
-				icon: <XIcon className='text-destructive' />
-			}
-		])
-		.build(),
-	dtf
-		.option()
 		.id('leftVenue')
 		.accessor(row => (row.leftVenue ?? false).toString())
 		.displayName('Reached Venue?')

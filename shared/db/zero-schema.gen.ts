@@ -888,16 +888,6 @@ export const schema = {
           >,
           serverName: "picked_up",
         },
-        reachedVenue: {
-          type: "boolean",
-          optional: true,
-          customType: null as unknown as ZeroCustomType<
-            typeof zeroSchema,
-            "participants",
-            "reachedVenue"
-          >,
-          serverName: "reached_venue",
-        },
         leftVenue: {
           type: "boolean",
           optional: true,
