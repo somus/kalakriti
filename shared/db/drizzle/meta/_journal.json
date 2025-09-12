@@ -288,6 +288,13 @@
       "when": 1757602832157,
       "tag": "0040_gifted_yellowjacket",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1757706938703,
+      "tag": "0041_lush_whirlwind",
+      "breakpoints": true
     }
   ]
 }

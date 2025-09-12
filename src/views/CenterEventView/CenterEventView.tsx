@@ -135,7 +135,7 @@ export default function CenterEventView() {
 
 			<DataTableWrapper
 				data={participants as SubEventParticipant[]}
-				columns={columns}
+				columns={columns(!!subEvent.scoreSheetPath)}
 				columnsConfig={columnsConfig}
 				columnsToHide={['center']}
 				additionalActions={[

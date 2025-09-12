@@ -155,6 +155,32 @@ export async function assertIsAdminOrGuardianOrLiasonOfSubEventParticipantGroup(
 	}
 }
 
+export async function assertIsEventCoordinatorOfSubEvent(
+	tx: Transaction<Schema>,
+	authData: AuthData | undefined,
+	subEventId: string
+) {
+	assertIsLoggedIn(authData);
+	const isAdmin = authData?.meta.role === 'admin';
+	const subEvent = await tx.query.subEvents
+		.where('id', subEventId)
+		.related('event', q => q.related('coordinators').related('category'))
+		.one();
+
+	if (!subEvent) {
+		throw new Error('Invalid event ID provided');
+	}
+	const isCoordinator = subEvent?.event?.coordinators.some(
+		g => g.userId === authData?.sub
+	);
+	const isEventCategoryCoordinator =
+		subEvent?.event?.category?.coordinatorId === authData?.sub;
+
+	if (!isAdmin && !isCoordinator && !isEventCategoryCoordinator) {
+		throw new Error('Unauthorized');
+	}
+}
+
 export async function assertIsEventCoordinatorOfSubEventParticipant(
 	tx: Transaction<Schema>,
 	authData: AuthData | undefined,

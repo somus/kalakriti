@@ -1,0 +1,1 @@
+ALTER TABLE "sub_events" ADD COLUMN "score_sheet_path" varchar;

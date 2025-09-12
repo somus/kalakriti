@@ -1090,6 +1090,16 @@ export const schema = {
           >,
           serverName: "end_time",
         },
+        scoreSheetPath: {
+          type: "string",
+          optional: true,
+          customType: null as unknown as ZeroCustomType<
+            typeof zeroSchema,
+            "subEvents",
+            "scoreSheetPath"
+          >,
+          serverName: "score_sheet_path",
+        },
         eventId: {
           type: "string",
           optional: false,

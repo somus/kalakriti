@@ -188,6 +188,7 @@ export const subEvents = pgTable('sub_events', {
 		.notNull(),
 	startTime: timestamp('start_time').notNull(),
 	endTime: timestamp('end_time').notNull(),
+	scoreSheetPath: varchar('score_sheet_path'),
 	eventId: varchar('event_id')
 		.references(() => events.id, {
 			onDelete: 'cascade'
