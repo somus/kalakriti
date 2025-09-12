@@ -19,15 +19,19 @@ const homeNavItem: NavItem = {
 	url: '/',
 	icon: HomeIcon
 };
-const userNavItem: NavItem = {
-	title: 'Users',
+const volunteersNavItem: NavItem = {
+	title: 'Volunteers',
 	url: '/users',
 	icon: UsersIcon
 };
 
 const getAdminNavItems = (centers: Center[], events: Event[]): NavItem[] => [
 	homeNavItem,
-	userNavItem,
+	{
+		title: 'Users',
+		url: '/users',
+		icon: UsersIcon
+	},
 	{
 		title: 'Events',
 		url: '/events',
@@ -105,13 +109,6 @@ const getGuardianAndLiasonNavItems = (
 	events: Event[],
 	isTransportCoordinator?: boolean
 ): NavItem[] => {
-	const userNavItem = {
-		title: isTransportCoordinator ? 'Volunteers' : 'Users',
-		url: isTransportCoordinator
-			? '/users?filters=[{"columnId":"role","type":"option","operator":"is","values":["volunteer"]},{"columnId":"team","type":"option","operator":"is","values":["transport"]}]'
-			: '/users',
-		icon: UsersIcon
-	};
 	return centers.length === 1
 		? [
 				homeNavItem,
@@ -133,7 +130,7 @@ const getGuardianAndLiasonNavItems = (
 						)
 						.sort((a, b) => a.title.localeCompare(b.title))
 				},
-				userNavItem
+				volunteersNavItem
 			].filter(item => item.title !== 'Events' || !isTransportCoordinator)
 		: [
 				homeNavItem,
@@ -158,7 +155,7 @@ const getGuardianAndLiasonNavItems = (
 						}
 					])
 					.sort((a, b) => a.title.localeCompare(b.title)),
-				userNavItem
+				volunteersNavItem
 			];
 };
 
@@ -173,7 +170,7 @@ const getEventVolunteerNavItems = (events: Event[]): NavItem[] => [
 			}))
 		)
 		.sort((a, b) => a.title.localeCompare(b.title)),
-	userNavItem
+	volunteersNavItem
 ];
 
 const getLogisticsCoordinatorNavItems = (): NavItem[] => [
@@ -189,11 +186,7 @@ const getLogisticsCoordinatorNavItems = (): NavItem[] => [
 			}
 		]
 	},
-	{
-		title: 'Volunteers',
-		url: '/users?filters=[{"columnId":"role","type":"option","operator":"is","values":["volunteer"]},{"columnId":"team","type":"option","operator":"is","values":["logistics"]}]',
-		icon: UsersIcon
-	}
+	volunteersNavItem
 ];
 
 function eventsQuery(z: Zero) {
@@ -223,25 +216,11 @@ export const useNavItems = () => {
 	}
 
 	if (user.role === 'volunteer' && user.leading === 'food') {
-		return [
-			homeNavItem,
-			{
-				title: 'Volunteers',
-				url: '/users?filters=[{"columnId":"role","type":"option","operator":"is","values":["volunteer"]},{"columnId":"team","type":"option","operator":"is","values":["food"]}]',
-				icon: UsersIcon
-			}
-		];
+		return [homeNavItem, volunteersNavItem];
 	}
 
 	if (user.role === 'volunteer' && user.leading === 'awards') {
-		return [
-			homeNavItem,
-			{
-				title: 'Volunteers',
-				url: '/users?filters=[{"columnId":"role","type":"option","operator":"is","values":["volunteer"]},{"columnId":"team","type":"option","operator":"is","values":["awards"]}]',
-				icon: UsersIcon
-			}
-		];
+		return [homeNavItem, volunteersNavItem];
 	}
 
 	if (
@@ -275,5 +254,5 @@ export const useNavItems = () => {
 		);
 	}
 
-	return [homeNavItem, userNavItem];
+	return [homeNavItem, volunteersNavItem];
 };

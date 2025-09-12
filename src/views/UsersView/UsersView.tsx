@@ -32,7 +32,7 @@ export default function UsersView() {
 	const [users, status] = useQuery(usersQuery(z));
 	const [prepareDownload, setPrepareDownload] = useState(false);
 	const {
-		user: { role }
+		user: { role, leading }
 	} = useApp();
 	const isAdmin = role === 'admin';
 
@@ -50,10 +50,17 @@ export default function UsersView() {
 		);
 	}
 
+	let filteredUsers = users;
+	if (role === 'volunteer') {
+		filteredUsers = users.filter(
+			user => user.team === leading || user.leading === leading
+		);
+	}
+
 	return (
 		<div className='relative flex flex-1'>
 			<DataTableWrapper
-				data={users as User[]}
+				data={filteredUsers as User[]}
 				columns={columns}
 				columnsConfig={columnsConfig}
 				additionalActions={
