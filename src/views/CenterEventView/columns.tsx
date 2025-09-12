@@ -51,7 +51,9 @@ export const columns = [
 			<DataTableColumnHeader className='ml-2' column={column} title='Name' />
 		),
 		cell: ({ row }) => (
-			<div className={row.depth === 0 ? 'pl-4' : ''}>
+			<div
+				className={`${row.depth === 0 ? 'pl-4' : ''} ${row.original.subRows ? 'font-medium' : ''}`}
+			>
 				{row.getValue('name')}
 			</div>
 		),
@@ -106,7 +108,9 @@ export const columns = [
 		),
 		cell: ({ row }) => {
 			const center = row.getValue<string | undefined>('center');
-			return center ? <Badge variant='outline'>{center}</Badge> : null;
+			return center && !row.original.subRows ? (
+				<Badge variant='outline'>{center}</Badge>
+			) : null;
 		},
 		meta: {
 			displayName: 'Center'
@@ -119,11 +123,7 @@ export const columns = [
 		),
 		cell: ({ row }) => (
 			<div className='capitalize'>
-				{(
-					row.original.subRows
-						? row.original.subRows.some(row => row.attended === true)
-						: row.getValue('attended') === 'true'
-				) ? (
+				{row.original.subRows ? null : row.getValue('attended') === 'true' ? (
 					<CheckIcon className='size-5 text-green-500' />
 				) : (
 					<XIcon className='size-5 text-destructive' />
