@@ -15,6 +15,8 @@
  * ------------------------------------------------------------
  */
 
+import type { Row } from "@rocicorp/zero";
+import { createBuilder } from "@rocicorp/zero";
 import type { ZeroCustomType } from "drizzle-zero";
 import type { default as zeroSchema } from "./drizzle-zero.config";
 
@@ -1647,3 +1649,95 @@ export const schema = {
  * This type is auto-generated from your Drizzle schema definition.
  */
 export type Schema = typeof schema;
+/**
+ * Represents a row from the "centerGuardians" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type CenterGuardian = Row<Schema["tables"]["centerGuardians"]>;
+/**
+ * Represents a row from the "centerLiaisons" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type CenterLiaison = Row<Schema["tables"]["centerLiaisons"]>;
+/**
+ * Represents a row from the "centers" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type Center = Row<Schema["tables"]["centers"]>;
+/**
+ * Represents a row from the "eventCategories" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type EventCategory = Row<Schema["tables"]["eventCategories"]>;
+/**
+ * Represents a row from the "eventCoordinators" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type EventCoordinator = Row<Schema["tables"]["eventCoordinators"]>;
+/**
+ * Represents a row from the "eventVolunteers" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type EventVolunteer = Row<Schema["tables"]["eventVolunteers"]>;
+/**
+ * Represents a row from the "events" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type Event = Row<Schema["tables"]["events"]>;
+/**
+ * Represents a row from the "inventory" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type Inventory = Row<Schema["tables"]["inventory"]>;
+/**
+ * Represents a row from the "inventoryEvents" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type InventoryEvent = Row<Schema["tables"]["inventoryEvents"]>;
+/**
+ * Represents a row from the "inventoryTransactionEvents" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type InventoryTransactionEvent = Row<
+  Schema["tables"]["inventoryTransactionEvents"]
+>;
+/**
+ * Represents a row from the "inventoryTransactions" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type InventoryTransaction = Row<
+  Schema["tables"]["inventoryTransactions"]
+>;
+/**
+ * Represents a row from the "participantCategories" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type ParticipantCategory = Row<
+  Schema["tables"]["participantCategories"]
+>;
+/**
+ * Represents a row from the "participants" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type Participant = Row<Schema["tables"]["participants"]>;
+/**
+ * Represents a row from the "subEventParticipants" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type SubEventParticipant = Row<Schema["tables"]["subEventParticipants"]>;
+/**
+ * Represents a row from the "subEvents" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type SubEvent = Row<Schema["tables"]["subEvents"]>;
+/**
+ * Represents a row from the "users" table.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export type User = Row<Schema["tables"]["users"]>;
+
+/**
+ * Represents the Zero schema query builder.
+ * This type is auto-generated from your Drizzle schema definition.
+ */
+export const builder = createBuilder(schema);
