@@ -37,9 +37,11 @@ function ChartContainer({
 	className,
 	children,
 	config,
+	containerHeight,
 	...props
 }: React.ComponentProps<'div'> & {
 	config: ChartConfig;
+	containerHeight?: number;
 	children: React.ComponentProps<
 		typeof RechartsPrimitive.ResponsiveContainer
 	>['children'];
@@ -59,7 +61,7 @@ function ChartContainer({
 				{...props}
 			>
 				<ChartStyle id={chartId} config={config} />
-				<RechartsPrimitive.ResponsiveContainer>
+				<RechartsPrimitive.ResponsiveContainer height={containerHeight}>
 					{children}
 				</RechartsPrimitive.ResponsiveContainer>
 			</div>

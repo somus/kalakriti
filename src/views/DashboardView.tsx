@@ -6,6 +6,7 @@ import {
 	CardHeader,
 	CardTitle
 } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import {
 	Table,
 	TableBody,
@@ -18,16 +19,11 @@ import { useApp } from '@/hooks/useApp';
 import useZero from '@/hooks/useZero';
 import { useQuery } from '@rocicorp/zero/react';
 import camelCase from 'lodash/camelCase';
-import { Suspense, lazy } from 'react';
 import { Link } from 'react-router';
 import { teamsEnum } from 'shared/db/schema';
 
 import { CenterPage, centerQuery } from './CenterView/CenterView';
 import { TEAMS_NAME_MAP } from './UsersView/columns';
-import LoadingScreen from './general/LoadingScreen';
-
-const AwardsView = lazy(() => import('@/views/AwardsView/AwardsView'));
-const FoodView = lazy(() => import('@/views/FoodView/FoodView'));
 
 export default function DashboardView() {
 	const {
@@ -46,24 +42,10 @@ export default function DashboardView() {
 	const [participants] = useQuery(zero.query.participants);
 	const [centers] = useQuery(zero.query.centers.related('participants'));
 	const [events] = useQuery(
-		zero.query.events.related('subEvents', q => q.related('participants'))
+		zero.query.events.related('subEvents', q =>
+			q.related('participants', q => q.related('participant'))
+		)
 	);
-
-	if (role === 'volunteer' && leading === 'awards') {
-		return (
-			<Suspense fallback={<LoadingScreen />}>
-				<AwardsView />
-			</Suspense>
-		);
-	}
-
-	if (role === 'volunteer' && leading === 'food') {
-		return (
-			<Suspense fallback={<LoadingScreen />}>
-				<FoodView />
-			</Suspense>
-		);
-	}
 
 	if (
 		center &&
@@ -113,6 +95,64 @@ export default function DashboardView() {
 					0
 				),
 				fill: `var(--color-${camelCase(event.name)})`
+			}))
+		: [];
+	const totalPeople = participants.length + users.length;
+	const peopleWhoHadBreakfast =
+		participants.filter(participant => participant.hadBreakfast).length +
+		users.filter(user => user.hadBreakfast).length;
+	const peopleWhoHadLunch =
+		participants.filter(participant => participant.hadLunch).length +
+		users.filter(user => user.hadLunch).length;
+	const totalEvents = events.flatMap(event => event.subEvents).length;
+	const completedEvents = events
+		.flatMap(event => event.subEvents)
+		.filter(
+			subEvent =>
+				subEvent.participants.some(participant => participant.isWinner) &&
+				subEvent.participants.some(participant => participant.isRunner)
+		).length;
+	const startedEvents = events
+		.flatMap(event => event.subEvents)
+		.filter(subEvent =>
+			subEvent.participants.some(participant => participant.attended)
+		).length;
+	const awardedPrizes = events
+		.flatMap(event => event.subEvents)
+		.reduce((acc, subEvent) => {
+			const hasAwardedWinners = subEvent.participants.some(
+				participant => participant.isWinner && participant.prizeAwarded
+			);
+			const hasAwardedRunners = subEvent.participants.some(
+				participant => participant.isRunner && participant.prizeAwarded
+			);
+			return acc + (hasAwardedWinners ? 1 : 0) + (hasAwardedRunners ? 1 : 0);
+		}, 0);
+	const centerScores = events
+		.flatMap(event => event.subEvents)
+		.reduce(
+			(acc, subEvent) => {
+				const winnerCenterId = subEvent.participants.find(
+					participant => participant.isWinner
+				)?.participant?.centerId;
+				const runnerCenterId = subEvent.participants.find(
+					participant => participant.isRunner
+				)?.participant?.centerId;
+				if (winnerCenterId) {
+					acc[winnerCenterId] = (acc[winnerCenterId] || 0) + 10;
+				}
+				if (runnerCenterId) {
+					acc[runnerCenterId] = (acc[runnerCenterId] || 0) + 5;
+				}
+				return acc;
+			},
+			{} as Record<string, number>
+		);
+	const scoresByCentersData = centers
+		? centers.map(center => ({
+				name: camelCase(center.name),
+				value: centerScores[center.id] || 0,
+				fill: `var(--color-${camelCase(center.name)})`
 			}))
 		: [];
 
@@ -172,28 +212,87 @@ export default function DashboardView() {
 						</Link>
 					</>
 				)}
-				{(((role === 'volunteer' || role === 'guardian') &&
-					centers.length > 1) ||
-					(role === 'volunteer' && leading === 'liaison') ||
-					(role === 'volunteer' && leading === 'transport')) && (
+				{(leading === 'food' || role === 'admin') && (
 					<>
-						{/* Liason and guardian dashboard for liasons & guardians with multiple centers */}
-						{centers.map(center => (
-							<Link to={`/centers/${center.id}`} key={center.id}>
-								<Card className='@container/card'>
-									<CardHeader className='relative'>
-										<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
-											{center.name}
-										</CardTitle>
-										<CardDescription>
-											{center.participants.length} participants
-										</CardDescription>
-									</CardHeader>
-								</Card>
-							</Link>
-						))}
+						<Link to={`/food`}>
+							<PercentCard
+								label='People who had breakfast'
+								total={totalPeople}
+								current={peopleWhoHadBreakfast}
+							/>
+						</Link>
+						<Link to={`/food`}>
+							<PercentCard
+								label='People who had lunch'
+								total={totalPeople}
+								current={peopleWhoHadLunch}
+							/>
+						</Link>
 					</>
 				)}
+				{(leading === 'liaison' ||
+					leading === 'transport' ||
+					role === 'admin') && (
+					<>
+						<PercentCard
+							label='Participants who have been picked up'
+							total={participants.length}
+							current={
+								participants.filter(participant => participant.pickedUp).length
+							}
+						/>
+						<PercentCard
+							label='Participants who have been dropped off'
+							total={participants.length}
+							current={
+								participants.filter(participant => participant.droppedOff)
+									.length
+							}
+						/>
+					</>
+				)}
+				{(leading === 'awards' ||
+					leading === 'arts' ||
+					leading === 'cultural' ||
+					role === 'admin') && (
+					<>
+						<PercentCard
+							label='Started events'
+							total={totalEvents}
+							current={startedEvents}
+						/>
+						<PercentCard
+							label='Completed events'
+							total={totalEvents}
+							current={completedEvents}
+						/>
+						<PercentCard
+							label='Prized awarded'
+							total={totalEvents * 2}
+							current={awardedPrizes}
+						/>
+					</>
+				)}
+				{(role === 'volunteer' || role === 'guardian') &&
+					(liaisoningCenters.length > 1 || guardianCenters.length > 1) && (
+						<>
+							{/* Liason and guardian dashboard for liasons & guardians with multiple centers */}
+							{centers.map(center => (
+								<Link to={`/centers/${center.id}`} key={center.id}>
+									<Card className='@container/card'>
+										<CardHeader className='relative'>
+											<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
+												{center.name}
+											</CardTitle>
+											<CardDescription>
+												{center.participants.length} participants
+											</CardDescription>
+										</CardHeader>
+									</Card>
+								</Link>
+							))}
+						</>
+					)}
 			</div>
 			{(role === 'admin' ||
 				coordinatingEvents.length > 0 ||
@@ -213,46 +312,82 @@ export default function DashboardView() {
 					/>
 				</div>
 			)}
-			{role === 'admin' && (
+			{(role === 'admin' || leading === 'awards') && (
 				<div className='@xl/main:grid-cols-1 @5xl/main:grid-cols-2 grid grid-cols-1 gap-4 px-4'>
-					<Card className='flex flex-col h-full'>
-						<CardHeader className='items-center pb-0'>
-							<CardTitle>Leads</CardTitle>
-						</CardHeader>
-						<CardContent className='flex-1 pb-0'>
-							<Table>
-								<TableHeader>
-									<TableRow>
-										<TableHead>Team</TableHead>
-										<TableHead>Lead</TableHead>
-									</TableRow>
-								</TableHeader>
-								<TableBody>
-									{teamsEnum.enumValues.map(team => {
-										const leads = users.filter(user => user.leading === team);
-										return (
-											<TableRow key={team}>
-												<TableCell className='font-medium'>
-													{TEAMS_NAME_MAP[team]}
-												</TableCell>
-												<TableCell>
-													{leads.length > 0
-														? leads
-																.map(
-																	lead => `${lead.firstName} ${lead.lastName}`
-																)
-																.join(', ')
-														: '-'}
-												</TableCell>
-											</TableRow>
-										);
-									})}
-								</TableBody>
-							</Table>
-						</CardContent>
-					</Card>
+					<ChartPieDonut
+						title='Scores by Center'
+						chartConfig={participantsByCentersConfig}
+						chartData={scoresByCentersData}
+					/>
+					{role === 'admin' && (
+						<Card className='flex flex-col h-full'>
+							<CardHeader className='items-center pb-0'>
+								<CardTitle>Leads</CardTitle>
+							</CardHeader>
+							<CardContent className='flex-1 pb-0'>
+								<Table>
+									<TableHeader>
+										<TableRow>
+											<TableHead>Team</TableHead>
+											<TableHead>Lead</TableHead>
+										</TableRow>
+									</TableHeader>
+									<TableBody>
+										{teamsEnum.enumValues.map(team => {
+											const leads = users.filter(user => user.leading === team);
+											return (
+												<TableRow key={team}>
+													<TableCell className='font-medium'>
+														{TEAMS_NAME_MAP[team]}
+													</TableCell>
+													<TableCell>
+														{leads.length > 0
+															? leads
+																	.map(
+																		lead => `${lead.firstName} ${lead.lastName}`
+																	)
+																	.join(', ')
+															: '-'}
+													</TableCell>
+												</TableRow>
+											);
+										})}
+									</TableBody>
+								</Table>
+							</CardContent>
+						</Card>
+					)}
 				</div>
 			)}
 		</div>
 	);
 }
+
+const PercentCard = ({
+	current,
+	total,
+	label
+}: {
+	current: number;
+	total: number;
+	label: string;
+}) => {
+	const percent = Math.round((current / total) * 100);
+	return (
+		<Card className='@container/card'>
+			<CardHeader className='relative'>
+				<CardDescription>{label}</CardDescription>
+				<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
+					{current}
+				</CardTitle>
+				<div className='space-y-2'>
+					<Progress value={percent} />
+					<div className='flex items-center justify-between'>
+						<span className='text-muted-foreground text-sm'>{total}</span>
+						<span className='text-muted-foreground text-sm'>{percent}%</span>
+					</div>
+				</div>
+			</CardHeader>
+		</Card>
+	);
+};

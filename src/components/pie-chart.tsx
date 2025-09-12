@@ -9,6 +9,7 @@ import {
 	ChartTooltip,
 	ChartTooltipContent
 } from '@/components/ui/chart';
+import { useIsMobile } from '@/hooks/use-mobile';
 import * as React from 'react';
 import { Label, Pie, PieChart } from 'recharts';
 
@@ -25,13 +26,14 @@ export function ChartPieDonut({
 	dataLabel
 }: {
 	title: string;
-	dataLabel: string;
+	dataLabel?: string;
 	chartConfig: ChartConfig;
 	chartData: ChartData[];
 }) {
 	const total = React.useMemo(() => {
 		return chartData.reduce((acc, curr) => acc + curr.value, 0);
 	}, [chartData]);
+	const isMobile = useIsMobile();
 
 	return (
 		<Card className='flex flex-col h-full'>
@@ -41,7 +43,8 @@ export function ChartPieDonut({
 			<CardContent className='flex-1 pb-0'>
 				<ChartContainer
 					config={chartConfig}
-					className='mx-auto w-full max-h-[300px] max-w-[600px]'
+					className='mx-auto w-full max-h-[600px] sm:max-h-[300px] max-w-[600px]'
+					containerHeight={isMobile ? 400 : undefined}
 				>
 					<PieChart width={600}>
 						<ChartTooltip
@@ -55,45 +58,47 @@ export function ChartPieDonut({
 							innerRadius={60}
 							strokeWidth={5}
 						>
-							<Label
-								content={({ viewBox }) => {
-									if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-										return (
-											<text
-												x={viewBox.cx}
-												y={viewBox.cy}
-												textAnchor='middle'
-												dominantBaseline='middle'
-											>
-												<tspan
+							{dataLabel && (
+								<Label
+									content={({ viewBox }) => {
+										if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+											return (
+												<text
 													x={viewBox.cx}
 													y={viewBox.cy}
-													className='fill-foreground text-3xl font-bold'
+													textAnchor='middle'
+													dominantBaseline='middle'
 												>
-													{total.toLocaleString()}
-												</tspan>
-												<tspan
-													x={viewBox.cx}
-													y={(viewBox.cy ?? 0) + 24}
-													className='fill-muted-foreground'
-												>
-													{dataLabel}
-												</tspan>
-											</text>
-										);
-									}
-								}}
-							/>
+													<tspan
+														x={viewBox.cx}
+														y={viewBox.cy}
+														className='fill-foreground text-3xl font-bold'
+													>
+														{total.toLocaleString()}
+													</tspan>
+													<tspan
+														x={viewBox.cx}
+														y={(viewBox.cy ?? 0) + 24}
+														className='fill-muted-foreground'
+													>
+														{dataLabel}
+													</tspan>
+												</text>
+											);
+										}
+									}}
+								/>
+							)}
 						</Pie>
 						<ChartLegend
 							content={<ChartLegendContent nameKey='name' />}
 							layout='vertical'
-							align='right'
-							verticalAlign='middle'
+							align={isMobile ? 'center' : 'right'}
+							verticalAlign={isMobile ? 'bottom' : 'middle'}
 							className='flex-col'
 							wrapperStyle={{
 								padding: '0 2rem',
-								height: '80%',
+								height: isMobile ? '50%' : '80%',
 								overflow: 'auto'
 							}}
 						/>

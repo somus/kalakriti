@@ -216,11 +216,27 @@ export const useNavItems = () => {
 	}
 
 	if (user.role === 'volunteer' && user.leading === 'food') {
-		return [homeNavItem, volunteersNavItem];
+		return [
+			homeNavItem,
+			{
+				title: 'Food',
+				url: '/food',
+				icon: CookieIcon
+			},
+			volunteersNavItem
+		];
 	}
 
 	if (user.role === 'volunteer' && user.leading === 'awards') {
-		return [homeNavItem, volunteersNavItem];
+		return [
+			homeNavItem,
+			{
+				title: 'Awards',
+				url: '/awards',
+				icon: TrophyIcon
+			},
+			volunteersNavItem
+		];
 	}
 
 	if (

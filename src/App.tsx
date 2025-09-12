@@ -109,6 +109,22 @@ function App() {
 									</Suspense>
 								}
 							/>
+							<Route
+								path='awards'
+								element={
+									<Suspense fallback={<LoadingScreen />}>
+										<AwardsView />
+									</Suspense>
+								}
+							/>
+							<Route
+								path='food'
+								element={
+									<Suspense fallback={<LoadingScreen />}>
+										<FoodView />
+									</Suspense>
+								}
+							/>
 						</Route>
 
 						{/* Admin Routes */}
@@ -149,22 +165,6 @@ function App() {
 									}
 								/>
 							</Route>
-							<Route
-								path='awards'
-								element={
-									<Suspense fallback={<LoadingScreen />}>
-										<AwardsView />
-									</Suspense>
-								}
-							/>
-							<Route
-								path='food'
-								element={
-									<Suspense fallback={<LoadingScreen />}>
-										<FoodView />
-									</Suspense>
-								}
-							/>
 						</Route>
 						<Route path='/centers'>
 							<Route

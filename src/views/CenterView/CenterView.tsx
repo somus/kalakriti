@@ -35,6 +35,27 @@ export function CenterPage({ center }: { center: Center }) {
 			q.related('participants', q => q.related('participant'))
 		)
 	);
+	const winners = events
+		.flatMap(event => event.subEvents)
+		.reduce((acc, subEvent) => {
+			const hasWinner = subEvent.participants.some(
+				participant =>
+					participant.isWinner &&
+					participant.participant?.centerId === center.id
+			);
+			return acc + (hasWinner ? 1 : 0);
+		}, 0);
+	const runners = events
+		.flatMap(event => event.subEvents)
+		.reduce((acc, subEvent) => {
+			const hasRunner = subEvent.participants.some(
+				participant =>
+					participant.isRunner &&
+					participant.participant?.centerId === center.id
+			);
+			return acc + (hasRunner ? 1 : 0);
+		}, 0);
+	const score = runners * 5 + winners * 10;
 
 	const participantsByAgeConfig = participantCategories
 		? participantCategories.reduce(
@@ -137,6 +158,30 @@ export function CenterPage({ center }: { center: Center }) {
 						</CardHeader>
 					</Card>
 				</Link>
+				<Card className='@container/card'>
+					<CardHeader className='relative'>
+						<CardDescription>Winners</CardDescription>
+						<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
+							{winners}
+						</CardTitle>
+					</CardHeader>
+				</Card>
+				<Card className='@container/card'>
+					<CardHeader className='relative'>
+						<CardDescription>Runners</CardDescription>
+						<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
+							{runners}
+						</CardTitle>
+					</CardHeader>
+				</Card>
+				<Card className='@container/card'>
+					<CardHeader className='relative'>
+						<CardDescription>Total Score</CardDescription>
+						<CardTitle className='@[250px]/card:text-3xl text-2xl font-semibold tabular-nums'>
+							{score}
+						</CardTitle>
+					</CardHeader>
+				</Card>
 			</div>
 			<div className='@xl/main:grid-cols-1 @5xl/main:grid-cols-2 grid grid-cols-1 gap-4 px-4'>
 				<ChartPieDonut
