@@ -1,17 +1,13 @@
-import { IdCardData, IdCardPdf } from '@/components/IdCardPdf';
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Button } from '@/components/ui/button';
 import { useApp } from '@/hooks/useApp';
 import useZero, { Zero } from '@/hooks/useZero';
 import LoadingScreen from '@/views/general/LoadingScreen';
-import { PDFDownloadLink } from '@react-pdf/renderer';
 import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
-import { DownloadCloudIcon } from 'lucide-react';
-import { useState } from 'react';
 
 import UserFormDialog from './UserFormDialog';
-import { columns, getUserRoleText } from './columns';
+import { columns } from './columns';
 import { columnsConfig } from './filters';
 
 function usersQuery(z: Zero) {
@@ -30,7 +26,7 @@ export default function UsersView() {
 	'use no memo';
 	const z = useZero();
 	const [users, status] = useQuery(usersQuery(z));
-	const [prepareDownload, setPrepareDownload] = useState(false);
+	// const [prepareDownload, setPrepareDownload] = useState(false);
 	const {
 		user: { role, leading }
 	} = useApp();
@@ -72,8 +68,8 @@ export default function UsersView() {
 							]
 						: []
 				}
-			>
-				{table => {
+			/>
+			{/*{table => {
 					if (!isAdmin) {
 						return null;
 					}
@@ -146,7 +142,7 @@ export default function UsersView() {
 						</Button>
 					);
 				}}
-			</DataTableWrapper>
+			</DataTableWrapper>*/}
 		</div>
 	);
 }

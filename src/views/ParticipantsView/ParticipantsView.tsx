@@ -1,13 +1,9 @@
-import { IdCardData, IdCardPdf } from '@/components/IdCardPdf';
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Button } from '@/components/ui/button';
 import useZero, { Zero } from '@/hooks/useZero';
 import LoadingScreen from '@/views/general/LoadingScreen';
-import { PDFDownloadLink } from '@react-pdf/renderer';
 import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
-import { DownloadCloudIcon } from 'lucide-react';
-import { useState } from 'react';
 
 import ParticipantFormDialog from './ParticipantFormDialog';
 import { columns } from './columns';
@@ -33,7 +29,7 @@ export default function ParticipantsView() {
 
 	const zero = useZero();
 	const [participants, status] = useQuery(participantsQuery(zero));
-	const [prepareDownload, setPrepareDownload] = useState(false);
+	// const [prepareDownload, setPrepareDownload] = useState(false);
 
 	if (status.type !== 'complete') {
 		return <LoadingScreen />;
@@ -60,8 +56,8 @@ export default function ParticipantsView() {
 						<Button className='h-7'>Create Participant</Button>
 					</ParticipantFormDialog>
 				]}
-			>
-				{table => {
+			/>
+			{/*{table => {
 					const idData = table.getRowModel().rows.map(row => ({
 						name: row.original.name,
 						role: `${row.original.center?.name ?? 'Participant'} - ${row.original.participantCategory?.name ?? 'No Category'}`,
@@ -98,7 +94,7 @@ export default function ParticipantsView() {
 						</Button>
 					);
 				}}
-			</DataTableWrapper>
+			</DataTableWrapper>*/}
 		</div>
 	);
 }
