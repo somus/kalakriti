@@ -197,6 +197,42 @@ export const columns = [
 			displayName: 'Can Login?'
 		}
 	}),
+	columnHelper.accessor(row => (row.hadBreakfast ?? false).toString(), {
+		id: 'hadBreakfast',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Had Breakfast' />
+		),
+		cell: ({ row }) => (
+			<div className='capitalize'>
+				{row.getValue('hadBreakfast') === 'true' ? (
+					<CheckIcon className='size-5 text-green-500' />
+				) : (
+					<XIcon className='size-5 text-destructive' />
+				)}
+			</div>
+		),
+		meta: {
+			displayName: 'Had Breakfast'
+		}
+	}),
+	columnHelper.accessor(row => (row.hadLunch ?? false).toString(), {
+		id: 'hadLunch',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title='Had Lunch' />
+		),
+		cell: ({ row }) => (
+			<div className='capitalize'>
+				{row.getValue('hadLunch') === 'true' ? (
+					<CheckIcon className='size-5 text-green-500' />
+				) : (
+					<XIcon className='size-5 text-destructive' />
+				)}
+			</div>
+		),
+		meta: {
+			displayName: 'Had Lunch'
+		}
+	}),
 	{
 		id: 'view-id-card',
 		cell: ({ row }: { row: Row<User> }) => {
