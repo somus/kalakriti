@@ -83,8 +83,6 @@ export default function UsersView() {
 		...filteredColumns.slice(5) // Elements from the insert index onwards
 	];
 
-	console.log(users, updatedColumns);
-
 	return (
 		<div className='relative flex flex-1'>
 			<DataTableWrapper

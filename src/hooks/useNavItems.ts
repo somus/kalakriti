@@ -4,6 +4,7 @@ import useZero, { Zero } from '@/hooks/useZero';
 import { Row } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
 import {
+	CalendarIcon,
 	CookieIcon,
 	HomeIcon,
 	PackageIcon,
@@ -34,6 +35,11 @@ const liaisonNavItem: NavItem = {
 	title: 'Liaisons',
 	url: '/liaisons',
 	icon: ShieldCheckIcon
+};
+const scheduleNavItem: NavItem = {
+	title: 'Schedule',
+	url: '/schedule',
+	icon: CalendarIcon
 };
 
 const getAdminNavItems = (centers: Center[], events: Event[]): NavItem[] => [
@@ -106,13 +112,9 @@ const getAdminNavItems = (centers: Center[], events: Event[]): NavItem[] => [
 		title: 'Food',
 		url: '/food',
 		icon: CookieIcon
-	}
-	// {
-	// 	title: 'Settings',
-	// 	url: '/settings',
-	// 	icon: Settings2,
-	// 	items: [] as { title: string; url: string }[]
-	// }
+	},
+	liaisonNavItem,
+	scheduleNavItem
 ];
 
 const getGuardianAndLiasonNavItems = (
@@ -143,7 +145,8 @@ const getGuardianAndLiasonNavItems = (
 				},
 				volunteersNavItem,
 				liaisonNavItem,
-				awardsNavItem
+				awardsNavItem,
+				scheduleNavItem
 			].filter(item => item.title !== 'Awards' || !isTransportCoordinator)
 		: [
 				homeNavItem,
@@ -170,7 +173,8 @@ const getGuardianAndLiasonNavItems = (
 					.sort((a, b) => a.title.localeCompare(b.title)),
 				volunteersNavItem,
 				liaisonNavItem,
-				awardsNavItem
+				awardsNavItem,
+				scheduleNavItem
 			].filter(item => item.title !== 'Awards' || !isTransportCoordinator);
 };
 
@@ -187,7 +191,8 @@ const getEventVolunteerNavItems = (events: Event[]): NavItem[] => [
 		.sort((a, b) => a.title.localeCompare(b.title)),
 	volunteersNavItem,
 	liaisonNavItem,
-	awardsNavItem
+	awardsNavItem,
+	scheduleNavItem
 ];
 
 const getLogisticsCoordinatorNavItems = (): NavItem[] => [
@@ -204,7 +209,8 @@ const getLogisticsCoordinatorNavItems = (): NavItem[] => [
 		]
 	},
 	volunteersNavItem,
-	liaisonNavItem
+	liaisonNavItem,
+	scheduleNavItem
 ];
 
 function eventsQuery(z: Zero) {
@@ -242,12 +248,19 @@ export const useNavItems = () => {
 				icon: CookieIcon
 			},
 			volunteersNavItem,
-			liaisonNavItem
+			liaisonNavItem,
+			scheduleNavItem
 		];
 	}
 
 	if (user.role === 'volunteer' && user.leading === 'awards') {
-		return [homeNavItem, awardsNavItem, volunteersNavItem, liaisonNavItem];
+		return [
+			homeNavItem,
+			awardsNavItem,
+			volunteersNavItem,
+			liaisonNavItem,
+			scheduleNavItem
+		];
 	}
 
 	if (
@@ -281,5 +294,5 @@ export const useNavItems = () => {
 		);
 	}
 
-	return [homeNavItem, volunteersNavItem, liaisonNavItem];
+	return [homeNavItem, volunteersNavItem, liaisonNavItem, scheduleNavItem];
 };
