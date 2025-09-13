@@ -55,8 +55,8 @@ const pageStyles = StyleSheet.create({
 		padding: 1
 	},
 	cardContainer: {
-		width: '100%',
-		height: '100%',
+		width: '50%',
+		height: '50%',
 		padding: 1
 	}
 });
@@ -247,12 +247,12 @@ function IdCard({ name, role, type, qrCodeValue }: IdCardData) {
 }
 
 export function IdCardPdf({ idCards }: IdCardPdfProps) {
-	const cardChunks = chunk(idCards, 1);
+	const cardChunks = chunk(idCards, 4);
 
 	return (
 		<Document>
 			{cardChunks.map((pageOfCards, pageIndex) => (
-				<Page key={pageIndex} size='A6' style={pageStyles.page}>
+				<Page key={pageIndex} size='A4' style={pageStyles.page}>
 					{pageOfCards.map((cardData, cardIndex) => (
 						<View key={cardIndex} style={pageStyles.cardContainer}>
 							<IdCard {...cardData} />
