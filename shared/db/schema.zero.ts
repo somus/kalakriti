@@ -57,37 +57,37 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 		eb: ExpressionBuilder<Schema, 'centers'>
 	) =>
 		eb.and(
-			allowIfLoggedIn(authData, eb),
-			eb.or(
-				eb.cmpLit(authData.meta.leading ?? '', '=', 'awards'),
-				eb.cmpLit(authData.meta.leading ?? '', '=', 'liaison'),
-				eb.cmpLit(authData.meta.leading ?? '', '=', 'transport'),
-				eb.cmpLit(authData.meta.leading ?? '', '=', 'food'),
-				eb.exists('guardians', q => q.where('userId', authData.sub)),
-				eb.exists('liaisons', q => q.where('userId', authData.sub)),
-				eb.exists('participants', q =>
-					q.whereExists('subEvents', q =>
-						q.whereExists('subEvent', q =>
-							q.whereExists('event', q =>
-								q.whereExists('coordinators', q =>
-									q.where('userId', authData.sub)
-								)
-							)
-						)
-					)
-				),
-				eb.exists('participants', q =>
-					q.whereExists('subEvents', q =>
-						q.whereExists('subEvent', q =>
-							q.whereExists('event', q =>
-								q.whereExists('category', q =>
-									q.where('coordinatorId', authData.sub)
-								)
-							)
-						)
-					)
-				)
-			)
+			allowIfLoggedIn(authData, eb)
+			// eb.or(
+			// 	eb.cmpLit(authData.meta.leading ?? '', '=', 'awards'),
+			// 	eb.cmpLit(authData.meta.leading ?? '', '=', 'liaison'),
+			// 	eb.cmpLit(authData.meta.leading ?? '', '=', 'transport'),
+			// 	eb.cmpLit(authData.meta.leading ?? '', '=', 'food'),
+			// 	eb.exists('guardians', q => q.where('userId', authData.sub)),
+			// 	eb.exists('liaisons', q => q.where('userId', authData.sub)),
+			// 	eb.exists('participants', q =>
+			// 		q.whereExists('subEvents', q =>
+			// 			q.whereExists('subEvent', q =>
+			// 				q.whereExists('event', q =>
+			// 					q.whereExists('coordinators', q =>
+			// 						q.where('userId', authData.sub)
+			// 					)
+			// 				)
+			// 			)
+			// 		)
+			// 	),
+			// 	eb.exists('participants', q =>
+			// 		q.whereExists('subEvents', q =>
+			// 			q.whereExists('subEvent', q =>
+			// 				q.whereExists('event', q =>
+			// 					q.whereExists('category', q =>
+			// 						q.where('coordinatorId', authData.sub)
+			// 					)
+			// 				)
+			// 			)
+			// 		)
+			// 	)
+			// )
 		);
 
 	const participantPermission = (
@@ -168,17 +168,17 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 		eb: ExpressionBuilder<Schema, 'centerLiaisons'>
 	) =>
 		eb.and(
-			allowIfLoggedIn(authData, eb),
-			eb.or(
-				eb.cmpLit(authData.meta.leading ?? '', '=', 'liaison'),
-				eb.cmpLit(authData.meta.leading ?? '', '=', 'transport'),
-				eb.exists('center', q =>
-					q.whereExists('guardians', q => q.where('userId', authData.sub))
-				),
-				eb.exists('center', q =>
-					q.whereExists('liaisons', q => q.where('userId', authData.sub))
-				)
-			)
+			allowIfLoggedIn(authData, eb)
+			// eb.or(
+			// 	eb.cmpLit(authData.meta.leading ?? '', '=', 'liaison'),
+			// 	eb.cmpLit(authData.meta.leading ?? '', '=', 'transport'),
+			// 	eb.exists('center', q =>
+			// 		q.whereExists('guardians', q => q.where('userId', authData.sub))
+			// 	),
+			// 	eb.exists('center', q =>
+			// 		q.whereExists('liaisons', q => q.where('userId', authData.sub))
+			// 	)
+			// )
 		);
 
 	const centerGuardianPermission = (
@@ -239,6 +239,9 @@ export const permissions = definePermissions<AuthData, Schema>(schema, () => {
 			allowIfLoggedIn(authData, eb),
 			eb.or(
 				eb.cmp('id', '=', authData.sub),
+				// Make liaison coordinators and liaison visible for everyone
+				eb.cmp('leading', '=', 'liaison'),
+				eb.exists('liaisoningCenters', q => q.where('centerId', '!=', '')),
 				eb.cmpLit(authData.meta.leading ?? '', '=', 'logistics'),
 				eb.cmpLit(authData.meta.leading ?? '', '=', 'food'),
 				eb.cmp('team', '=', authData.meta.leading ?? 'overall'),
