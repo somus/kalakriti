@@ -24,6 +24,11 @@ const volunteersNavItem: NavItem = {
 	url: '/users',
 	icon: UsersIcon
 };
+const awardsNavItem: NavItem = {
+	title: 'Awards',
+	url: '/awards',
+	icon: TrophyIcon
+};
 
 const getAdminNavItems = (centers: Center[], events: Event[]): NavItem[] => [
 	homeNavItem,
@@ -130,8 +135,9 @@ const getGuardianAndLiasonNavItems = (
 						)
 						.sort((a, b) => a.title.localeCompare(b.title))
 				},
-				volunteersNavItem
-			].filter(item => item.title !== 'Events' || !isTransportCoordinator)
+				volunteersNavItem,
+				awardsNavItem
+			].filter(item => item.title !== 'Awards' || !isTransportCoordinator)
 		: [
 				homeNavItem,
 				...centers
@@ -155,8 +161,9 @@ const getGuardianAndLiasonNavItems = (
 						}
 					])
 					.sort((a, b) => a.title.localeCompare(b.title)),
-				volunteersNavItem
-			];
+				volunteersNavItem,
+				awardsNavItem
+			].filter(item => item.title !== 'Awards' || !isTransportCoordinator);
 };
 
 const getEventVolunteerNavItems = (events: Event[]): NavItem[] => [
@@ -170,7 +177,8 @@ const getEventVolunteerNavItems = (events: Event[]): NavItem[] => [
 			}))
 		)
 		.sort((a, b) => a.title.localeCompare(b.title)),
-	volunteersNavItem
+	volunteersNavItem,
+	awardsNavItem
 ];
 
 const getLogisticsCoordinatorNavItems = (): NavItem[] => [
@@ -228,15 +236,7 @@ export const useNavItems = () => {
 	}
 
 	if (user.role === 'volunteer' && user.leading === 'awards') {
-		return [
-			homeNavItem,
-			{
-				title: 'Awards',
-				url: '/awards',
-				icon: TrophyIcon
-			},
-			volunteersNavItem
-		];
+		return [homeNavItem, awardsNavItem, volunteersNavItem];
 	}
 
 	if (

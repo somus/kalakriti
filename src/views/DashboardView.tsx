@@ -252,6 +252,7 @@ export default function DashboardView() {
 					</>
 				)}
 				{(leading === 'awards' ||
+					leading === 'liaison' ||
 					leading === 'arts' ||
 					leading === 'cultural' ||
 					role === 'admin') && (
@@ -312,7 +313,7 @@ export default function DashboardView() {
 					/>
 				</div>
 			)}
-			{(role === 'admin' || leading === 'awards') && (
+			{(role === 'admin' || leading === 'awards' || leading === 'liaison') && (
 				<div className='@xl/main:grid-cols-1 @5xl/main:grid-cols-2 grid grid-cols-1 gap-4 px-4'>
 					<ChartPieDonut
 						title='Scores by Center'

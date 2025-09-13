@@ -30,7 +30,9 @@ export const columns = [
 			<DataTableColumnHeader className='ml-2' column={column} title='Name' />
 		),
 		cell: ({ row }) => (
-			<div className={row.depth === 0 ? 'pl-4' : ''}>
+			<div
+				className={`${row.depth === 0 ? 'pl-4' : ''} ${row.original.subRows ? 'font-medium' : ''}`}
+			>
 				{row.subRows?.length > 0 && <Badge variant='outline'>Group</Badge>}{' '}
 				{row.getValue('name')}
 			</div>
