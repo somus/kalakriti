@@ -224,7 +224,14 @@ export type Event = NonNullable<Row<ReturnType<typeof eventsQuery>>>;
 export const useNavItems = () => {
 	const { user } = useApp();
 	const z = useZero();
-	const [centers] = useQuery(z.query.centers);
+	const [centers] = useQuery(
+		z.query.centers.where(({ or, exists }) =>
+			or(
+				exists('guardians', q => q.where('userId', user.id)),
+				exists('liaisons', q => q.where('userId', user.id))
+			)
+		)
+	);
 	const [events] = useQuery(eventsQuery(z));
 
 	if (!user) {

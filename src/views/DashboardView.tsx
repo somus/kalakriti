@@ -22,12 +22,13 @@ import camelCase from 'lodash/camelCase';
 import { Link } from 'react-router';
 import { teamsEnum } from 'shared/db/schema';
 
-import { CenterPage, centerQuery } from './CenterView/CenterView';
+import { CenterPage } from './CenterView/CenterView';
 import { TEAMS_NAME_MAP } from './UsersView/columns';
 
 export default function DashboardView() {
 	const {
 		user: {
+			id,
 			role,
 			leading,
 			liaisoningCenters,
@@ -37,7 +38,19 @@ export default function DashboardView() {
 		}
 	} = useApp();
 	const zero = useZero();
-	const [center] = useQuery(centerQuery(zero));
+	const [center] = useQuery(
+		zero.query.centers
+			.where(({ or, exists }) =>
+				or(
+					exists('guardians', q => q.where('userId', id)),
+					exists('liaisons', q => q.where('userId', id))
+				)
+			)
+			.related('guardians', q => q.related('user'))
+			.related('liaisons', q => q.related('user'))
+			.related('participants', q => q.related('participantCategory'))
+			.one()
+	);
 	const [users] = useQuery(zero.query.users);
 	const [participants] = useQuery(zero.query.participants);
 	const [centers] = useQuery(zero.query.centers.related('participants'));
