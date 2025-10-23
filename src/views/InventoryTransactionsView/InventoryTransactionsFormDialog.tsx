@@ -156,6 +156,7 @@ export default function InventoryTransactionFormModal({
 		defaultValues
 	});
 	const { setValue, watch } = form;
+	// eslint-disable-next-line react-hooks/incompatible-library
 	const currentEvents = watch('events');
 	const transactorOptions =
 		currentEvents.length > 0 &&

@@ -1,6 +1,6 @@
 // mutators.ts
 import { createId } from '@paralleldrive/cuid2';
-import { CustomMutatorDefs } from '@rocicorp/zero';
+import { Transaction } from '@rocicorp/zero';
 
 import { assertIsAdminOrLogisticsCoordinator } from '../permissions.ts';
 import { AuthData, Schema } from '../schema.zero.ts';
@@ -19,15 +19,21 @@ export interface CreateInventoryTransactionArgs {
 	transactorId?: string;
 }
 
+type MutatorTx = Transaction<Schema>;
+
 export function createInventoryTransactionMutators(
 	authData: AuthData | undefined
 ) {
 	return {
-		create: async (tx, { events, ...data }: CreateInventoryTransactionArgs) => {
+		create: async (
+			tx: MutatorTx,
+			{ events, ...data }: CreateInventoryTransactionArgs
+		) => {
 			assertIsAdminOrLogisticsCoordinator(authData);
 			const inventory = await tx.query.inventory
 				.where('id', data.inventoryId)
-				.one();
+				.one()
+				.run();
 
 			if (!inventory) {
 				throw new Error('Inventory not found');
@@ -70,12 +76,13 @@ export function createInventoryTransactionMutators(
 				quantity: quantity
 			});
 		},
-		delete: async (tx, { id }: { id: string }) => {
+		delete: async (tx: MutatorTx, { id }: { id: string }) => {
 			assertIsAdminOrLogisticsCoordinator(authData);
 			const inventoryTransaction = await tx.query.inventoryTransactions
 				.where('id', id)
 				.related('inventory')
-				.one();
+				.one()
+				.run();
 
 			if (!inventoryTransaction) {
 				throw new Error('Inventory transaction not found');
@@ -90,5 +97,5 @@ export function createInventoryTransactionMutators(
 
 			await tx.mutate.inventoryTransactions.delete({ id });
 		}
-	} as const satisfies CustomMutatorDefs<Schema>;
+	} as const;
 }

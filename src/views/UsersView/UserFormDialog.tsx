@@ -220,6 +220,7 @@ export default function UserFormModal({
 		}
 	}, [qrScanResult, setValue]);
 
+	// eslint-disable-next-line react-hooks/incompatible-library
 	const selectedLeading = form.watch('leading');
 	const selectedTeam = form.watch('team');
 	useEffect(() => {
@@ -262,7 +263,8 @@ export default function UserFormModal({
 
 									const user = await zero.query.users
 										.where('id', scanResult.id)
-										.one();
+										.one()
+										.run();
 
 									if (user && !!scanResult.isNewUser) {
 										toast.error('User already exists');

@@ -324,7 +324,8 @@ function DropDrawerContent({
 										className='pb-6 space-y-1.5 w-full h-full'
 									>
 										{activeSubmenu
-											? getSubmenuContent(activeSubmenu)
+											? // eslint-disable-next-line react-hooks/refs
+												getSubmenuContent(activeSubmenu)
 											: children}
 									</motion.div>
 								</AnimatePresence>

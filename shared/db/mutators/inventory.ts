@@ -1,6 +1,6 @@
 // mutators.ts
 import { createId } from '@paralleldrive/cuid2';
-import { CustomMutatorDefs, UpdateValue } from '@rocicorp/zero';
+import { Transaction, UpdateValue } from '@rocicorp/zero';
 
 import { assertIsAdminOrLogisticsCoordinator } from '../permissions.ts';
 import { inventoryTransactionType } from '../schema.ts';
@@ -14,9 +14,11 @@ export interface CreateInventoryArgs {
 	photoPath?: string;
 }
 
+type MutatorTx = Transaction<Schema>;
+
 export function createInventoryMutators(authData: AuthData | undefined) {
 	return {
-		create: async (tx, { events, ...data }: CreateInventoryArgs) => {
+		create: async (tx: MutatorTx, { events, ...data }: CreateInventoryArgs) => {
 			assertIsAdminOrLogisticsCoordinator(authData);
 			const inventoryId = createId();
 			await tx.mutate.inventory.insert({ id: inventoryId, ...data });
@@ -41,7 +43,7 @@ export function createInventoryMutators(authData: AuthData | undefined) {
 			}
 		},
 		update: async (
-			tx,
+			tx: MutatorTx,
 			{
 				photoPath,
 				events,
@@ -56,7 +58,8 @@ export function createInventoryMutators(authData: AuthData | undefined) {
 			const inventory = await tx.query.inventory
 				.where('id', change.id)
 				.related('events')
-				.one();
+				.one()
+				.run();
 
 			if (!inventory) {
 				throw new Error('Inventory not found');
@@ -94,9 +97,9 @@ export function createInventoryMutators(authData: AuthData | undefined) {
 				}
 			}
 		},
-		delete: async (tx, { id }: { id: string }) => {
+		delete: async (tx: MutatorTx, { id }: { id: string }) => {
 			assertIsAdminOrLogisticsCoordinator(authData);
 			await tx.mutate.inventory.delete({ id });
 		}
-	} as const satisfies CustomMutatorDefs<Schema>;
+	} as const;
 }

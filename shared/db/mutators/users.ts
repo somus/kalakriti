@@ -2,7 +2,7 @@
 import { ClerkClient, User } from '@clerk/backend';
 import { ClerkAPIResponseError } from '@clerk/types';
 import { createId } from '@paralleldrive/cuid2';
-import { CustomMutatorDefs, UpdateValue } from '@rocicorp/zero';
+import { Transaction, UpdateValue } from '@rocicorp/zero';
 import isObject from 'lodash/isObject';
 
 import {
@@ -50,12 +50,14 @@ export interface CreateUserArgs {
 	canLogin: boolean;
 }
 
+type MutatorTx = Transaction<Schema>;
+
 export function createUserMutators(
 	authData: AuthData | undefined,
 	clerkClient?: ClerkClient
 ) {
 	return {
-		create: async (tx, { password, ...data }: CreateUserArgs) => {
+		create: async (tx: MutatorTx, { password, ...data }: CreateUserArgs) => {
 			assertIsAdmin(authData);
 
 			if (data.canLogin && !password) {
@@ -103,10 +105,13 @@ export function createUserMutators(
 				}
 			}
 		},
-		update: async (tx, change: UpdateValue<Schema['tables']['users']>) => {
+		update: async (
+			tx: MutatorTx,
+			change: UpdateValue<Schema['tables']['users']>
+		) => {
 			assertIsAdmin(authData);
 
-			const user = await tx.query.users.where('id', change.id).one();
+			const user = await tx.query.users.where('id', change.id).one().run();
 			if (!user) {
 				throw new Error('User not found');
 			}
@@ -133,10 +138,10 @@ export function createUserMutators(
 				updatedAt: new Date().getTime()
 			});
 		},
-		toggleHadBreakfast: async (tx, id: string) => {
+		toggleHadBreakfast: async (tx: MutatorTx, id: string) => {
 			assertIsAdminOrFoodCoordinator(authData);
 
-			const user = await tx.query.users.where('id', id).one();
+			const user = await tx.query.users.where('id', id).one().run();
 			if (!user) {
 				throw new Error('User not found');
 			}
@@ -147,10 +152,10 @@ export function createUserMutators(
 				updatedAt: new Date().getTime()
 			});
 		},
-		toggleHadLunch: async (tx, id: string) => {
+		toggleHadLunch: async (tx: MutatorTx, id: string) => {
 			assertIsAdminOrFoodCoordinator(authData);
 
-			const user = await tx.query.users.where('id', id).one();
+			const user = await tx.query.users.where('id', id).one().run();
 			if (!user) {
 				throw new Error('User not found');
 			}
@@ -161,10 +166,10 @@ export function createUserMutators(
 				updatedAt: new Date().getTime()
 			});
 		},
-		delete: async (tx, { id }: { id: string }) => {
+		delete: async (tx: MutatorTx, { id }: { id: string }) => {
 			assertIsAdmin(authData);
 
-			const user = await tx.query.users.where('id', id).one();
+			const user = await tx.query.users.where('id', id).one().run();
 			if (!user) {
 				throw new Error('User not found');
 			}
@@ -177,7 +182,7 @@ export function createUserMutators(
 			}
 			await tx.mutate.users.delete({ id });
 		}
-	} as const satisfies CustomMutatorDefs<Schema>;
+	} as const;
 }
 
 const isClerkError = (error: unknown): error is ClerkAPIResponseError => {

@@ -384,22 +384,25 @@ export default function EventFormModal({
 							isRequired
 						/>
 						<CheckboxField name='isGroupEvent' label='Is Group Event?' />
-						{form.watch('isGroupEvent') && (
-							<>
-								<InputField
-									name='minGroupSize'
-									label='Minimum Group Size'
-									type='number'
-									isRequired
-								/>
-								<InputField
-									name='maxGroupSize'
-									label='Maximum Group Size'
-									type='number'
-									isRequired
-								/>
-							</>
-						)}
+						{
+							// eslint-disable-next-line react-hooks/incompatible-library
+							form.watch('isGroupEvent') && (
+								<>
+									<InputField
+										name='minGroupSize'
+										label='Minimum Group Size'
+										type='number'
+										isRequired
+									/>
+									<InputField
+										name='maxGroupSize'
+										label='Maximum Group Size'
+										type='number'
+										isRequired
+									/>
+								</>
+							)
+						}
 						<MultiSelectField
 							name='coordinators'
 							label='Coordinators'

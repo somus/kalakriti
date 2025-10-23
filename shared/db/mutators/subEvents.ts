@@ -1,5 +1,5 @@
 // mutators.ts
-import { CustomMutatorDefs } from '@rocicorp/zero';
+import { Transaction } from '@rocicorp/zero';
 
 import {
 	assertIsAdmin,
@@ -7,15 +7,17 @@ import {
 } from '../permissions.ts';
 import { AuthData, Schema } from '../schema.zero.ts';
 
+type MutatorTx = Transaction<Schema>;
+
 export function createSubEventMutators(authData: AuthData | undefined) {
 	return {
 		updateScoresheetPhoto: async (
-			tx,
+			tx: MutatorTx,
 			{ id, scoresheetPhoto }: { id: string; scoresheetPhoto: string | null }
 		) => {
 			await assertIsEventCoordinatorOfSubEvent(tx, authData, id);
 
-			const subEvent = await tx.query.subEvents.where('id', id).one();
+			const subEvent = await tx.query.subEvents.where('id', id).one().run();
 
 			if (!subEvent) {
 				throw new Error('SubEvent not found');
@@ -26,12 +28,13 @@ export function createSubEventMutators(authData: AuthData | undefined) {
 				scoreSheetPath: scoresheetPhoto
 			});
 		},
-		delete: async (tx, { id }: { id: string }) => {
+		delete: async (tx: MutatorTx, { id }: { id: string }) => {
 			assertIsAdmin(authData);
 			const subEvent = await tx.query.subEvents
 				.where('id', '=', id)
 				.related('event', q => q.related('subEvents'))
-				.one();
+				.one()
+				.run();
 			if (!subEvent) throw new Error('SubEvent not found');
 
 			const isLastSubEvent = subEvent.event?.subEvents?.length === 1;
@@ -43,5 +46,5 @@ export function createSubEventMutators(authData: AuthData | undefined) {
 				await tx.mutate.subEvents.delete({ id });
 			}
 		}
-	} as const satisfies CustomMutatorDefs<Schema>;
+	} as const;
 }

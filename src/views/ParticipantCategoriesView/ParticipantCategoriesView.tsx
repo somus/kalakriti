@@ -10,7 +10,6 @@ import { columns } from './columns';
 import { columnsConfig } from './filters';
 
 export default function ParticipantCategoriesView() {
-	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 	const z = useZero();
 	const [participantCategories, status] = useQuery(

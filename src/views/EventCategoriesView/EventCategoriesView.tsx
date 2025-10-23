@@ -18,7 +18,6 @@ function eventCategoriesQuery(z: Zero) {
 export type EventCategory = Row<ReturnType<typeof eventCategoriesQuery>>;
 
 export default function EventCategoriesView() {
-	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 	const z = useZero();
 	const [eventCategories, status] = useQuery(eventCategoriesQuery(z));

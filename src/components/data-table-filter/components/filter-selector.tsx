@@ -129,7 +129,7 @@ function NonMemoFilterSelector<TData>({
 					</CommandList>
 				</Command>
 			),
-		// eslint-disable-next-line react-hooks/react-compiler
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[property, column, filter, filters, columns, actions, value]
 	);

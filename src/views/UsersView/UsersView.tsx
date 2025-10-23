@@ -22,7 +22,6 @@ function usersQuery(z: Zero) {
 export type User = Row<ReturnType<typeof usersQuery>>;
 
 export default function UsersView() {
-	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 	const z = useZero();
 	const [users, status] = useQuery(usersQuery(z));

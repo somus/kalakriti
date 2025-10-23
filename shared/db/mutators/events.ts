@@ -1,6 +1,6 @@
 // mutators.ts
 import { createId } from '@paralleldrive/cuid2';
-import { CustomMutatorDefs, UpdateValue } from '@rocicorp/zero';
+import { Transaction, UpdateValue } from '@rocicorp/zero';
 
 import { assertIsAdmin } from '../permissions.ts';
 import { AuthData, Schema } from '../schema.zero.ts';
@@ -25,10 +25,12 @@ export interface CreateEventArgs {
 	>;
 }
 
+type MutatorTx = Transaction<Schema>;
+
 export function createEventMutators(authData: AuthData | undefined) {
 	return {
 		create: async (
-			tx,
+			tx: MutatorTx,
 			{
 				timings,
 				coordinators,
@@ -77,7 +79,7 @@ export function createEventMutators(authData: AuthData | undefined) {
 			}
 		},
 		update: async (
-			tx,
+			tx: MutatorTx,
 			{
 				timings,
 				coordinators,
@@ -101,7 +103,8 @@ export function createEventMutators(authData: AuthData | undefined) {
 				.related('coordinators')
 				.related('volunteers')
 				.related('subEvents')
-				.one();
+				.one()
+				.run();
 
 			if (!event) {
 				throw new Error('Event not found');
@@ -200,9 +203,9 @@ export function createEventMutators(authData: AuthData | undefined) {
 				}
 			}
 		},
-		delete: async (tx, { id }: { id: string }) => {
+		delete: async (tx: MutatorTx, { id }: { id: string }) => {
 			assertIsAdmin(authData);
 			await tx.mutate.events.delete({ id });
 		}
-	} as const satisfies CustomMutatorDefs<Schema>;
+	} as const;
 }

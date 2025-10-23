@@ -1,6 +1,6 @@
 // mutators.ts
 import { createId } from '@paralleldrive/cuid2';
-import { CustomMutatorDefs, UpdateValue } from '@rocicorp/zero';
+import { Transaction, UpdateValue } from '@rocicorp/zero';
 
 import { assertIsAdmin } from '../permissions.ts';
 import { AuthData, Schema } from '../schema.zero.ts';
@@ -11,9 +11,14 @@ export interface CreateCenterArgs {
 	guardians: string[];
 }
 
+type MutatorTx = Transaction<Schema>;
+
 export function createCenterMutators(authData: AuthData | undefined) {
 	return {
-		create: async (tx, { guardians, liaisons, ...data }: CreateCenterArgs) => {
+		create: async (
+			tx: MutatorTx,
+			{ guardians, liaisons, ...data }: CreateCenterArgs
+		) => {
 			assertIsAdmin(authData);
 			const centerId = createId();
 			await tx.mutate.centers.insert({ id: centerId, ...data });
@@ -31,7 +36,7 @@ export function createCenterMutators(authData: AuthData | undefined) {
 			}
 		},
 		update: async (
-			tx,
+			tx: MutatorTx,
 			{
 				liaisons,
 				guardians,
@@ -44,7 +49,8 @@ export function createCenterMutators(authData: AuthData | undefined) {
 				.where('id', change.id)
 				.related('guardians')
 				.related('liaisons')
-				.one();
+				.one()
+				.run();
 
 			if (!center) {
 				throw new Error('Center not found');
@@ -113,9 +119,9 @@ export function createCenterMutators(authData: AuthData | undefined) {
 				}
 			}
 		},
-		delete: async (tx, { id }: { id: string }) => {
+		delete: async (tx: MutatorTx, { id }: { id: string }) => {
 			assertIsAdmin(authData);
 			await tx.mutate.centers.delete({ id });
 		}
-	} as const satisfies CustomMutatorDefs<Schema>;
+	} as const;
 }

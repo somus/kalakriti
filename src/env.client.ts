@@ -13,18 +13,18 @@ export const env = createEnv({
 	},
 	runtimeEnv: {
 		VITE_PUBLIC_SERVER: (import.meta.env.VITE_PUBLIC_SERVER ??
-			process.env.VITE_PUBLIC_SERVER) as string,
+			process.env.VITE_PUBLIC_SERVER)!,
 		VITE_IMAGE_CDN: (import.meta.env.VITE_IMAGE_CDN ??
-			process.env.VITE_IMAGE_CDN) as string,
+			process.env.VITE_IMAGE_CDN)!,
 		VITE_CLERK_PUBLISHABLE_KEY: (import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ??
-			process.env.VITE_CLERK_PUBLISHABLE_KEY) as string,
+			process.env.VITE_CLERK_PUBLISHABLE_KEY)!,
 		VITE_ASSET_FOLDER: (import.meta.env.VITE_ASSET_FOLDER ??
-			process.env.VITE_ASSET_FOLDER) as string,
+			process.env.VITE_ASSET_FOLDER)!,
 		VITE_API_SERVER: (import.meta.env.VITE_API_SERVER ??
-			process.env.VITE_API_SERVER) as string,
+			process.env.VITE_API_SERVER)!,
 		VITE_SENTRY_DSN: (import.meta.env
 			? import.meta.env.VITE_SENTRY_DSN
-			: process.env.VITE_SENTRY_DSN) as string
+			: process.env.VITE_SENTRY_DSN)!
 	},
 	skipValidation: !!import.meta.env.SKIP_ENV_VALIDATION,
 	emptyStringAsUndefined: true

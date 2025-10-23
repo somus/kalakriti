@@ -22,7 +22,6 @@ export type InventoryTransaction = Row<
 >;
 
 export default function InventoryTransactionsView() {
-	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 	const z = useZero();
 	const [inventoryTransactions, status] = useQuery(

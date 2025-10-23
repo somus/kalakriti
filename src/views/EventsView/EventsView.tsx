@@ -29,7 +29,6 @@ export interface EventRow {
 }
 
 export default function EventsView() {
-	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 
 	const zero = useZero();

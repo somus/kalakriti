@@ -50,7 +50,6 @@ export type SubEventParticipant = Row<
 >;
 
 export default function CenterEventView() {
-	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 
 	const { center } = useOutletContext<CenterOutletContext>();

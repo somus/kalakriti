@@ -33,7 +33,6 @@ function liaisonsQuery(z: Zero) {
 export type User = Row<ReturnType<typeof liaisonsQuery>>;
 
 export default function UsersView() {
-	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 	const z = useZero();
 	const [users, status] = useQuery(liaisonsQuery(z));

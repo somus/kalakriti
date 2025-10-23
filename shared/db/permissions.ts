@@ -55,7 +55,8 @@ export async function assertIsAdminOrLiasonOfCenter(
 	const center = await tx.query.centers
 		.related('liaisons')
 		.where('id', centerId)
-		.one();
+		.one()
+		.run();
 	const isLiason = center?.liaisons.some(l => l.userId === authData?.sub);
 	if (!isAdmin && !isLiaisonCoordinator && !isLiason) {
 		throw new Error('Unauthorized');
@@ -74,7 +75,8 @@ export async function assertIsAdminOrGuardianOrLiasonOfCenter(
 		.related('guardians')
 		.related('liaisons')
 		.where('id', centerId)
-		.one();
+		.one()
+		.run();
 	const isGuardian = center?.guardians.some(g => g.userId === authData?.sub);
 	const isLiason = center?.liaisons.some(l => l.userId === authData?.sub);
 	if (!isAdmin && !isLiaisonCoordinator && !isGuardian && !isLiason) {
@@ -93,7 +95,8 @@ export async function assertIsAdminOrGuardianOrLiasonOfParticipant(
 	const participant = await tx.query.participants
 		.related('center', q => q.related('guardians').related('liaisons'))
 		.where('id', participantId)
-		.one();
+		.one()
+		.run();
 	const isGuardian = participant?.center?.guardians.some(
 		g => g.userId === authData?.sub
 	);
@@ -118,7 +121,8 @@ export async function assertIsAdminOrGuardianOrLiasonOfSubEventParticipant(
 			q.related('center', q => q.related('guardians').related('liaisons'))
 		)
 		.where('id', participantId)
-		.one();
+		.one()
+		.run();
 	const isGuardian = participant?.participant?.center?.guardians.some(
 		g => g.userId === authData?.sub
 	);
@@ -143,7 +147,8 @@ export async function assertIsAdminOrGuardianOrLiasonOfSubEventParticipantGroup(
 			q.related('center', q => q.related('guardians').related('liaisons'))
 		)
 		.where('groupId', groupId)
-		.one();
+		.one()
+		.run();
 	const isGuardian = participant?.participant?.center?.guardians.some(
 		g => g.userId === authData?.sub
 	);
@@ -165,7 +170,8 @@ export async function assertIsEventCoordinatorOfSubEvent(
 	const subEvent = await tx.query.subEvents
 		.where('id', subEventId)
 		.related('event', q => q.related('coordinators').related('category'))
-		.one();
+		.one()
+		.run();
 
 	if (!subEvent) {
 		throw new Error('Invalid event ID provided');
@@ -197,14 +203,16 @@ export async function assertIsEventCoordinatorOfSubEventParticipant(
 			.related('subEvent', q =>
 				q.related('event', q => q.related('coordinators').related('category'))
 			)
-			.one();
+			.one()
+			.run();
 	} else if (groupId) {
 		participant = await tx.query.subEventParticipants
 			.where('groupId', groupId)
 			.related('subEvent', q =>
 				q.related('event', q => q.related('coordinators').related('category'))
 			)
-			.one();
+			.one()
+			.run();
 	}
 
 	if (!participant) {

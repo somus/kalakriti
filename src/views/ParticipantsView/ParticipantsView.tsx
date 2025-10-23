@@ -24,7 +24,6 @@ function participantsQuery(z: Zero) {
 export type Participant = Row<ReturnType<typeof participantsQuery>>;
 
 export default function ParticipantsView() {
-	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 
 	const zero = useZero();

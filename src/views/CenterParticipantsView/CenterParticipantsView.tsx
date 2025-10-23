@@ -90,7 +90,8 @@ export default function CenterParticipantsView() {
 											onScan={async scanResult => {
 												const participant = await zero.query.participants
 													.where('id', scanResult.id)
-													.one();
+													.one()
+													.run();
 
 												if (!participant) {
 													throw new Error('Participant not found');
@@ -125,7 +126,8 @@ export default function CenterParticipantsView() {
 											onScan={async scanResult => {
 												const participant = await zero.query.participants
 													.where('id', scanResult.id)
-													.one();
+													.one()
+													.run();
 
 												if (!participant) {
 													throw new Error('Participant not found');
@@ -169,7 +171,8 @@ export default function CenterParticipantsView() {
 											onScan={async scanResult => {
 												const participant = await zero.query.participants
 													.where('id', scanResult.id)
-													.one();
+													.one()
+													.run();
 
 												if (!participant) {
 													throw new Error('Participant not found');

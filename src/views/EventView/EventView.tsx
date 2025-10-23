@@ -51,7 +51,6 @@ function eventQuery(z: Zero, eventId: string) {
 export type Event = NonNullable<Row<ReturnType<typeof eventQuery>>>;
 
 export default function EventView() {
-	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 
 	const params = useParams();
@@ -262,7 +261,8 @@ export default function EventView() {
 															.whereExists('subEvent', q =>
 																q.where('id', subEvent.id)
 															)
-															.one();
+															.one()
+															.run();
 
 													if (!subEventParticipant) {
 														throw new Error('Participant not found');

@@ -1,6 +1,6 @@
 // mutators.ts
 import { createId } from '@paralleldrive/cuid2';
-import { CustomMutatorDefs, UpdateValue } from '@rocicorp/zero';
+import { Transaction, UpdateValue } from '@rocicorp/zero';
 import { differenceInYears } from 'date-fns';
 
 import {
@@ -17,26 +17,27 @@ export interface CreateParticipantArgs {
 	centerId: string;
 }
 
+type MutatorTx = Transaction<Schema>;
+
 export function createParticipantMutators(authData: AuthData | undefined) {
 	return {
-		create: async (tx, data: CreateParticipantArgs) => {
+		create: async (tx: MutatorTx, data: CreateParticipantArgs) => {
 			await assertIsAdminOrGuardianOrLiasonOfCenter(
 				tx,
 				authData,
 				data.centerId
 			);
 			const age = differenceInYears(new Date(), data.dob);
-			const participantCategories = await tx.query.participantCategories;
+			const participantCategories = await tx.query.participantCategories.run();
 			const participantCategory = participantCategories.find(
 				category => category.minAge <= age && category.maxAge >= age
 			);
 			if (!participantCategory) {
 				throw new Error('Participant category not found');
 			}
-			const participants = await tx.query.participants.where(
-				'centerId',
-				data.centerId
-			);
+			const participants = await tx.query.participants
+				.where('centerId', data.centerId)
+				.run();
 			const exisitngParticipantsInCategory = participants.filter(
 				p =>
 					p.gender === data.gender &&
@@ -62,12 +63,13 @@ export function createParticipantMutators(authData: AuthData | undefined) {
 			});
 		},
 		update: async (
-			tx,
+			tx: MutatorTx,
 			change: UpdateValue<Schema['tables']['participants']>
 		) => {
 			const participant = await tx.query.participants
 				.where('id', change.id)
-				.one();
+				.one()
+				.run();
 			if (!participant) {
 				throw new Error('Participant not found');
 			}
@@ -81,8 +83,11 @@ export function createParticipantMutators(authData: AuthData | undefined) {
 				updatedAt: new Date().getTime()
 			});
 		},
-		togglePickedUp: async (tx, id: string) => {
-			const participant = await tx.query.participants.where('id', id).one();
+		togglePickedUp: async (tx: MutatorTx, id: string) => {
+			const participant = await tx.query.participants
+				.where('id', id)
+				.one()
+				.run();
 			if (!participant) {
 				throw new Error('Participant not found');
 			}
@@ -95,8 +100,11 @@ export function createParticipantMutators(authData: AuthData | undefined) {
 				updatedAt: new Date().getTime()
 			});
 		},
-		toggleLeftVenue: async (tx, id: string) => {
-			const participant = await tx.query.participants.where('id', id).one();
+		toggleLeftVenue: async (tx: MutatorTx, id: string) => {
+			const participant = await tx.query.participants
+				.where('id', id)
+				.one()
+				.run();
 			if (!participant) {
 				throw new Error('Participant not found');
 			}
@@ -109,8 +117,11 @@ export function createParticipantMutators(authData: AuthData | undefined) {
 				updatedAt: new Date().getTime()
 			});
 		},
-		toggleDroppedOff: async (tx, id: string) => {
-			const participant = await tx.query.participants.where('id', id).one();
+		toggleDroppedOff: async (tx: MutatorTx, id: string) => {
+			const participant = await tx.query.participants
+				.where('id', id)
+				.one()
+				.run();
 			if (!participant) {
 				throw new Error('Participant not found');
 			}
@@ -123,10 +134,13 @@ export function createParticipantMutators(authData: AuthData | undefined) {
 				updatedAt: new Date().getTime()
 			});
 		},
-		toggleHadBreakfast: async (tx, id: string) => {
+		toggleHadBreakfast: async (tx: MutatorTx, id: string) => {
 			assertIsAdminOrFoodCoordinator(authData);
 
-			const participant = await tx.query.participants.where('id', id).one();
+			const participant = await tx.query.participants
+				.where('id', id)
+				.one()
+				.run();
 			if (!participant) {
 				throw new Error('Participant not found');
 			}
@@ -137,10 +151,13 @@ export function createParticipantMutators(authData: AuthData | undefined) {
 				updatedAt: new Date().getTime()
 			});
 		},
-		toggleHadLunch: async (tx, id: string) => {
+		toggleHadLunch: async (tx: MutatorTx, id: string) => {
 			assertIsAdminOrFoodCoordinator(authData);
 
-			const participant = await tx.query.participants.where('id', id).one();
+			const participant = await tx.query.participants
+				.where('id', id)
+				.one()
+				.run();
 			if (!participant) {
 				throw new Error('Participant not found');
 			}
@@ -151,8 +168,11 @@ export function createParticipantMutators(authData: AuthData | undefined) {
 				updatedAt: new Date().getTime()
 			});
 		},
-		delete: async (tx, { id }: { id: string }) => {
-			const participant = await tx.query.participants.where('id', id).one();
+		delete: async (tx: MutatorTx, { id }: { id: string }) => {
+			const participant = await tx.query.participants
+				.where('id', id)
+				.one()
+				.run();
 			if (!participant) {
 				throw new Error('Participant not found');
 			}
@@ -163,5 +183,5 @@ export function createParticipantMutators(authData: AuthData | undefined) {
 			);
 			await tx.mutate.participants.delete({ id });
 		}
-	} as const satisfies CustomMutatorDefs<Schema>;
+	} as const;
 }

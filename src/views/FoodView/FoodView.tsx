@@ -30,7 +30,6 @@ export interface Person {
 }
 
 export default function UsersView() {
-	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 	const z = useZero();
 	const [users, status] = useQuery(
@@ -103,7 +102,8 @@ export default function UsersView() {
 								if (scanResult.type === 'participant') {
 									const participant = await z.query.participants
 										.where('id', scanResult.id)
-										.one();
+										.one()
+										.run();
 
 									if (!participant) {
 										throw new Error('Participant not found');
@@ -116,7 +116,8 @@ export default function UsersView() {
 								} else {
 									const user = await z.query.users
 										.where('id', scanResult.id)
-										.one();
+										.one()
+										.run();
 
 									if (!user) {
 										throw new Error('User not found');
@@ -151,7 +152,8 @@ export default function UsersView() {
 								if (scanResult.type === 'participant') {
 									const participant = await z.query.participants
 										.where('id', scanResult.id)
-										.one();
+										.one()
+										.run();
 
 									if (!participant) {
 										throw new Error('Participant not found');
@@ -164,7 +166,8 @@ export default function UsersView() {
 								} else {
 									const user = await z.query.users
 										.where('id', scanResult.id)
-										.one();
+										.one()
+										.run();
 
 									if (!user) {
 										throw new Error('User not found');

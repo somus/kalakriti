@@ -78,5 +78,5 @@ export function FileUploader({
 	uppy.on('complete', result => {
 		onUploadSuccess(result);
 	});
-	return <Dashboard uppy={uppy} showProgressDetails height={350} />;
+	return <Dashboard uppy={uppy} height={350} />;
 }

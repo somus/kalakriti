@@ -1,7 +1,7 @@
 // mutators.ts
 import { Zero } from '@/hooks/useZero.ts';
 import { createId } from '@paralleldrive/cuid2';
-import { CustomMutatorDefs, Row } from '@rocicorp/zero';
+import { Row, Transaction } from '@rocicorp/zero';
 
 import {
 	assertIsAdminOrAwardsCoordinator,
@@ -29,11 +29,16 @@ export type SubEventParticipant = NonNullable<
 	Row<ReturnType<typeof subEventParticipantQuery>>
 >;
 
+type MutatorTx = Transaction<Schema>;
+
 export function createSubEventParticipantMutators(
 	authData: AuthData | undefined
 ) {
 	return {
-		createBatch: async (tx, data: CreateBatchSubEventParticipantArgs) => {
+		createBatch: async (
+			tx: MutatorTx,
+			data: CreateBatchSubEventParticipantArgs
+		) => {
 			if (data.participantIds.length === 0) {
 				throw new Error('No participant IDs provided');
 			}
@@ -52,7 +57,7 @@ export function createSubEventParticipantMutators(
 			}
 		},
 		toggleAttendance: async (
-			tx,
+			tx: MutatorTx,
 			{ id, groupId }: { id?: string; groupId?: string }
 		) => {
 			await assertIsEventCoordinatorOfSubEventParticipant(
@@ -70,7 +75,8 @@ export function createSubEventParticipantMutators(
 							q.related('coordinators').related('category')
 						)
 					)
-					.one();
+					.one()
+					.run();
 			} else if (groupId) {
 				participant = await tx.query.subEventParticipants
 					.where('groupId', groupId)
@@ -79,17 +85,17 @@ export function createSubEventParticipantMutators(
 							q.related('coordinators').related('category')
 						)
 					)
-					.one();
+					.one()
+					.run();
 			}
 			if (!participant) {
 				throw new Error('Invalid participant or group ID provided');
 			}
 
 			if (groupId) {
-				const groupParticipants = await tx.query.subEventParticipants.where(
-					'groupId',
-					groupId
-				);
+				const groupParticipants = await tx.query.subEventParticipants
+					.where('groupId', groupId)
+					.run();
 				await Promise.all(
 					groupParticipants.map(({ id }) =>
 						tx.mutate.subEventParticipants.update({
@@ -106,7 +112,7 @@ export function createSubEventParticipantMutators(
 			}
 		},
 		toggleWinner: async (
-			tx,
+			tx: MutatorTx,
 			{ id, groupId }: { id?: string; groupId?: string }
 		) => {
 			await assertIsEventCoordinatorOfSubEventParticipant(
@@ -125,7 +131,8 @@ export function createSubEventParticipantMutators(
 							q.related('coordinators').related('category')
 						)
 					)
-					.one();
+					.one()
+					.run();
 			} else if (groupId) {
 				participant = await tx.query.subEventParticipants
 					.where('groupId', groupId)
@@ -135,7 +142,8 @@ export function createSubEventParticipantMutators(
 							q.related('coordinators').related('category')
 						)
 					)
-					.one();
+					.one()
+					.run();
 			}
 			if (!participant) {
 				throw new Error('Invalid participant or group ID provided');
@@ -148,7 +156,8 @@ export function createSubEventParticipantMutators(
 				}
 				const existingWinners = await tx.query.subEventParticipants
 					.where('subEventId', participant.subEventId)
-					.where('isWinner', true);
+					.where('isWinner', true)
+					.run();
 				if (existingWinners.length > 0) {
 					throw new Error(
 						"Can't mark as winner when there are existing winners"
@@ -162,7 +171,8 @@ export function createSubEventParticipantMutators(
 					// eslint-disable-next-line @typescript-eslint/unbound-method
 					.where(({ cmp, or }) =>
 						or(cmp('isWinner', true), cmp('attended', true))
-					);
+					)
+					.run();
 				await Promise.all(
 					groupParticipants.map(({ id }) =>
 						tx.mutate.subEventParticipants.update({
@@ -179,7 +189,7 @@ export function createSubEventParticipantMutators(
 			}
 		},
 		toggleRunnerUp: async (
-			tx,
+			tx: MutatorTx,
 			{ id, groupId }: { id?: string; groupId?: string }
 		) => {
 			await assertIsEventCoordinatorOfSubEventParticipant(
@@ -198,7 +208,8 @@ export function createSubEventParticipantMutators(
 							q.related('coordinators').related('category')
 						)
 					)
-					.one();
+					.one()
+					.run();
 			} else if (groupId) {
 				participant = await tx.query.subEventParticipants
 					.where('groupId', groupId)
@@ -208,7 +219,8 @@ export function createSubEventParticipantMutators(
 							q.related('coordinators').related('category')
 						)
 					)
-					.one();
+					.one()
+					.run();
 			}
 			if (!participant) {
 				throw new Error('Invalid participant or group ID provided');
@@ -221,7 +233,8 @@ export function createSubEventParticipantMutators(
 				}
 				const existingRunnerUps = await tx.query.subEventParticipants
 					.where('subEventId', participant.subEventId)
-					.where('isRunner', true);
+					.where('isRunner', true)
+					.run();
 				if (existingRunnerUps.length > 0) {
 					throw new Error(
 						"Can't mark as runner when there are existing runner ups"
@@ -235,7 +248,8 @@ export function createSubEventParticipantMutators(
 					// eslint-disable-next-line @typescript-eslint/unbound-method
 					.where(({ cmp, or }) =>
 						or(cmp('isRunner', true), cmp('attended', true))
-					);
+					)
+					.run();
 				await Promise.all(
 					groupParticipants.map(({ id }) =>
 						tx.mutate.subEventParticipants.update({
@@ -252,7 +266,7 @@ export function createSubEventParticipantMutators(
 			}
 		},
 		togglePrizeAwarded: async (
-			tx,
+			tx: MutatorTx,
 			{ id, groupId }: { id?: string; groupId?: string }
 		) => {
 			assertIsAdminOrAwardsCoordinator(authData);
@@ -266,7 +280,8 @@ export function createSubEventParticipantMutators(
 							q.related('coordinators').related('category')
 						)
 					)
-					.one();
+					.one()
+					.run();
 			} else if (groupId) {
 				participant = await tx.query.subEventParticipants
 					.where('groupId', groupId)
@@ -276,7 +291,8 @@ export function createSubEventParticipantMutators(
 							q.related('coordinators').related('category')
 						)
 					)
-					.one();
+					.one()
+					.run();
 			}
 			if (!participant) {
 				throw new Error('Invalid participant or group ID provided');
@@ -295,7 +311,8 @@ export function createSubEventParticipantMutators(
 					// eslint-disable-next-line @typescript-eslint/unbound-method
 					.where(({ cmp, or }) =>
 						or(cmp('isWinner', true), cmp('isRunner', true))
-					);
+					)
+					.run();
 				await Promise.all(
 					groupParticipants.map(({ id }) =>
 						tx.mutate.subEventParticipants.update({
@@ -312,14 +329,15 @@ export function createSubEventParticipantMutators(
 			}
 		},
 		updateSubmissionPhoto: async (
-			tx,
+			tx: MutatorTx,
 			{ id, submissionPhoto }: { id: string; submissionPhoto: string | null }
 		) => {
 			await assertIsEventCoordinatorOfSubEventParticipant(tx, authData, id);
 
 			const subEventParticipant = await tx.query.subEventParticipants
 				.where('id', id)
-				.one();
+				.one()
+				.run();
 
 			if (!subEventParticipant) {
 				throw new Error('Participant not found');
@@ -330,7 +348,7 @@ export function createSubEventParticipantMutators(
 				submissionPhoto
 			});
 		},
-		delete: async (tx, { id }: { id: string }) => {
+		delete: async (tx: MutatorTx, { id }: { id: string }) => {
 			await assertIsAdminOrGuardianOrLiasonOfSubEventParticipant(
 				tx,
 				authData,
@@ -338,7 +356,7 @@ export function createSubEventParticipantMutators(
 			);
 			await tx.mutate.subEventParticipants.delete({ id });
 		},
-		deleteBatch: async (tx, { ids }: { ids: string[] }) => {
+		deleteBatch: async (tx: MutatorTx, { ids }: { ids: string[] }) => {
 			await assertIsAdminOrGuardianOrLiasonOfSubEventParticipant(
 				tx,
 				authData,
@@ -348,16 +366,18 @@ export function createSubEventParticipantMutators(
 				ids.map(id => tx.mutate.subEventParticipants.delete({ id }))
 			);
 		},
-		deleteByGroupId: async (tx, { groupId }: { groupId: string }) => {
+		deleteByGroupId: async (
+			tx: MutatorTx,
+			{ groupId }: { groupId: string }
+		) => {
 			await assertIsAdminOrGuardianOrLiasonOfSubEventParticipantGroup(
 				tx,
 				authData,
 				groupId
 			);
-			const subEventParticipants = await tx.query.subEventParticipants.where(
-				'groupId',
-				groupId
-			);
+			const subEventParticipants = await tx.query.subEventParticipants
+				.where('groupId', groupId)
+				.run();
 
 			if (subEventParticipants.length === 0) {
 				throw new Error('No participants found for group');
@@ -369,5 +389,5 @@ export function createSubEventParticipantMutators(
 				)
 			);
 		}
-	} as const satisfies CustomMutatorDefs<Schema>;
+	} as const;
 }

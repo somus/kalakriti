@@ -12,7 +12,7 @@ import { createParticipantMutators } from './mutators/participants.ts';
 import { createSubEventParticipantMutators } from './mutators/subEventParticipants.ts';
 import { createSubEventMutators } from './mutators/subEvents.ts';
 import { createUserMutators } from './mutators/users.ts';
-import { AuthData, Schema } from './schema.zero.ts';
+import { AuthData } from './schema.zero.ts';
 
 export interface CreateEventCategoryArgs {
 	id: string;
@@ -35,5 +35,5 @@ export function createMutators(
 		subEventParticipants: createSubEventParticipantMutators(authData),
 		inventory: createInventoryMutators(authData),
 		inventoryTransactions: createInventoryTransactionMutators(authData)
-	} as const satisfies CustomMutatorDefs<Schema>;
+	} as const satisfies CustomMutatorDefs;
 }

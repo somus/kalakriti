@@ -22,7 +22,6 @@ export type SubEventParticipant = Row<
 > & { subRows?: SubEventParticipant[] };
 
 export default function AwardsView() {
-	// eslint-disable-next-line react-hooks/react-compiler
 	'use no memo';
 
 	const zero = useZero();
