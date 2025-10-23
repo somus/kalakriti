@@ -1,12 +1,15 @@
 import { createClerkClient } from '@clerk/backend';
 import { clerkMiddleware, getAuth } from '@hono/clerk-auth';
+import { ReadonlyJSONValue, withValidation } from '@rocicorp/zero';
 import {
 	PostgresJSConnection,
 	PushProcessor,
-	ZQLDatabase
+	ZQLDatabase,
+	handleGetQueriesRequest
 } from '@rocicorp/zero/pg';
 import * as Sentry from '@sentry/bun';
 import { createMutators } from '@shared/db/mutators';
+import { queries } from '@shared/db/queries';
 import { AuthData } from '@shared/db/schema.zero';
 import { schema } from '@shared/db/zero-schema.gen';
 import { S3Client } from 'bun';
@@ -89,6 +92,61 @@ app.post('/push', async c => {
 		return Error.isError(e) ? c.json(e) : c.json({ message: e });
 	}
 });
+
+app.post('/get-queries', async c => {
+	const auth = getAuth(c);
+	if (!auth?.userId) {
+		return c.json({
+			message: 'You are not logged in.'
+		});
+	}
+	try {
+		const user = await clerkClient.users.getUser(auth.userId);
+		return c.json(
+			await handleGetQueriesRequest(
+				(name, args) =>
+					getQuery(
+						{
+							sub: auth.userId,
+							meta: {
+								role: user.publicMetadata.role as AuthData['meta']['role'],
+								leading: user.publicMetadata
+									.leading as AuthData['meta']['leading']
+							}
+						},
+						name,
+						args
+					),
+				schema,
+				c.req.raw
+			)
+		);
+	} catch (e) {
+		return Error.isError(e) ? c.json(e) : c.json({ message: e });
+	}
+});
+
+// Build a map of queries with validation by name.
+const validated = Object.fromEntries(
+	Object.values(queries).map(q => [q.queryName, withValidation(q)])
+);
+
+function getQuery(
+	context: AuthData | undefined,
+	name: string,
+	args: readonly ReadonlyJSONValue[]
+) {
+	const q = validated[name];
+	if (!q) {
+		throw new Error(`No such query: ${name}`);
+	}
+	return {
+		// First param is the context for contextful queries.
+		// `args` are validated using the `parser` you provided with
+		// the query definition.
+		query: q(context, ...args)
+	};
+}
 
 app.post('/getSignedURL', async c => {
 	const auth = getAuth(c);

@@ -21,6 +21,7 @@ import get from 'lodash/get';
 import { LoaderCircle, ScanQrCodeIcon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { queries } from 'shared/db/queries';
 import { rolesEnum, teamsEnum } from 'shared/db/schema';
 import { User } from 'shared/db/schema.zero';
 import { toast } from 'sonner';
@@ -261,10 +262,7 @@ export default function UserFormModal({
 										return;
 									}
 
-									const user = await zero.query.users
-										.where('id', scanResult.id)
-										.one()
-										.run();
+									const user = await zero.run(queries.user(scanResult.id));
 
 									if (user && !!scanResult.isNewUser) {
 										toast.error('User already exists');

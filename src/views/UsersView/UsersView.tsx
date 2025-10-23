@@ -1,30 +1,20 @@
 import DataTableWrapper from '@/components/data-table-wrapper';
 import { Button } from '@/components/ui/button';
 import { useApp } from '@/hooks/useApp';
-import useZero, { Zero } from '@/hooks/useZero';
 import LoadingScreen from '@/views/general/LoadingScreen';
-import { Row } from '@rocicorp/zero';
+import { QueryRowType } from '@rocicorp/zero';
 import { useQuery } from '@rocicorp/zero/react';
+import { queries } from 'shared/db/queries';
 
 import UserFormDialog from './UserFormDialog';
 import { columns } from './columns';
 import { columnsConfig } from './filters';
 
-function usersQuery(z: Zero) {
-	return z.query.users
-		.related('coordinatingEvents', q => q.related('event'))
-		.related('guardianCenters', q => q.related('center'))
-		.related('liaisoningCenters', q => q.related('center'))
-		.related('volunteeringEvents', q => q.related('event'))
-		.orderBy('createdAt', 'desc');
-}
-
-export type User = Row<ReturnType<typeof usersQuery>>;
+export type User = QueryRowType<typeof queries.allUsers>;
 
 export default function UsersView() {
 	'use no memo';
-	const z = useZero();
-	const [users, status] = useQuery(usersQuery(z));
+	const [users, status] = useQuery(queries.allUsers());
 	// const [prepareDownload, setPrepareDownload] = useState(false);
 	const {
 		user: { role, leading }
