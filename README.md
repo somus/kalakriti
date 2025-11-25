@@ -583,7 +583,7 @@ Proud Indian is a Bangalore-based charity organization dedicated to providing op
 - **Sponsor**: Become an event sponsor or provide materials
 - **Contribute**: Help improve this open-source platform
 
-For more information about Proud Indian and upcoming events, visit [their website] or contact the organization directly.
+For more information about Proud Indian and upcoming events, visit [their website](https://proudindian.ngo) or contact the organization directly.
 
 ---
 
