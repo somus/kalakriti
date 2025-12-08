@@ -4,6 +4,8 @@ services:
     shm_size: 1g
     user: postgres
     restart: always
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
     healthcheck:
       test: 'pg_isready -U ${PG_USER} --dbname=${PG_DB}'
       interval: 10s
