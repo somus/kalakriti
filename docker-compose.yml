@@ -67,7 +67,7 @@ services:
     volumes:
       - '.:/app'
       - '/app/node_modules'
-    command: sh -c "bun install && bun run prod:api"
+    command: sh -c "bun install --ignore-scripts && bun run prod:api"
     networks:
       - dokploy-network
 
@@ -87,7 +87,7 @@ services:
     volumes:
       - '.:/app'
       - '/app/node_modules'
-    command: sh -c "bun install && bun run build && bun install -g serve && serve -s dist -l 5173"
+    command: sh -c "bun install --ignore-scripts && bun run build && bun install -g serve && serve -s dist -l 5173"
     networks:
       - dokploy-network
 
