@@ -1,0 +1,101 @@
+services:
+  postgres:
+    image: 'postgres:16.2-alpine'
+    shm_size: 1g
+    user: postgres
+    restart: always
+    healthcheck:
+      test: 'pg_isready -U ${PG_USER} --dbname=${PG_DB}'
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_USER: '${PG_USER}'
+      POSTGRES_DB: '${PG_DB}'
+      POSTGRES_PASSWORD: '${PG_PASSWORD}'
+    command: "postgres\n-c wal_level=logical\n-c max_wal_senders=10\n-c max_replication_slots=5\n-c hot_standby=on\n-c hot_standby_feedback=on\n"
+    volumes:
+      - 'pgdata:/var/lib/postgresql/data'
+      - './:/docker-entrypoint-initdb.d'
+    networks:
+      - dokploy-network
+
+  zero_cache:
+    image: 'rocicorp/zero:latest'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      zero_push:
+        condition: service_started
+    ports:
+      - '4848:4848'
+    environment:
+      - 'ZERO_UPSTREAM_DB=postgresql://${PG_USER}:${PG_PASSWORD}@postgres:5432/${PG_DB}'
+      - 'ZERO_CVR_DB=postgresql://${PG_USER}:${PG_PASSWORD}@postgres:5432/${PG_DB}'
+      - 'ZERO_CHANGE_DB=postgresql://${PG_USER}:${PG_PASSWORD}@postgres:5432/${PG_DB}'
+      - 'ZERO_AUTH_JWKS_URL=${ZERO_AUTH_JWKS_URL}'
+      - 'ZERO_ADMIN_PASSWORD=${ZERO_ADMIN_PASSWORD}'
+      - 'ZERO_MUTATE_URL=http://zero_push:3000/api/push'
+      - 'ZERO_GET_QUERIES_URL=http://zero_push:3000/api/get-queries'
+      - ZERO_REPLICA_FILE=/zero_data/zchat_replica.db
+      - ZERO_PORT=4848
+    volumes:
+      - 'replica:/zero_data'
+    networks:
+      - dokploy-network
+
+  zero_push:
+    image: oven/bun:alpine
+    working_dir: /app
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - '3000:3000'
+    environment:
+      - PORT=3000
+      - 'ZERO_UPSTREAM_DB=postgresql://${PG_USER}:${PG_PASSWORD}@postgres:5432/${PG_DB}'
+      - 'CLERK_SECRET_KEY=${CLERK_SECRET_KEY}'
+      - 'CLERK_PUBLISHABLE_KEY=${CLERK_PUBLISHABLE_KEY}'
+      - 'R2_ACCOUNT_ID=${R2_ACCOUNT_ID}'
+      - 'R2_ACCESS_KEY_ID=${R2_ACCESS_KEY_ID}'
+      - 'R2_SECRET_KEY_ID=${R2_SECRET_KEY_ID}'
+      - 'R2_BUCKET_NAME=${R2_BUCKET_NAME}'
+      - 'ASSET_FOLDER=${ASSET_FOLDER}'
+      - 'SENTRY_DSN=${API_SENTRY_DSN}'
+    volumes:
+      - '.:/app'
+      - '/app/node_modules'
+    command: sh -c "bun install && bun run prod:api"
+    networks:
+      - dokploy-network
+
+  vite_app:
+    image: oven/bun:alpine
+    working_dir: /app
+    restart: always
+    ports:
+      - '5173:5173'
+    environment:
+      - 'VITE_PUBLIC_SERVER=${VITE_PUBLIC_SERVER}'
+      - 'VITE_IMAGE_CDN=${VITE_IMAGE_CDN}'
+      - 'VITE_CLERK_PUBLISHABLE_KEY=${CLERK_PUBLISHABLE_KEY}'
+      - 'VITE_ASSET_FOLDER=${ASSET_FOLDER}'
+      - 'VITE_API_SERVER=${VITE_API_SERVER}'
+      - 'VITE_SENTRY_DSN=${VITE_SENTRY_DSN}'
+    volumes:
+      - '.:/app'
+      - '/app/node_modules'
+    command: sh -c "bun install && bun run build && bun install -g serve && serve -s dist -l 5173"
+    networks:
+      - dokploy-network
+
+volumes:
+  pgdata:
+    driver: local
+  replica: null
+
+networks:
+  dokploy-network:
+    external: true
