@@ -57,12 +57,12 @@ services:
       - 'replica:/zero_data'
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.zero-cache.rule=Host(`${DOMAIN}`) && PathPrefix(`/zero`)'
-      - 'traefik.http.routers.zero-cache.entrypoints=websecure'
-      - 'traefik.http.routers.zero-cache.tls.certresolver=letsencrypt'
-      - 'traefik.http.services.zero-cache.loadbalancer.server.port=4848'
-      - 'traefik.http.middlewares.zero-cache-strip.stripprefix.prefixes=/zero'
-      - 'traefik.http.routers.zero-cache.middlewares=zero-cache-strip'
+      - 'traefik.http.routers.kalakriti-zero-cache.rule=Host(`${DOMAIN}`) && PathPrefix(`/zero`)'
+      - 'traefik.http.routers.kalakriti-zero-cache.entrypoints=websecure'
+      # - 'traefik.http.routers.kalakriti-zero-cache.tls.certresolver=letsencrypt'
+      - 'traefik.http.services.kalakriti-zero-cache.loadbalancer.server.port=4848'
+      - 'traefik.http.middlewares.kalakriti-zero-cache-strip.stripprefix.prefixes=/zero'
+      - 'traefik.http.routers.kalakriti-zero-cache.middlewares=kalakriti-zero-cache-strip'
     networks:
       - dokploy-network
 
@@ -104,10 +104,10 @@ services:
     command: sh -c "bun install --ignore-scripts && bun run prod:api"
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.zero-push.rule=Host(`${DOMAIN}`) && PathPrefix(`/api`)'
-      - 'traefik.http.routers.zero-push.entrypoints=websecure'
-      - 'traefik.http.routers.zero-push.tls.certresolver=letsencrypt'
-      - 'traefik.http.services.zero-push.loadbalancer.server.port=3000'
+      - 'traefik.http.routers.kalakriti-zero-push.rule=Host(`${DOMAIN}`) && PathPrefix(`/api`)'
+      - 'traefik.http.routers.kalakriti-zero-push.entrypoints=websecure'
+      # - 'traefik.http.routers.kalakriti-zero-push.tls.certresolver=letsencrypt'
+      - 'traefik.http.services.kalakriti-zero-push.loadbalancer.server.port=3000'
     networks:
       - dokploy-network
 
@@ -150,11 +150,11 @@ services:
     command: sh -c "bun install --ignore-scripts && bun run build && bun install -g serve && serve -s dist -l 5173"
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.vite-app.rule=Host(`${DOMAIN}`)'
-      - 'traefik.http.routers.vite-app.entrypoints=websecure'
-      - 'traefik.http.routers.vite-app.tls.certresolver=letsencrypt'
-      - 'traefik.http.services.vite-app.loadbalancer.server.port=5173'
-      - 'traefik.http.routers.vite-app.priority=1'
+      - 'traefik.http.routers.kalakriti-vite-app.rule=Host(`${DOMAIN}`)'
+      - 'traefik.http.routers.kalakriti-vite-app.entrypoints=websecure'
+      # - 'traefik.http.routers.kalakriti-vite-app.tls.certresolver=letsencrypt'
+      - 'traefik.http.services.kalakriti-vite-app.loadbalancer.server.port=5173'
+      - 'traefik.http.routers.kalakriti-vite-app.priority=1'
     networks:
       - dokploy-network
 
