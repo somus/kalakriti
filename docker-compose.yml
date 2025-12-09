@@ -5,7 +5,7 @@ services:
     user: postgres
     restart: always
     ports:
-      - '${POSTGRES_PORT:-5432}:5432'
+      - '${POSTGRES_PORT:-5430}:5430'
     healthcheck:
       test: 'pg_isready -U ${PG_USER} --dbname=${PG_DB}'
       interval: 10s
@@ -44,9 +44,9 @@ services:
       retries: 5
       start_period: 30s
     environment:
-      - 'ZERO_UPSTREAM_DB=postgresql://${PG_USER}:${PG_PASSWORD}@postgres:5432/${PG_DB}'
-      - 'ZERO_CVR_DB=postgresql://${PG_USER}:${PG_PASSWORD}@postgres:5432/${PG_DB}'
-      - 'ZERO_CHANGE_DB=postgresql://${PG_USER}:${PG_PASSWORD}@postgres:5432/${PG_DB}'
+      - 'ZERO_UPSTREAM_DB=postgresql://${PG_USER}:${PG_PASSWORD}@postgres:5430/${PG_DB}'
+      - 'ZERO_CVR_DB=postgresql://${PG_USER}:${PG_PASSWORD}@postgres:5430/${PG_DB}'
+      - 'ZERO_CHANGE_DB=postgresql://${PG_USER}:${PG_PASSWORD}@postgres:5430/${PG_DB}'
       - 'ZERO_AUTH_JWKS_URL=${ZERO_AUTH_JWKS_URL}'
       - 'ZERO_ADMIN_PASSWORD=${ZERO_ADMIN_PASSWORD}'
       - 'ZERO_MUTATE_URL=http://zero_push:3000/api/push'
@@ -89,7 +89,7 @@ services:
       start_period: 30s
     environment:
       - PORT=3000
-      - 'ZERO_UPSTREAM_DB=postgresql://${PG_USER}:${PG_PASSWORD}@postgres:5432/${PG_DB}'
+      - 'ZERO_UPSTREAM_DB=postgresql://${PG_USER}:${PG_PASSWORD}@postgres:5430/${PG_DB}'
       - 'CLERK_SECRET_KEY=${CLERK_SECRET_KEY}'
       - 'CLERK_PUBLISHABLE_KEY=${CLERK_PUBLISHABLE_KEY}'
       - 'R2_ACCOUNT_ID=${R2_ACCOUNT_ID}'
