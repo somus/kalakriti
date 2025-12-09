@@ -15,7 +15,7 @@ services:
       POSTGRES_USER: '${PG_USER}'
       POSTGRES_DB: '${PG_DB}'
       POSTGRES_PASSWORD: '${PG_PASSWORD}'
-    command: "postgres\n-c wal_level=logical\n-c max_wal_senders=10\n-c max_replication_slots=5\n-c hot_standby=on\n-c hot_standby_feedback=on\n"
+    command: "postgres\n-c wal_level=logical\n-c max_wal_senders=10\n-c max_replication_slots=5\n-c hot_standby=on\n-c hot_standby_feedback=on\n-p 5430\n"
     volumes:
       - 'pgdata:/var/lib/postgresql/data'
       - './:/docker-entrypoint-initdb.d'
