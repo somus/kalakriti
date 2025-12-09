@@ -7,7 +7,7 @@ services:
     ports:
       - '${POSTGRES_PORT:-5430}:5430'
     healthcheck:
-      test: 'pg_isready -U ${PG_USER} --dbname=${PG_DB}'
+      test: 'pg_isready -p 5430 -U ${PG_USER} --dbname=${PG_DB}'
       interval: 10s
       timeout: 5s
       retries: 5
